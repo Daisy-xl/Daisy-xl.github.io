@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hexo</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-03-18T09:58:54.238Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>John Doe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于Hexo和GitPages搭建个人博客</title>
+    <link href="http://yoursite.com/2017/08/28/hello-world/"/>
+    <id>http://yoursite.com/2017/08/28/hello-world/</id>
+    <published>2017-08-27T16:00:00.000Z</published>
+    <updated>2020-03-18T09:58:54.238Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文主要介绍了如何基于Hexo生成一个静态博客站点，并通过github发布。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="git" scheme="http://yoursite.com/categories/git/"/>
+    
+    
+      <category term="github" scheme="http://yoursite.com/tags/github/"/>
+    
+      <category term="hexo" scheme="http://yoursite.com/tags/hexo/"/>
+    
+      <category term="blog" scheme="http://yoursite.com/tags/blog/"/>
+    
+  </entry>
+  
+</feed>
