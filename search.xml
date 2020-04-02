@@ -1,56 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>基于Hexo和GitPages搭建个人博客</title>
-    <url>/2017/08/28/hello-world/</url>
-    <content><![CDATA[<p>本文主要介绍了如何基于Hexo生成一个静态博客站点，并通过github发布。</p>
+    <title>Web前端常见面试题——HTTP</title>
+    <url>/2020/04/02/mianshi01/</url>
+    <content><![CDATA[<p>一篇用于面试前恶补的小文章，不断补充。</p>
 <a id="more"></a>
-<h1 id="Hexo简介"><a href="#Hexo简介" class="headerlink" title="Hexo简介"></a>Hexo简介</h1><blockquote>
-<p>A fast, simple &amp; powerful blog framework.–Hexo官网</p>
-</blockquote>
-<p>Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。它有下面几个特点：</p>
-<ul>
-<li>超快速度<br>Node.js 所带来的超快生成速度，让上百个页面在几秒内瞬间完成渲染。</li>
-<li>支持Markdown<br>Hexo 支持 GitHub Flavored Markdown 的所有功能，甚至可以整合 Octopress 的大多数插件。</li>
-<li>一键部署<br>只需一条指令即可部署到Github Pages，或其他网站</li>
-<li>丰富的插件<br>Hexo 拥有强大的插件系统，安装插件可以让 Hexo 支持 Jade, CoffeeScript。  </li>
+
+<h1 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h1><ul>
+<li>GET： 用于请求访问已经被URI识别的资源，可以通过URL传参给服务器</li>
+<li>POST： 用于传输信息，提交表单给服务器，主要功能与GET相似，更推荐POST请求</li>
+<li>PUT：传输文件，报文主体包含文件内容，保存到对应URI位置</li>
+<li>HEAD： 获得报文首部，类似于GET方法，不返回报文主体，一般用于验证URI是否有效</li>
+<li>DELETE：删除文件，删除对应URI位置的文件</li>
+<li>OPTIONS：查询对应URI支持的HTTP方法</li>
 </ul>
-<p>通过 Hexo 你可以轻松地使用 Markdown 编写文章，除了 Markdown 本身的语法之外，还可以使用 Hexo 提供的 标签插件 来快速的插入特定形式的内容。</p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>安装 Hexo 相当简单。然而在安装前，您必须检查电脑中是否已安装下列应用程序：</p>
-<ul>
-<li>Node.js</li>
-<li>Git</li>
+<h1 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h1><ul>
+<li>HTTP 的URL 以http:// 开头，而HTTPS 的URL 以https:// 开头</li>
+<li>HTTP是不安全的，HTTPS是安全的</li>
+<li>HTTP标准端口是80， HTTPS是443</li>
+<li>OSI网罗模型中，HTTP工作于应用层，HTTPS的安全传输机制工作在传输层</li>
+<li>HTTP无法加密，HTTPS对传输的数据是加密的</li>
+<li>HTTP不需要证书，HTTPS需要SSL证书</li>
 </ul>
-<p>网上有很多的安装教程，这里不做赘述。<br>接下来只需要使用 npm 即可完成 Hexo 的安装。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-
-<p>安装 Hexo 完成后，我们首先需要为我们的项目创建一个指定文件夹，在指定文件夹中执行下列命令， Hexo 将会在指定文件夹中新建所需要的文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure>
-
-<p>等待安装，安装完成后，<span id="inline-green">指定文件夹</span> 的目录如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── _config.yml</span><br><span class="line">├── package.json</span><br><span class="line">├── scaffolds</span><br><span class="line">├── source</span><br><span class="line">|   ├── _drafts</span><br><span class="line">|   └── _posts</span><br><span class="line">└──</span><br></pre></td></tr></table></figure>
-
-<p>继续执行命令</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo s --debug</span><br></pre></td></tr></table></figure>
-<p>Hexo 将 source 文件夹中除 _posts 文件夹之外，开头命名为 _(下划线)的文件 / 文件夹和隐藏的文件将会被忽略。Markdown 和 HTML 文件会被解析并放到 public 文件夹，而其他文件夹会被拷贝过去。<br>这个时候，我们在浏览器中访问 <a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a> ，就可以看到基于 Hexo 的默认主题的原型。</p>
-<h1 id="主题扩展功能"><a href="#主题扩展功能" class="headerlink" title="主题扩展功能"></a>主题扩展功能</h1><p>首先，我们需要明白：</p>
-<blockquote>
-<p>在 Hexo 中有两份主要的配置文件，其名称都是 _config.yml 。其中，一份位于站点根目录下，主要包含 Hexo 本身的配置；另一份位于主题目录下，这份配置由主题作者提供，主要用于配置主题相关的选项。<br>  我们约定，将前者称为 <strong>站点配置文件</strong>，后者称为 <strong>主题配置文件</strong><br>  可以通过hexo的官网选择喜欢的模板进行使用。</p>
-</blockquote>
-<h1 id="发布到github-io"><a href="#发布到github-io" class="headerlink" title="发布到github.io"></a>发布到github.io</h1><p>在github中创建仓库，命名方式为<strong>用户名.github.io</strong>，一定要以这种方式命名，并且每个github账户只能有一个pages。在站点配置文件中增加发布仓库:</p>
-<figure class="highlight md"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: https://github.com/DaisyGXL/DaisyGXL.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo g</span><br><span class="line">$ hexo d</span><br></pre></td></tr></table></figure>
-<p>完成编译发布过程。 </p>
+<h1 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h1><ul>
+<li>200 请求正常处理</li>
+<li>301 永久重定向</li>
+<li>302 临时重定向</li>
+<li>401 请求需要认证</li>
+<li>403 未授权</li>
+<li>404 资源未找到</li>
+<li>500 服务器内部错误</li>
+<li>503 服务器超过最大负荷</li>
+</ul>
+<h1 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h1><ul>
+<li>域名解析</li>
+<li>发起TCP三次握手</li>
+<li>建立TCP连接后发起HTTP请求</li>
+<li>服务器响应HTTP请求，浏览器得到HTML代码</li>
+<li>浏览器解析HTML代码，请求代码中的资源</li>
+<li>浏览器渲染页面呈现给用户</li>
+</ul>
+<h1 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h1><ul>
+<li>首先HTTP请求服务端生成证书，客户端对证书的有效性，合法性，域名是否与请求的域名一致，证书的公钥等进行校验。</li>
+<li>客户端校验通过后，根据证书的公钥有效性，生成随机数，对公钥随机加密。</li>
+<li>消息体产生后，对它的摘要进行MD5算法加密，得到了RSA签名。</li>
+<li>发送给服务器，只有服务端可以解密。</li>
+<li>解密得到的随机数，再用AES加密，作为秘钥。</li>
+</ul>
+<h1 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h1><ul>
+<li>TCP复用</li>
+<li>内容缓存</li>
+<li>压缩文本数据，减少带宽</li>
+<li>SSL协议加密，在通道内加密并加速</li>
+<li>TCP缓冲</li>
+</ul>
+<h1 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h1><ul>
+<li>服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改。本质上，客户端通过将该记号传回服务器要求服务器验证其（客户端）缓存</li>
+<li>304是HTTP状态码，服务器用来标识这个文件没修改，不返回内容，浏览器在接收到个状态码后，会使用浏览器已缓存的文件</li>
+<li>客户端请求一个页面（A）。 服务器返回页面A，并在给A加上一个ETag。 客户端展现该页面，并将页面连同ETag一起缓存。 客户再次请求页面A，并将上次请求时服务器返回的ETag一起传递给服务器。 服务器检查该ETag，并判断出该页面自上次客户端请求之后还未被修改，直接返回响应304（未修改——Not Modified）和一个空的响应体</li>
+</ul>
+<h1 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h1><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
+<h1 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h1><ul>
+<li>引入了服务端推的概念，允许服务端在客户端请求数据之前主动将数据发送到客户端缓存中，以提高性能</li>
+<li>提供更多的加密支持</li>
+<li>使用多路技术，允许多个消息在一个连接上同事交差</li>
+<li>增加了头部压缩，因此即使非常小的请求，其请求和响应的header都只会占用很少比例的带宽</li>
+</ul>
+<h1 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h1><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
+<p>02.浏览器向 Web 服务器发送一个 HTTP 请求（TCP三次握手）</p>
+<p>03.服务器 301 重定向（从 <a href="http://example.com" target="_blank" rel="noopener">http://example.com</a> 重定向到 <a href="http://www.example.com）" target="_blank" rel="noopener">http://www.example.com）</a></p>
+<p>04.浏览器跟踪重定向地址，请求另一个带 www 的网址</p>
+<p>05.服务器处理请求（通过路由读取资源）</p>
+<p>06.服务器返回一个 HTTP 响应（报头中把 Content-type 设置为 ‘text/html’）</p>
+<p>07.浏览器进 DOM 树构建</p>
+<p>08.浏览器发送请求获取嵌在 HTML 中的资源（如图片、音频、视频、CSS、JS等）</p>
+<p>09.浏览器显示完成页面</p>
+<p>10.浏览器发送异步请求</p>
+<h1 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h1><ul>
+<li>TCP（Transmission Control Protocol，传输控制协议）是基于连接的协议，也就是说，在正式收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“对话”才能建立起来</li>
+<li>UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是面向非连接的协议，它不与对方建立连接，而是直接就把数据包发送过去！ UDP适用于一次只传送少量数据、对可靠性要求不高的应用环境</li>
+</ul>
+<h1 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h1><ul>
+<li>应用层：允许访问OSI环境的手段</li>
+<li>表示层：对数据进行翻译、加密和压缩</li>
+<li>会话层：建立、管理和终止会话</li>
+<li>传输层：提供端到端的可靠报文传递和错误恢复</li>
+<li>网络层：负责数据包从源到宿的传递和网际互连</li>
+<li>物理层：通过媒介传输比特,确定机械及电气规范</li>
+</ul>
 ]]></content>
       <categories>
-        <category>git</category>
+        <category>http</category>
       </categories>
       <tags>
-        <tag>github</tag>
-        <tag>hexo</tag>
-        <tag>blog</tag>
+        <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法题练习记录 （一）</title>
+    <url>/2020/03/24/test01/</url>
+    <content><![CDATA[<p>力扣算法题练习记录及小结。</p>
+<a id="more"></a>
+
+<p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</p>
+<p>你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</p>
+<p>示例</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">给定 nums &#x3D; [2, 7, 11, 15], target &#x3D; 9</span><br><span class="line"></span><br><span class="line">因为 nums[0] + nums[1] &#x3D; 2 + 7 &#x3D; 9</span><br><span class="line">所以返回 [0, 1]</span><br></pre></td></tr></table></figure>
+
+<p>解题方案一（最慢暴力for循环）<br>时间复杂度是O(n*(n-1))</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * @param &#123;number[]&#125; nums</span><br><span class="line"> * @param &#123;number&#125; target</span><br><span class="line"> * @return &#123;number[]&#125;</span><br><span class="line"> *&#x2F;</span><br><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let arr &#x3D; nums;</span><br><span class="line">    let arrs &#x3D; new Array()</span><br><span class="line">    for(let i &#x3D;  0; i &lt; arr.length - 1; i++)&#123;</span><br><span class="line">        for(let j &#x3D; i+1; j &lt; arr.length; j++)&#123;</span><br><span class="line">            if ( arr[i] + arr[j] &#x3D;&#x3D;&#x3D; target) &#123;</span><br><span class="line">                arrs.push(i, j)</span><br><span class="line">                return arrs</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>解题方案二（使用Map函数）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let map &#x3D; new Map();</span><br><span class="line">    let arr &#x3D; new Array();</span><br><span class="line">    for(let i in nnums) &#123;</span><br><span class="line">        map.set(nums[i], i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for(let j &#x3D; 0; j &lt; nums.length - 1; j++) &#123;</span><br><span class="line">        if(map.has(target - nums[j]) &amp;&amp; map.get(target - nums[j] !&#x3D;&#x3D; j) &#123;</span><br><span class="line">            arr.push(map.get(target-nums[j]), j);</span><br><span class="line">            return arr;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解题方案三 （尾递归）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target, i &#x3D; 0, maps &#x3D; &#123;&#125;) &#123;</span><br><span class="line">    const map &#x3D; maps</span><br><span class="line">    if(map[target - nums[i] ] &gt;&#x3D; 0 ) &#123;</span><br><span class="line">        return [ map[target - nums[i] ], i]</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        map[ nums[i] ] &#x3D; i;</span><br><span class="line">        i++;</span><br><span class="line">        if(i &lt; nums.length - 1)&#123;</span><br><span class="line">            return twoSum(nums, target, i, map)</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return [ map[target - nums[i] ], i]</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>图解HTTP</title>
+    <url>/2020/03/23/http/</url>
+    <content><![CDATA[<p>深入浅出《图解HTTP》</p>
+<a id="more"></a>
+
+<h1 id="HTTP和网络基础"><a href="#HTTP和网络基础" class="headerlink" title="HTTP和网络基础"></a>HTTP和网络基础</h1><p>HTTP，超文本传输协议，Web是建立在HTTP协议上通信的。是TCP/IP协议的子集。</p>
+<p>TCP/IP协议是互联网协议的合集，最重要的一点就是分层：应用层、传输层、网络层和数据链路层。</p>
+<p>分层协议的好处是，如果某个地方改变设计，只需要把变动的层替换掉即可。</p>
+<ul>
+<li>应用层： 决定了向用户提供应用服务时通信的活动。</li>
+<li>传输层： 提供处于网络连接中的两台计算机之间的数据传输。</li>
+<li>网络层： 处理在网络上流动的数据包。</li>
+<li>链路层： 处理链接网络的硬件部分。</li>
+</ul>
+<img src="../../../../images/tcpip.jpg" width="80%">
+发送端从应用层往下走，接收端则往应用层往上走。]]></content>
+      <categories>
+        <category>http</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
       </tags>
   </entry>
 </search>
