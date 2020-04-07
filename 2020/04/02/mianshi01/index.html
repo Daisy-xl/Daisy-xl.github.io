@@ -100,7 +100,7 @@
       <p>一篇用于面试前恶补的小文章，不断补充。</p>
 <a id="more"></a>
 
-<h1 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h1><ul>
+<h2 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h2><ul>
 <li>GET： 用于请求访问已经被URI识别的资源，可以通过URL传参给服务器</li>
 <li>POST： 用于传输信息，提交表单给服务器，主要功能与GET相似，更推荐POST请求</li>
 <li>PUT：传输文件，报文主体包含文件内容，保存到对应URI位置</li>
@@ -108,7 +108,7 @@
 <li>DELETE：删除文件，删除对应URI位置的文件</li>
 <li>OPTIONS：查询对应URI支持的HTTP方法</li>
 </ul>
-<h1 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h1><ul>
+<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
 <li>HTTP 的URL 以http:// 开头，而HTTPS 的URL 以https:// 开头</li>
 <li>HTTP是不安全的，HTTPS是安全的</li>
 <li>HTTP标准端口是80， HTTPS是443</li>
@@ -116,7 +116,7 @@
 <li>HTTP无法加密，HTTPS对传输的数据是加密的</li>
 <li>HTTP不需要证书，HTTPS需要SSL证书</li>
 </ul>
-<h1 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h1><ul>
+<h2 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h2><ul>
 <li>200 请求正常处理</li>
 <li>301 永久重定向</li>
 <li>302 临时重定向</li>
@@ -126,7 +126,7 @@
 <li>500 服务器内部错误</li>
 <li>503 服务器超过最大负荷</li>
 </ul>
-<h1 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h1><ul>
+<h2 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h2><ul>
 <li>域名解析</li>
 <li>发起TCP三次握手</li>
 <li>建立TCP连接后发起HTTP请求</li>
@@ -134,33 +134,33 @@
 <li>浏览器解析HTML代码，请求代码中的资源</li>
 <li>浏览器渲染页面呈现给用户</li>
 </ul>
-<h1 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h1><ul>
+<h2 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h2><ul>
 <li>首先HTTP请求服务端生成证书，客户端对证书的有效性，合法性，域名是否与请求的域名一致，证书的公钥等进行校验。</li>
 <li>客户端校验通过后，根据证书的公钥有效性，生成随机数，对公钥随机加密。</li>
 <li>消息体产生后，对它的摘要进行MD5算法加密，得到了RSA签名。</li>
 <li>发送给服务器，只有服务端可以解密。</li>
 <li>解密得到的随机数，再用AES加密，作为秘钥。</li>
 </ul>
-<h1 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h1><ul>
+<h2 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h2><ul>
 <li>TCP复用</li>
 <li>内容缓存</li>
 <li>压缩文本数据，减少带宽</li>
 <li>SSL协议加密，在通道内加密并加速</li>
 <li>TCP缓冲</li>
 </ul>
-<h1 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h1><ul>
+<h2 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h2><ul>
 <li>服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改。本质上，客户端通过将该记号传回服务器要求服务器验证其（客户端）缓存</li>
 <li>304是HTTP状态码，服务器用来标识这个文件没修改，不返回内容，浏览器在接收到个状态码后，会使用浏览器已缓存的文件</li>
 <li>客户端请求一个页面（A）。 服务器返回页面A，并在给A加上一个ETag。 客户端展现该页面，并将页面连同ETag一起缓存。 客户再次请求页面A，并将上次请求时服务器返回的ETag一起传递给服务器。 服务器检查该ETag，并判断出该页面自上次客户端请求之后还未被修改，直接返回响应304（未修改——Not Modified）和一个空的响应体</li>
 </ul>
-<h1 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h1><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
-<h1 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h1><ul>
+<h2 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h2><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
+<h2 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h2><ul>
 <li>引入了服务端推的概念，允许服务端在客户端请求数据之前主动将数据发送到客户端缓存中，以提高性能</li>
 <li>提供更多的加密支持</li>
 <li>使用多路技术，允许多个消息在一个连接上同事交差</li>
 <li>增加了头部压缩，因此即使非常小的请求，其请求和响应的header都只会占用很少比例的带宽</li>
 </ul>
-<h1 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h1><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
+<h2 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h2><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
 <p>02.浏览器向 Web 服务器发送一个 HTTP 请求（TCP三次握手）</p>
 <p>03.服务器 301 重定向（从 <a href="http://example.com" target="_blank" rel="noopener">http://example.com</a> 重定向到 <a href="http://www.example.com）" target="_blank" rel="noopener">http://www.example.com）</a></p>
 <p>04.浏览器跟踪重定向地址，请求另一个带 www 的网址</p>
@@ -170,11 +170,11 @@
 <p>08.浏览器发送请求获取嵌在 HTML 中的资源（如图片、音频、视频、CSS、JS等）</p>
 <p>09.浏览器显示完成页面</p>
 <p>10.浏览器发送异步请求</p>
-<h1 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h1><ul>
+<h2 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h2><ul>
 <li>TCP（Transmission Control Protocol，传输控制协议）是基于连接的协议，也就是说，在正式收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“对话”才能建立起来</li>
 <li>UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是面向非连接的协议，它不与对方建立连接，而是直接就把数据包发送过去！ UDP适用于一次只传送少量数据、对可靠性要求不高的应用环境</li>
 </ul>
-<h1 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h1><ul>
+<h2 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h2><ul>
 <li>应用层：允许访问OSI环境的手段</li>
 <li>表示层：对数据进行翻译、加密和压缩</li>
 <li>会话层：建立、管理和终止会话</li>
@@ -259,9 +259,9 @@
   <nav class="article-nav">
     
     
-      <a href="/2020/03/24/test01/" class="article-nav-link">
+      <a href="/2020/04/02/mianshi02/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">算法题练习记录 （一）</div>
+        <div class="article-nav-title">Web前端常见面试题——HTML/CSS</div>
       </a>
     
   </nav>

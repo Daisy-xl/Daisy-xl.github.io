@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-02T09:48:56.852Z</updated>
+  <updated>2020-04-02T11:58:41.897Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://yoursite.com/2020/04/02/mianshi01/"/>
     <id>http://yoursite.com/2020/04/02/mianshi01/</id>
     <published>2020-04-01T16:00:00.000Z</published>
-    <updated>2020-04-02T09:48:56.852Z</updated>
+    <updated>2020-04-02T11:58:41.897Z</updated>
     
     <summary type="html">
     
@@ -34,6 +34,36 @@
     
     
       <category term="http" scheme="http://yoursite.com/tags/http/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Web前端常见面试题——HTML/CSS</title>
+    <link href="http://yoursite.com/2020/04/02/mianshi02/"/>
+    <id>http://yoursite.com/2020/04/02/mianshi02/</id>
+    <published>2020-04-01T16:00:00.000Z</published>
+    <updated>2020-04-07T11:42:09.679Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;一篇用于面试前恶补的小文章，不断补充。&lt;/p&gt;
+&lt;h2 id=&quot;对HTML语义化的理解&quot;&gt;&lt;a href=&quot;#对HTML语义化的理解&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="HTML" scheme="http://yoursite.com/tags/HTML/"/>
+    
+      <category term="CSS" scheme="http://yoursite.com/tags/CSS/"/>
     
   </entry>
   
