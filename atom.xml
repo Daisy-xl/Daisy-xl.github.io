@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-02T11:58:41.897Z</updated>
+  <updated>2020-05-11T09:16:35.322Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,50 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>HTML基础</title>
+    <link href="http://yoursite.com/2020/05/11/html/"/>
+    <id>http://yoursite.com/2020/05/11/html/</id>
+    <published>2020-05-10T16:00:00.000Z</published>
+    <updated>2020-05-11T09:16:35.322Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一篇用于面试前恶补的小文章，不断补充。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="HTML" scheme="http://yoursite.com/tags/HTML/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Web前端常见面试题——性能优化与安全篇</title>
+    <link href="http://yoursite.com/2020/04/09/mianshi03/"/>
+    <id>http://yoursite.com/2020/04/09/mianshi03/</id>
+    <published>2020-04-08T16:00:00.000Z</published>
+    <updated>2020-05-11T09:15:13.283Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一篇用于面试前恶补的小文章，不断补充。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="性能" scheme="http://yoursite.com/tags/%E6%80%A7%E8%83%BD/"/>
+    
+      <category term="安全" scheme="http://yoursite.com/tags/%E5%AE%89%E5%85%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>Web前端常见面试题——HTTP</title>
@@ -42,18 +86,11 @@
     <link href="http://yoursite.com/2020/04/02/mianshi02/"/>
     <id>http://yoursite.com/2020/04/02/mianshi02/</id>
     <published>2020-04-01T16:00:00.000Z</published>
-    <updated>2020-04-07T11:42:09.679Z</updated>
+    <updated>2020-04-09T05:46:06.029Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;一篇用于面试前恶补的小文章，不断补充。&lt;/p&gt;
-&lt;h2 id=&quot;对HTML语义化的理解&quot;&gt;&lt;a href=&quot;#对HTML语义化的理解&quot; class=&quot;headerlink&quot;
-        
-      
+      &lt;p&gt;一篇用于面试前恶补的小文章，不断补充。&lt;/p&gt;
     
     </summary>
     

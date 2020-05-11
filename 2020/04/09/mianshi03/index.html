@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    Web前端常见面试题——HTTP |  雪凝姐姐
+    Web前端常见面试题——性能优化与安全篇 |  雪凝姐姐
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -31,7 +31,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-mianshi01" class="article article-type-post" itemscope
+  <article id="post-mianshi03" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -39,7 +39,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  Web前端常见面试题——HTTP
+  Web前端常见面试题——性能优化与安全篇
 </h1>
   
 
@@ -48,12 +48,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/02/mianshi01/" class="article-date">
-  <time datetime="2020-04-01T16:00:00.000Z" itemprop="datePublished">2020-04-02</time>
+      <a href="/2020/04/09/mianshi03/" class="article-date">
+  <time datetime="2020-04-08T16:00:00.000Z" itemprop="datePublished">2020-04-09</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/http/">http</a>
+    <a class="article-category-link" href="/categories/HTML/">HTML</a>
   </div>
 
       
@@ -63,7 +63,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k字</span>
+            <span class="post-count">1.6k字</span>
         </span>
     </span>
 
@@ -100,88 +100,55 @@
       <p>一篇用于面试前恶补的小文章，不断补充。</p>
 <a id="more"></a>
 
-<h2 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h2><ul>
-<li>GET： 用于请求访问已经被URI识别的资源，可以通过URL传参给服务器</li>
-<li>POST： 用于传输信息，提交表单给服务器，主要功能与GET相似，更推荐POST请求</li>
-<li>PUT：传输文件，报文主体包含文件内容，保存到对应URI位置</li>
-<li>HEAD： 获得报文首部，类似于GET方法，不返回报文主体，一般用于验证URI是否有效</li>
-<li>DELETE：删除文件，删除对应URI位置的文件</li>
-<li>OPTIONS：查询对应URI支持的HTTP方法</li>
+<h2 id="web语义化及其优势"><a href="#web语义化及其优势" class="headerlink" title="web语义化及其优势"></a>web语义化及其优势</h2><p>web语义化是通过HTML标记表示此页面包含的信息，包含HTML标签语义化和CSS明明语义化。</p>
+<p>优势：</p>
+<ul>
+<li>去掉样式后页面呈现清晰的结构</li>
+<li>盲人使用阅读器可以更好的阅读</li>
+<li>搜索引擎可以更好的理解，利于收录</li>
+<li>便于团队项目的可持续运作和维护</li>
 </ul>
-<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
-<li>HTTP 的URL 以http:// 开头，而HTTPS 的URL 以https:// 开头</li>
-<li>HTTP是不安全的，HTTPS是安全的</li>
-<li>HTTP标准端口是80， HTTPS是443</li>
-<li>OSI网罗模型中，HTTP工作于应用层，HTTPS的安全传输机制工作在传输层</li>
-<li>HTTP无法加密，HTTPS对传输的数据是加密的</li>
-<li>HTTP不需要证书，HTTPS需要SSL证书</li>
+<h2 id="前端SEO"><a href="#前端SEO" class="headerlink" title="前端SEO"></a>前端SEO</h2><p>1.合理的title（强调重点，重要的关键词不要出现超过2次，靠前，不同）,description（高度概括内容，长度合适，不过分堆砌关键词，不同页面不同），keyword（列举出重要内容）<br>2.语义化的HTML代码，符合W3C规范，语义化代码让搜索引擎更容易理解网页<br>3.重要的HTML内容放在最前面，搜索引擎抓取HTML顺序是从上到下，有的搜索引擎有抓取长度限制，保证重要内容一定会被抓取<br>4.重要内容不要用js输出<br>5.少用iframe，搜索引擎不会抓取iframe的内容<br>6.非装饰性图片处必须加alt<br>7.提高网站速度</p>
+<h2 id="会话跟踪方法"><a href="#会话跟踪方法" class="headerlink" title="会话跟踪方法"></a>会话跟踪方法</h2><ul>
+<li>cookie</li>
+<li>session</li>
+<li>URL重写</li>
+<li>隐藏input</li>
+<li>ip地址</li>
 </ul>
-<h2 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h2><ul>
-<li>200 请求正常处理</li>
-<li>301 永久重定向</li>
-<li>302 临时重定向</li>
-<li>401 请求需要认证</li>
-<li>403 未授权</li>
-<li>404 资源未找到</li>
-<li>500 服务器内部错误</li>
-<li>503 服务器超过最大负荷</li>
+<h2 id="前端开发中如何优化图片"><a href="#前端开发中如何优化图片" class="headerlink" title="前端开发中如何优化图片"></a>前端开发中如何优化图片</h2><ul>
+<li>尽量用CSS3代替传图片</li>
+<li>用矢量图SVF</li>
+<li>webfont或者雪碧图</li>
+<li>css或js预加载</li>
+<li>按照HTTP协议设置合理的缓存</li>
+<li>webP图片格式</li>
 </ul>
-<h2 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h2><ul>
-<li>域名解析</li>
-<li>发起TCP三次握手</li>
-<li>建立TCP连接后发起HTTP请求</li>
-<li>服务器响应HTTP请求，浏览器得到HTML代码</li>
-<li>浏览器解析HTML代码，请求代码中的资源</li>
-<li>浏览器渲染页面呈现给用户</li>
+<h2 id="你所了解到的Web攻击技术"><a href="#你所了解到的Web攻击技术" class="headerlink" title="你所了解到的Web攻击技术"></a>你所了解到的Web攻击技术</h2><p>（1）XSS（Cross-Site Scripting，跨站脚本攻击）：指通过存在安全漏洞的Web网站注册用户的浏览器内运行非法的HTML标签或者JS进行的一种攻击。<br>（2）SQL注入攻击<br>（3）CSRF（跨站点请求伪造）：指攻击者通过设置好的陷阱，强制对已完成的认证用户进行非预期的个人信息或设定信息等某些状态更新</p>
+<h2 id="什么是渐进增强"><a href="#什么是渐进增强" class="headerlink" title="什么是渐进增强"></a>什么是渐进增强</h2><p>渐进增强是指在web设计时强调可访问性、语义化HTML标签、外部样式表和脚本。<br>保证所有人都能访问页面的基本内容和功能同时为高级浏览器和高带宽用户提供更好的用户体验<br>核心原则如下：<br>所有浏览器都必须能访问基本内容<br>所有浏览器都必须能使用基本功能<br>所有内容都包含在语义化标签中<br>通过外部CSS提供增强的布局<br>通过非侵入式、外部javascript提供增强功能</p>
+<h2 id="哪些操作会造成内存泄漏"><a href="#哪些操作会造成内存泄漏" class="headerlink" title="哪些操作会造成内存泄漏"></a>哪些操作会造成内存泄漏</h2><p>内存泄漏指任何对象在您不再拥有或需要它之后仍然存在。<br>垃圾回收器定期扫描对象，并计算引用了每个对象的其他对象的数量。如果一个对象的引用数量为 0（没有其他对象引用过该对象），或对该对象的惟一引用是循环的，那么该对象的内存即可回收。<br>setTimeout 的第一个参数使用字符串而非函数的话，会引发内存泄漏。<br>闭包、控制台日志、循环（在两个对象彼此引用且彼此保留时，就会产生一个循环）</p>
+<h2 id="从输入URL到页面加载发生了什么"><a href="#从输入URL到页面加载发生了什么" class="headerlink" title="从输入URL到页面加载发生了什么"></a>从输入URL到页面加载发生了什么</h2><p>总体来说分为以下几个过程　</p>
+<ul>
+<li>DNS解析</li>
+<li>TCP连接</li>
+<li>发送HTTP请求</li>
+<li>服务器处理请求并返回HTTP报文</li>
+<li>浏览器解析渲染页面</li>
+<li>连接结束</li>
 </ul>
-<h2 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h2><ul>
-<li>首先HTTP请求服务端生成证书，客户端对证书的有效性，合法性，域名是否与请求的域名一致，证书的公钥等进行校验。</li>
-<li>客户端校验通过后，根据证书的公钥有效性，生成随机数，对公钥随机加密。</li>
-<li>消息体产生后，对它的摘要进行MD5算法加密，得到了RSA签名。</li>
-<li>发送给服务器，只有服务端可以解密。</li>
-<li>解密得到的随机数，再用AES加密，作为秘钥。</li>
-</ul>
-<h2 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h2><ul>
-<li>TCP复用</li>
-<li>内容缓存</li>
-<li>压缩文本数据，减少带宽</li>
-<li>SSL协议加密，在通道内加密并加速</li>
-<li>TCP缓冲</li>
-</ul>
-<h2 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h2><ul>
-<li>服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改。本质上，客户端通过将该记号传回服务器要求服务器验证其（客户端）缓存</li>
-<li>304是HTTP状态码，服务器用来标识这个文件没修改，不返回内容，浏览器在接收到个状态码后，会使用浏览器已缓存的文件</li>
-<li>客户端请求一个页面（A）。 服务器返回页面A，并在给A加上一个ETag。 客户端展现该页面，并将页面连同ETag一起缓存。 客户再次请求页面A，并将上次请求时服务器返回的ETag一起传递给服务器。 服务器检查该ETag，并判断出该页面自上次客户端请求之后还未被修改，直接返回响应304（未修改——Not Modified）和一个空的响应体</li>
-</ul>
-<h2 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h2><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
-<h2 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h2><ul>
-<li>引入了服务端推的概念，允许服务端在客户端请求数据之前主动将数据发送到客户端缓存中，以提高性能</li>
-<li>提供更多的加密支持</li>
-<li>使用多路技术，允许多个消息在一个连接上同事交差</li>
-<li>增加了头部压缩，因此即使非常小的请求，其请求和响应的header都只会占用很少比例的带宽</li>
-</ul>
-<h2 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h2><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
-<p>02.浏览器向 Web 服务器发送一个 HTTP 请求（TCP三次握手）</p>
-<p>03.服务器 301 重定向（从 <a href="http://example.com" target="_blank" rel="noopener">http://example.com</a> 重定向到 <a href="http://www.example.com）" target="_blank" rel="noopener">http://www.example.com）</a></p>
-<p>04.浏览器跟踪重定向地址，请求另一个带 www 的网址</p>
-<p>05.服务器处理请求（通过路由读取资源）</p>
-<p>06.服务器返回一个 HTTP 响应（报头中把 Content-type 设置为 ‘text/html’）</p>
-<p>07.浏览器进 DOM 树构建</p>
-<p>08.浏览器发送请求获取嵌在 HTML 中的资源（如图片、音频、视频、CSS、JS等）</p>
-<p>09.浏览器显示完成页面</p>
-<p>10.浏览器发送异步请求</p>
-<h2 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h2><ul>
-<li>TCP（Transmission Control Protocol，传输控制协议）是基于连接的协议，也就是说，在正式收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“对话”才能建立起来</li>
-<li>UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是面向非连接的协议，它不与对方建立连接，而是直接就把数据包发送过去！ UDP适用于一次只传送少量数据、对可靠性要求不高的应用环境</li>
-</ul>
-<h2 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h2><ul>
-<li>应用层：允许访问OSI环境的手段</li>
-<li>表示层：对数据进行翻译、加密和压缩</li>
-<li>会话层：建立、管理和终止会话</li>
-<li>传输层：提供端到端的可靠报文传递和错误恢复</li>
-<li>网络层：负责数据包从源到宿的传递和网际互连</li>
-<li>物理层：通过媒介传输比特,确定机械及电气规范</li>
-</ul>
+<h2 id="介绍下重绘和回流（Repaint-amp-Reflow），以及如何进行优化"><a href="#介绍下重绘和回流（Repaint-amp-Reflow），以及如何进行优化" class="headerlink" title="介绍下重绘和回流（Repaint &amp; Reflow），以及如何进行优化"></a>介绍下重绘和回流（Repaint &amp; Reflow），以及如何进行优化</h2><p>　　改变了背景颜色、边框、字体的颜色，浏览器重新绘制颜色的过程称为重绘</p>
+<p>　　当页面的元素发生变化的时候（宽、高、位置、创建元素），都会导致整个页面重排，浏览器会重新计算结构位置，重新渲染页面，称为DOM回流</p>
+<p>　　回流必定会发生重绘，重绘不一定会引发回流。</p>
+<p>　　解决方案：</p>
+<p>　　利用文档碎片 createDocumentFragment 或者利用模板字符串，将操作的元素进行字符串拼接，最后打包放入页面中</p>
+<h2 id="如何进行网站性能优化"><a href="#如何进行网站性能优化" class="headerlink" title="如何进行网站性能优化"></a>如何进行网站性能优化</h2><h3 id="content方向："><a href="#content方向：" class="headerlink" title="content方向："></a>content方向：</h3><p>　　1. 减少HTTP请求：合并文件、CSS精灵、inline Image<br>　　2. 减少DNS查询：DNS查询完成之前浏览器不能从这个主机下载任何文件。方法：DNS缓存、将资源分布到恰当数量的主机名，平衡并行下载和DNS查询<br>　　3. 避免重定向：多余的中间访问<br>　　4. 使Ajax可缓存<br>　　5. 非必须组件延迟加载<br>　　6. 未来所需组件预加载<br>　　7. 减少DOM元素数量<br>　　8. 将资源放到不同的域下：浏览器同时从一个域下载资源的数目有限，增加域可以提高并行下载量<br>　　9. 减少iframe数量<br>　　10. 减少404页面</p>
+<h3 id="Server方面"><a href="#Server方面" class="headerlink" title="Server方面"></a>Server方面</h3><p>　　1. 使用CDN<br>　　2. 添加Expires或者Cache-Control响应头<br>　　3. 对组件使用Gzip压缩<br>　　4. 配置ETag<br>　　5. Flush Buffer Early<br>　　6. Ajax使用GET进行请求<br>　　7. 避免空src的img标签</p>
+<h3 id="Cookie方面"><a href="#Cookie方面" class="headerlink" title="Cookie方面"></a>Cookie方面</h3><p>　　1. 减小cookie大小<br>　　2. 引入资源的域名不要包含cookie</p>
+<h3 id="css方面"><a href="#css方面" class="headerlink" title="css方面"></a>css方面</h3><p>　　1. 将样式表放到页面顶部<br>　　2. 不使用CSS表达式<br>　　3. 不使用@import<br>　　4. 不使用IE的Filter</p>
+<h3 id="Javascript方面"><a href="#Javascript方面" class="headerlink" title="Javascript方面"></a>Javascript方面</h3><p>　　1. 将脚本放到页面底部<br>　　2. 将javascript和css从外部引入<br>　　3. 压缩javascript和css<br>　　4. 删除不需要的脚本<br>　　5. 减少DOM访问<br>　　6. 合理设计事件监听器</p>
+<h3 id="图片方面"><a href="#图片方面" class="headerlink" title="图片方面"></a>图片方面</h3><p>　　1. 优化图片：根据实际颜色需要选择色深、压缩<br>　　2. 优化css精灵<br>　　3. 不要在HTML中拉伸图片<br>　　4. 保证favicon.ico小并且可缓存</p>
+<h2 id="XSS和CSRF如何避免"><a href="#XSS和CSRF如何避免" class="headerlink" title="XSS和CSRF如何避免"></a>XSS和CSRF如何避免</h2><p>　　防御XSS攻击：<br>　　a：HttpOnly 浏览器禁止页面的JS访问带有HttpOnly属性的Cookie。<br>　　b：输入检查 XSS Filter 对输入内容做格式检查，类似“白名单”，可以让一些基于特殊字符的攻击失效。在客户端JS和服务器端代码中实现相同的输入检查<br>　　c：输出检查 在变量输出到html页面时，可以使用编码或转义的方式来防御XSS攻击</p>
+<p>　　防御CSRF攻击：<br>　　a. 验证码、 Referer Check 检查请求是否来自合法的源（可被伪造）</p>
 
       
       <!-- reward -->
@@ -240,14 +207,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/02/mianshi01/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/09/mianshi03/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http/" rel="tag">http</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%80%A7%E8%83%BD/" rel="tag">性能</a></li></ul>
 
 
     </footer>
@@ -258,19 +225,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/04/09/mianshi03/" class="article-nav-link">
+      <a href="/2020/05/11/html/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            Web前端常见面试题——性能优化与安全篇
+            HTML基础
           
         </div>
       </a>
     
     
-      <a href="/2020/04/02/mianshi02/" class="article-nav-link">
+      <a href="/2020/04/02/mianshi01/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Web前端常见面试题——HTML/CSS</div>
+        <div class="article-nav-title">Web前端常见面试题——HTTP</div>
       </a>
     
   </nav>

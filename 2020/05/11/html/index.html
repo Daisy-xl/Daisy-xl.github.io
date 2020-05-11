@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    Web前端常见面试题——HTTP |  雪凝姐姐
+    HTML基础 |  雪凝姐姐
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -31,7 +31,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-mianshi01" class="article article-type-post" itemscope
+  <article id="post-html" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -39,7 +39,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  Web前端常见面试题——HTTP
+  HTML基础
 </h1>
   
 
@@ -48,12 +48,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/02/mianshi01/" class="article-date">
-  <time datetime="2020-04-01T16:00:00.000Z" itemprop="datePublished">2020-04-02</time>
+      <a href="/2020/05/11/html/" class="article-date">
+  <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/http/">http</a>
+    <a class="article-category-link" href="/categories/HTML/">HTML</a>
   </div>
 
       
@@ -63,7 +63,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k字</span>
+            <span class="post-count">453字</span>
         </span>
     </span>
 
@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5分钟</span>
+            <span class="post-count">2分钟</span>
         </span>
     </span>
 </div>
@@ -83,8 +83,6 @@
 
     
     
-    <div class="tocbot"></div>
-
 
 
 
@@ -100,88 +98,22 @@
       <p>一篇用于面试前恶补的小文章，不断补充。</p>
 <a id="more"></a>
 
-<h2 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h2><ul>
-<li>GET： 用于请求访问已经被URI识别的资源，可以通过URL传参给服务器</li>
-<li>POST： 用于传输信息，提交表单给服务器，主要功能与GET相似，更推荐POST请求</li>
-<li>PUT：传输文件，报文主体包含文件内容，保存到对应URI位置</li>
-<li>HEAD： 获得报文首部，类似于GET方法，不返回报文主体，一般用于验证URI是否有效</li>
-<li>DELETE：删除文件，删除对应URI位置的文件</li>
-<li>OPTIONS：查询对应URI支持的HTTP方法</li>
-</ul>
-<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
-<li>HTTP 的URL 以http:// 开头，而HTTPS 的URL 以https:// 开头</li>
-<li>HTTP是不安全的，HTTPS是安全的</li>
-<li>HTTP标准端口是80， HTTPS是443</li>
-<li>OSI网罗模型中，HTTP工作于应用层，HTTPS的安全传输机制工作在传输层</li>
-<li>HTTP无法加密，HTTPS对传输的数据是加密的</li>
-<li>HTTP不需要证书，HTTPS需要SSL证书</li>
-</ul>
-<h2 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h2><ul>
-<li>200 请求正常处理</li>
-<li>301 永久重定向</li>
-<li>302 临时重定向</li>
-<li>401 请求需要认证</li>
-<li>403 未授权</li>
-<li>404 资源未找到</li>
-<li>500 服务器内部错误</li>
-<li>503 服务器超过最大负荷</li>
-</ul>
-<h2 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h2><ul>
-<li>域名解析</li>
-<li>发起TCP三次握手</li>
-<li>建立TCP连接后发起HTTP请求</li>
-<li>服务器响应HTTP请求，浏览器得到HTML代码</li>
-<li>浏览器解析HTML代码，请求代码中的资源</li>
-<li>浏览器渲染页面呈现给用户</li>
-</ul>
-<h2 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h2><ul>
-<li>首先HTTP请求服务端生成证书，客户端对证书的有效性，合法性，域名是否与请求的域名一致，证书的公钥等进行校验。</li>
-<li>客户端校验通过后，根据证书的公钥有效性，生成随机数，对公钥随机加密。</li>
-<li>消息体产生后，对它的摘要进行MD5算法加密，得到了RSA签名。</li>
-<li>发送给服务器，只有服务端可以解密。</li>
-<li>解密得到的随机数，再用AES加密，作为秘钥。</li>
-</ul>
-<h2 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h2><ul>
-<li>TCP复用</li>
-<li>内容缓存</li>
-<li>压缩文本数据，减少带宽</li>
-<li>SSL协议加密，在通道内加密并加速</li>
-<li>TCP缓冲</li>
-</ul>
-<h2 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h2><ul>
-<li>服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改。本质上，客户端通过将该记号传回服务器要求服务器验证其（客户端）缓存</li>
-<li>304是HTTP状态码，服务器用来标识这个文件没修改，不返回内容，浏览器在接收到个状态码后，会使用浏览器已缓存的文件</li>
-<li>客户端请求一个页面（A）。 服务器返回页面A，并在给A加上一个ETag。 客户端展现该页面，并将页面连同ETag一起缓存。 客户再次请求页面A，并将上次请求时服务器返回的ETag一起传递给服务器。 服务器检查该ETag，并判断出该页面自上次客户端请求之后还未被修改，直接返回响应304（未修改——Not Modified）和一个空的响应体</li>
-</ul>
-<h2 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h2><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
-<h2 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h2><ul>
-<li>引入了服务端推的概念，允许服务端在客户端请求数据之前主动将数据发送到客户端缓存中，以提高性能</li>
-<li>提供更多的加密支持</li>
-<li>使用多路技术，允许多个消息在一个连接上同事交差</li>
-<li>增加了头部压缩，因此即使非常小的请求，其请求和响应的header都只会占用很少比例的带宽</li>
-</ul>
-<h2 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h2><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
-<p>02.浏览器向 Web 服务器发送一个 HTTP 请求（TCP三次握手）</p>
-<p>03.服务器 301 重定向（从 <a href="http://example.com" target="_blank" rel="noopener">http://example.com</a> 重定向到 <a href="http://www.example.com）" target="_blank" rel="noopener">http://www.example.com）</a></p>
-<p>04.浏览器跟踪重定向地址，请求另一个带 www 的网址</p>
-<p>05.服务器处理请求（通过路由读取资源）</p>
-<p>06.服务器返回一个 HTTP 响应（报头中把 Content-type 设置为 ‘text/html’）</p>
-<p>07.浏览器进 DOM 树构建</p>
-<p>08.浏览器发送请求获取嵌在 HTML 中的资源（如图片、音频、视频、CSS、JS等）</p>
-<p>09.浏览器显示完成页面</p>
-<p>10.浏览器发送异步请求</p>
-<h2 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h2><ul>
-<li>TCP（Transmission Control Protocol，传输控制协议）是基于连接的协议，也就是说，在正式收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“对话”才能建立起来</li>
-<li>UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是面向非连接的协议，它不与对方建立连接，而是直接就把数据包发送过去！ UDP适用于一次只传送少量数据、对可靠性要求不高的应用环境</li>
-</ul>
-<h2 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h2><ul>
-<li>应用层：允许访问OSI环境的手段</li>
-<li>表示层：对数据进行翻译、加密和压缩</li>
-<li>会话层：建立、管理和终止会话</li>
-<li>传输层：提供端到端的可靠报文传递和错误恢复</li>
-<li>网络层：负责数据包从源到宿的传递和网际互连</li>
-<li>物理层：通过媒介传输比特,确定机械及电气规范</li>
-</ul>
+
+<p>行内元素有哪儿些？块级元素有哪儿些？空元素（void）有哪儿些？<br>行内： a b span input button img select textarea<br>块级：div ul ol li dt h1-h6 p<br>空： br hr link meta</p>
+<p>html标签<br>HTML超文本标记语言<br>h1-h6  ol li div span<br>meta： name+content 关键字，描述  charset字符集<br>ul li：导航栏类结构，父子结构好，通用型，可维护<br>&amp;nbsp空格  &amp;lt小于号   &amp;gt大于号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src&#x3D;&quot;&quot; alt&#x3D;&quot;图片占位符，出错时展示&quot; title&#x3D;&quot;鼠标划过提示&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href&#x3D;&quot;指向的目标地址&quot; target&#x3D;&quot;_blank&quot;&gt;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>超文本引用 内容任意 target在新标签页打开</li>
+<li>a href=“#id“可作为锚点，跳回页面指定元素位置，可做置顶，双击置顶也可以</li>
+<li>打电话 <code>&lt;a href=&quot;tel: 17610603269&quot;&gt;&lt;/a&gt;</code> mailto:发邮件</li>
+<li>协议限定符：<code>&lt;a href=&quot;javascript:while(1){alert(&#39;让你手欠&#39;)&quot;&gt;&lt;/a&gt;</code></li>
+</ol>
+<p>form表单:发送数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method&#x3D;&quot;get&#x2F;post&quot; action&#x3D;&quot;发送后端地址&quot;&gt;</span><br><span class="line">&lt;p&gt;username: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;userName&quot; placeholder&#x3D;&quot;默认展示的文案&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">&lt;p&gt;password: &lt;input type&#x3D;&quot;password&quot; name&#x3D;&quot;password&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">你喜欢的人：</span><br><span class="line">a&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;&gt;</span><br><span class="line">b&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">c&lt;input type&#x3D;&quot;radio&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line">&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;登陆&quot;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>提交后name绑定的名称和值都会拼接到url后面，密码用md5加密</p>
 
       
       <!-- reward -->
@@ -240,14 +172,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/02/mianshi01/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/05/11/html/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http/" rel="tag">http</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/" rel="tag">HTML</a></li></ul>
 
 
     </footer>
@@ -258,19 +190,10 @@
   
   <nav class="article-nav">
     
+    
       <a href="/2020/04/09/mianshi03/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            Web前端常见面试题——性能优化与安全篇
-          
-        </div>
-      </a>
-    
-    
-      <a href="/2020/04/02/mianshi02/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Web前端常见面试题——HTML/CSS</div>
+        <div class="article-nav-title">Web前端常见面试题——性能优化与安全篇</div>
       </a>
     
   </nav>

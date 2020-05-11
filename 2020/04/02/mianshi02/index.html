@@ -63,7 +63,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">5.4k字</span>
+            <span class="post-count">6.6k字</span>
         </span>
     </span>
 
@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">21分钟</span>
+            <span class="post-count">26分钟</span>
         </span>
     </span>
 </div>
@@ -98,6 +98,8 @@
 
       
       <p>一篇用于面试前恶补的小文章，不断补充。</p>
+<a id="more"></a>
+
 <h2 id="对HTML语义化的理解"><a href="#对HTML语义化的理解" class="headerlink" title="对HTML语义化的理解"></a>对HTML语义化的理解</h2><ul>
 <li>用正确的标签做正确的事情</li>
 <li>让页面的结构化，结构更清晰，便于对浏览器、搜索引擎解析</li>
@@ -245,6 +247,33 @@ flex布局非常简单，只需在container中设置flex即可。两边和上面
 
 <h3 id="双飞翼布局"><a href="#双飞翼布局" class="headerlink" title="双飞翼布局"></a>双飞翼布局</h3><p>双飞翼布局：对圣杯布局（使用相对定位对以后布局有局限性）的改进，消除相对定位<br>原理：主体元素上设置左右边距，预留两翼位置。左右两栏使用浮动和负边距归位，消除相对定位</p>
 <h2 id="align-content与align-items的区别？"><a href="#align-content与align-items的区别？" class="headerlink" title="align-content与align-items的区别？"></a>align-content与align-items的区别？</h2><p>align-content:center对单行是没有效果的<br>而align-items:center不管是对单行还是多行都有效果<br>我们日常开发中用的比较多的就是align-items</p>
+<h2 id="去除inline-block出现间距的几种方法"><a href="#去除inline-block出现间距的几种方法" class="headerlink" title="去除inline-block出现间距的几种方法"></a>去除inline-block出现间距的几种方法</h2><p>造成空白间隙的原因是在标签和标签之间使用了空格或换行符。</p>
+<ul>
+<li>移除空格和换行符</li>
+<li>设置父元素吃的font-size为0，子元素重新设置font-size</li>
+<li>利用负margin-left（不推荐，具体负margin多少取决于字体的大小）</li>
+<li>letter-spacing（字符边距）：负值 or word-spacing（单词边距） 负值</li>
+</ul>
+<h2 id="title和h1-b和strong，i和em的区别"><a href="#title和h1-b和strong，i和em的区别" class="headerlink" title="title和h1,b和strong，i和em的区别"></a>title和h1,b和strong，i和em的区别</h2><p>title属性没有明确意义只表示是个标题，H1则表示层次明确的标题，对页面信息的抓取有很大的影响<br>b是一个实体标签，展示强调内容。strong是标明重点内容，有语气加强的含义<br>i内容展示为斜体，em表示强调的文本</p>
+<h2 id="、、三者之间区别"><a href="#、、三者之间区别" class="headerlink" title="、、三者之间区别"></a><script>、<script defer>、<script async>三者之间区别</h2><p>没有defer或async属性，浏览器会立即加载并执行相应的脚本<br>有了async属性，表示后续文档的加载和渲染与js脚本的加载和执行是并行进行的，即异步执行<br>有了defer属性，加载后续文档的过程和js脚本的加载是并行进行的（此时仅加载不执行）<br>defer和async在网络加载过程是一致的，都是异步执行<br>两者的区别在于脚本加载完成之后何时执行<br>如果存在多个有defer属性的脚本，那么它们是按照加载顺序执行脚本的<br>对于async，它的加载和执行是紧挨的，无论声明顺序如何，只要加载完成立刻执行</p>
+<h2 id="data-的用法，以及他的优势"><a href="#data-的用法，以及他的优势" class="headerlink" title="data-的用法，以及他的优势"></a>data-的用法，以及他的优势</h2><p>data-代表自定义属性，可以在所有的 HTML 元素中嵌入数据<br>自定义的数据可以让页面拥有更好的交互体验<br>属性名不要包含大写字母，在 data- 后必须至少有一个字符<br>该属性可以是任何字符串<br>自定义属性前缀 "data-" 会被客户端忽略</p>
+<h2 id="实现多个标签页之间通信"><a href="#实现多个标签页之间通信" class="headerlink" title="实现多个标签页之间通信"></a>实现多个标签页之间通信</h2><p>websocket,shareworker,localstorage,cookies</p>
+<h2 id="实现不使用border画出1px高的线"><a href="#实现不使用border画出1px高的线" class="headerlink" title="实现不使用border画出1px高的线"></a>实现不使用border画出1px高的线</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style&#x3D;&quot;height:1px;overflow:hidden;background:red&quot;&gt;&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="怎么让Chrome支持小于12px-的文字"><a href="#怎么让Chrome支持小于12px-的文字" class="headerlink" title="怎么让Chrome支持小于12px 的文字"></a>怎么让Chrome支持小于12px 的文字</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.shrink&#123;</span><br><span class="line">      -webkit-transform:scale(0.8);</span><br><span class="line">       -o-transform:scale(1);</span><br><span class="line">       display:inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一个满屏-品-字布局-如何设计"><a href="#一个满屏-品-字布局-如何设计" class="headerlink" title="一个满屏 品 字布局 如何设计?"></a>一个满屏 品 字布局 如何设计?</h2><p>上面的div宽100%<br>下面的两个div分别宽50%<br>然后用float或者inline使其不换行即可</p>
+<h2 id="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"><a href="#经常遇到的浏览器的兼容性有哪些？解决方法是什么？" class="headerlink" title="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"></a>经常遇到的浏览器的兼容性有哪些？解决方法是什么？</h2><p>1）PNG24位的图片在ie6浏览器上出现背景，解决方案是做成PNG8<br>2）浏览器默认的margin和padding不同。解决方案：*{margin:0;padding:0;}<br>3）Chrome中文界面下默认会将小于12px的文本强制按照12px显示，可通过加入CSS属性-webkit-text-size-adjust:none解决<br>4）IE下，可以使用获取常规属性的方法来获取自定义属性，也可以使用getAttribute()获取自定义的属性<br>在FireFox下，只能使用getAttribute()获取自定义属性；解决方法：统一通过getAttribute()获取自定义属性<br>5）IE下，even对象有x,y属性，但是没有pageX,pageY属性<br>在Firefox下，even对象有pageX,pageY属性，但是没有x,y属性<br>解决方法：(条件注释)缺点是在IE浏览器下可能会增加额外的HTTP请求数</p>
+<p>TODO</p>
+<h2 id="平移放大一个元素"><a href="#平移放大一个元素" class="headerlink" title="平移放大一个元素"></a>平移放大一个元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">transform: translateX(10px)</span><br><span class="line">transform:scale(2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="css中动画实现方式"><a href="#css中动画实现方式" class="headerlink" title="css中动画实现方式"></a>css中动画实现方式</h2><p>TODO</p>
+<h2 id="你知道的CSS预处理器，以及预处理器作用"><a href="#你知道的CSS预处理器，以及预处理器作用" class="headerlink" title="你知道的CSS预处理器，以及预处理器作用"></a>你知道的CSS预处理器，以及预处理器作用</h2><p>TODO</p>
+<h2 id="如何解决CSS模块化"><a href="#如何解决CSS模块化" class="headerlink" title="如何解决CSS模块化"></a>如何解决CSS模块化</h2><p>TODO</p>
+<h2 id="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"><a href="#li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？" class="headerlink" title="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"></a>li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？</h2><h2 id="描述一下你对渐进增强和优雅降级的理解"><a href="#描述一下你对渐进增强和优雅降级的理解" class="headerlink" title="描述一下你对渐进增强和优雅降级的理解"></a>描述一下你对渐进增强和优雅降级的理解</h2><h2 id="解释css-sprites，如何使用"><a href="#解释css-sprites，如何使用" class="headerlink" title="解释css sprites，如何使用"></a>解释css sprites，如何使用</h2><p>css精灵又称雪碧图<br>将多个小图片整个到一张大的背景图上，再利用repeat、position进行精准操作<br>雪碧图减轻了服务器的请求次数，提高了页面性能</p>
+<h2 id="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"><a href="#针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？" class="headerlink" title="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"></a>针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name &#x3D; &quot;viewport&quot; content &#x3D; &quot;width&#x3D;device-width,initial-scale &#x3D; 1.0,maximum-scale &#x3D; 1.0&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="简述几个css-hack"><a href="#简述几个css-hack" class="headerlink" title="简述几个css hack"></a>简述几个css hack</h2><p>(1) 图片间隙<br>　　在div中插入图片，图片会将div下方撑大3px。hack1：将<div>与<img>写在同一行。hack2：给<img>添加display：block；<br>　　dt li 中的图片间隙。hack：给<img>添加display：block；<br>(2) 默认高度，IE6以下版本中，部分块元素，拥有默认高度（低于18px）<br>　　hack1：给元素添加：font-size：0；<br>　　hack2：声明：overflow：hidden；<br>　　表单行高不一致<br>　　hack1：给表单添加声明：float：left；height： ；border： 0；<br>　　鼠标指针<br>　　hack：若统一某一元素鼠标指针为手型：cursor：pointer；<br>　　当li内的a转化块元素时，给a设置float，IE里面会出现阶梯状<br>　　hack1：给a加display：inline-block；<br>　　hack2：给li加float：left；</p>
 
       
       <!-- reward -->
