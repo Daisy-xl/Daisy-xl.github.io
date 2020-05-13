@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    HTML基础 |  雪凝姐姐
+    HTML/CSS基础 |  雪凝姐姐
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -39,7 +39,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  HTML基础
+  HTML/CSS基础
 </h1>
   
 
@@ -53,7 +53,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/HTML/">HTML</a>
+    <a class="article-category-link" href="/categories/HTML%E3%80%81CSS/">HTML、CSS</a>
   </div>
 
       
@@ -63,7 +63,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">453字</span>
+            <span class="post-count">709字</span>
         </span>
     </span>
 
@@ -72,7 +72,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -83,6 +83,8 @@
 
     
     
+    <div class="tocbot"></div>
+
 
 
 
@@ -100,7 +102,7 @@
 
 
 <p>行内元素有哪儿些？块级元素有哪儿些？空元素（void）有哪儿些？<br>行内： a b span input button img select textarea<br>块级：div ul ol li dt h1-h6 p<br>空： br hr link meta</p>
-<p>html标签<br>HTML超文本标记语言<br>h1-h6  ol li div span<br>meta： name+content 关键字，描述  charset字符集<br>ul li：导航栏类结构，父子结构好，通用型，可维护<br>&amp;nbsp空格  &amp;lt小于号   &amp;gt大于号</p>
+<h3 id="html标签"><a href="#html标签" class="headerlink" title="html标签"></a>html标签</h3><p>HTML超文本标记语言<br>h1-h6  ol li div span<br>meta： name+content 关键字，描述  charset字符集<br>ul li：导航栏类结构，父子结构好，通用型，可维护<br>&amp;nbsp空格  &amp;lt小于号   &amp;gt大于号</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src&#x3D;&quot;&quot; alt&#x3D;&quot;图片占位符，出错时展示&quot; title&#x3D;&quot;鼠标划过提示&quot;&gt;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href&#x3D;&quot;指向的目标地址&quot; target&#x3D;&quot;_blank&quot;&gt;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
@@ -111,9 +113,31 @@
 <li>协议限定符：<code>&lt;a href=&quot;javascript:while(1){alert(&#39;让你手欠&#39;)&quot;&gt;&lt;/a&gt;</code></li>
 </ol>
 <p>form表单:发送数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method&#x3D;&quot;get&#x2F;post&quot; action&#x3D;&quot;发送后端地址&quot;&gt;</span><br><span class="line">&lt;p&gt;username: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;userName&quot; placeholder&#x3D;&quot;默认展示的文案&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">&lt;p&gt;password: &lt;input type&#x3D;&quot;password&quot; name&#x3D;&quot;password&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">你喜欢的人：</span><br><span class="line">a&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;&gt;</span><br><span class="line">b&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">c&lt;input type&#x3D;&quot;radio&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line">&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;登陆&quot;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method&#x3D;&quot;get&#x2F;post&quot; action&#x3D;&quot;发送后端地址&quot;&gt;</span><br><span class="line">    &lt;p&gt;username: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;userName&quot; placeholder&#x3D;&quot;默认展示的文案&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;p&gt;password: &lt;input type&#x3D;&quot;password&quot; name&#x3D;&quot;password&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;  checked&#x3D;&quot;checked&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;radio&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;登陆&quot;&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;checkbox&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select name&#x3D;&quot;province&quot;&gt; </span><br><span class="line">        &lt;option&gt;beijing&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;shanghai&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;tianjin&lt;&#x2F;option&gt;</span><br><span class="line">    &lt;&#x2F;select&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
 
 <p>提交后name绑定的名称和值都会拼接到url后面，密码用md5加密</p>
+<h3 id="浏览器及其内核"><a href="#浏览器及其内核" class="headerlink" title="浏览器及其内核"></a>浏览器及其内核</h3><p>IE      triden<br>Google  Chrome  webkit–&gt;blint<br>Safari  webkit<br>FireFox Cecko<br>Opera   Presto</p>
+<h3 id="Css层叠样式表"><a href="#Css层叠样式表" class="headerlink" title="Css层叠样式表"></a>Css层叠样式表</h3><ul>
+<li>内联样式</li>
+<li>页面级样式</li>
+<li>外部链接文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link ref&#x3D;&quot;stylesheet&quot; type&#x3D;&quot;text&#x2F;css&quot; href&#x3D;&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="选择器及其权重"><a href="#选择器及其权重" class="headerlink" title="选择器及其权重"></a>选择器及其权重</h4><ul>
+<li>!important Infinity</li>
+<li>行间样式 1000</li>
+<li>id 100</li>
+<li>class 10</li>
+<li>标签 1</li>
+<li>通配符 0</li>
+</ul>
+<h4 id="复杂选择器"><a href="#复杂选择器" class="headerlink" title="复杂选择器"></a>复杂选择器</h4><ul>
+<li>父子选择器 div span {} 祖先也可以，不限制直接父子</li>
+<li>直接父子 div &gt; span</li>
+<li>并列选择器 div.demo 不加空格，表示同一个标签下的某个class</li>
+</ul>
+<p>浏览器处理父子选择器的顺序：自右向左</p>
 
       
       <!-- reward -->
@@ -179,7 +203,7 @@
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/" rel="tag">HTML</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/" rel="tag">CSS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/" rel="tag">HTML</a></li></ul>
 
 
     </footer>
