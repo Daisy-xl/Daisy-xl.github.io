@@ -42,8 +42,34 @@
 <li>父子选择器 div span {} 祖先也可以，不限制直接父子</li>
 <li>直接父子 div &gt; span</li>
 <li>并列选择器 div.demo 不加空格，表示同一个标签下的某个class</li>
+<li>分组选择器 div,span 公用一个代码块</li>
 </ul>
-<p>浏览器处理父子选择器的顺序：自右向左</p>
+<p>浏览器处理父子选择器的顺序：自右向左。</p>
+<p>不管什么关系的选择器，权重都直接相加。相同权重的相同样式后面覆盖前面。</p>
+<h4 id="font-size"><a href="#font-size" class="headerlink" title="font-size"></a>font-size</h4><p>设置的字体的高，从而设置字体大小</p>
+<h4 id="font-weight"><a href="#font-weight" class="headerlink" title="font-weight"></a>font-weight</h4><p>设置元素的粗细，bold,,lighter,normal,bolder或者数字<br>bolder是否有效取决于字体包可否设置成更粗的样式</p>
+<h4 id="font-style"><a href="#font-style" class="headerlink" title="font-style"></a>font-style</h4><p>设置斜体 italic，normal</p>
+<h4 id="font-family"><a href="#font-family" class="headerlink" title="font-family"></a>font-family</h4><p>字体，默认宋体</p>
+<h4 id="color"><a href="#color" class="headerlink" title="color"></a>color</h4><p>设置字体颜色</p>
+<ul>
+<li>英文单词</li>
+<li>颜色代码 r()g()b() 每两位代表一个16进制的颜色 00-ff</li>
+<li>颜色函数 rgb(0-255，0-255，0-255)</li>
+</ul>
+<h4 id="border-粗细，类型，颜色"><a href="#border-粗细，类型，颜色" class="headerlink" title="border:粗细，类型，颜色"></a>border:粗细，类型，颜色</h4><p>border-width<br>border-style<br>border-color<br>画三角形利用border-left-color:transparent</p>
+<h4 id="text"><a href="#text" class="headerlink" title="text-"></a>text-</h4><p>text-align对齐方式<br>text-indent：2em 首行缩进<br>line-height=1.2倍的font-size丢对应的height<br>text-decoration: underline,overline,line-through</p>
+<h3 id="行级元素与块级元素"><a href="#行级元素与块级元素" class="headerlink" title="行级元素与块级元素"></a>行级元素与块级元素</h3><h4 id="行级元素-span-a-strong-em-del"><a href="#行级元素-span-a-strong-em-del" class="headerlink" title="行级元素 span a strong em del"></a>行级元素 span a strong em del</h4><ul>
+<li>内容决定元素所占位置</li>
+<li>不可以通过css改变宽高</li>
+</ul>
+<h4 id="块级元素-div-p-input-ul-ol-li-form-address"><a href="#块级元素-div-p-input-ul-ol-li-form-address" class="headerlink" title="块级元素 div p input ul ol li form address"></a>块级元素 div p input ul ol li form address</h4><ul>
+<li>独占一行</li>
+<li>可以通过css改变宽高</li>
+</ul>
+<h4 id="行级块元素-img"><a href="#行级块元素-img" class="headerlink" title="行级块元素 img"></a>行级块元素 img</h4><ul>
+<li>内容决定大小</li>
+<li>可以改宽高</li>
+</ul>
 ]]></content>
       <categories>
         <category>HTML、CSS</category>
