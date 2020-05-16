@@ -139,3 +139,62 @@ text-decoration: underline,overline,line-through
 - 内容决定大小
 - 可以改宽高
 
+### 定位
+#### absolute
+- 脱离原来位置进行定位
+- 配合top left
+- 相对于最近的有定位的父级进行定位，如果没有，相对于文档定位
+
+#### relative
+- 保留原来位置进行定位
+- 相对于自己原来的位置进行定位
+
+#### fixed
+固定定位
+
+### 两栏布局
+```
+<div class="right"></div>
+<div class="left"></div>
+
+
+.right {
+    position: absolute;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+    opacity: 0.5;
+}
+.left {
+    height: 100px;
+    background-color: aqua;
+    margin-right: 100px;
+}
+//先写右边是因为，先写左边沾满了一行，右边只能在第二行调整位置
+```
+
+### 经典bug
+- margin塌陷
+父子都设置了margin-left，子在父内右移
+都设置了margin-top，子top需要大于父top才会相对向下
+
+解决方案：
+1.父加border，影响图纸还原程度
+2.bfc块级格式化上下文 ，每个盒子里面有一个完整的规则，可以通过特定的手段改变特定盒子的规则，使用的就是bfc方案。
+position：absolute 
+float:left/right
+overflow:hidden 引发问题移除部分隐藏
+display:inline-block
+
+- 兄弟元素margin合并 
+1.加父层隔离开，改变文档解决
+2.不解决，计算像素
+
+### float浮动
+站队的边界是父级的边界。
+- 浮动元素产生了浮动流
+所有产生了浮动流的元素，块级元素看不到它们，产生了bfc的元素及文本类属性的元素以及文本可以看到。
+-清除浮动流
+1.块级父级元素包浮动元素，清除浮动流，在子元素尾增加标签添加样式clear: both
+2.伪元素，伪元素::after 必须写content，是行级元素，限制块级元素
