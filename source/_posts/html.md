@@ -23,6 +23,7 @@ h1-h6  ol li div span
 meta： name+content 关键字，描述  charset字符集
 ul li：导航栏类结构，父子结构好，通用型，可维护
 &nbsp空格  &lt小于号   &gt大于号
+
 ```
 <img src="" alt="图片占位符，出错时展示" title="鼠标划过提示">
 ```
@@ -64,14 +65,18 @@ form表单:发送数据
 ### meta标签的常用属性
 - 设置字符集 charset
 - 声明浏览器及版本 
+
 ```
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /> 
 ```
+
 - viewport屏幕可视区域
 - Pragma禁止本地缓存
+
 ```
 <meta http-equiv="Pragma" contect="no-cache" /> 
-``
+```
+
 - SEO优化部分：关键字，描述，作者等
 
 
@@ -79,13 +84,14 @@ form表单:发送数据
 IE      triden
 Google  Chrome  webkit-->blint
 Safari  webkit
-FireFox Cecko
+FireFox Gecko
 Opera   Presto
 
 ### Css层叠样式表
 - 内联样式
 - 页面级样式
 - 外部链接文件
+
 ```
 <link ref="stylesheet" type="text/css" href="">
 ```
@@ -172,6 +178,7 @@ text-decoration: underline,overline,line-through，none
 固定定位
 
 ### 两栏布局
+
 ```
 <div class="right"></div>
 <div class="left"></div>
@@ -201,6 +208,7 @@ text-decoration: underline,overline,line-through，none
 解决方案：
 1.父加border，影响图纸还原程度
 2.bfc块级格式化上下文 ，每个盒子里面有一个完整的规则，可以通过特定的手段改变特定盒子的规则，使用的就是bfc方案。给父级添加bfc样式。
+
 ```
 position：absolute 
 float:left/right
@@ -238,6 +246,7 @@ BFC的特性：
 
 ### 文字溢出
 - 单行文本
+
 ```
 width:200px;
 white-space:nowrap;
@@ -398,6 +407,7 @@ initial-scale – // 初始的缩放比例 （范围从 > 0 到 10）
 minimum-scale – // 允许用户缩放到的最小比例
 maximum-scale – // 允许用户缩放到的最大比例
 user-scalable – // 用户是否可以手动缩放 (no，yes)
+
 ```
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 ```
@@ -409,6 +419,7 @@ user-scalable – // 用户是否可以手动缩放 (no，yes)
 基准640宽度下屏幕对比比例为1 font-size为20px
 320下 font-size 应该设置为才20/640=0.5
 那么如何来根据不同分辨率定义font-size呢？当然是媒体查询了
+
 ```
 @media only screen and (min-device-width: 320px)and (-webkit-min-device-pixel-ratio: 2) {
    //针对iPhone 4, 5c,5s, 所有iPhone6的放大模式，个别iPhone6的标准模式<br>　　html{<br>　　　　font-size:10px;<br>　　}
@@ -440,6 +451,7 @@ user-scalable – // 用户是否可以手动缩放 (no，yes)
 ```
 
 #### 2.js
+
 ```
 docEl.style.fontSize = 20 * (clientWidth / 320) + 'px';
 ```
@@ -453,6 +465,7 @@ rem布局需要基于根元素的基准量来做的，不同屏幕分辨率设�
 4）flex布局（父级元素设置display:flex，左侧设置固定宽，右侧flex:1）
 
 ## 使用css实现一个持续的动画
+
 ```
 .animat{
      width:20px;
@@ -468,6 +481,7 @@ rem布局需要基于根元素的基准量来做的，不同屏幕分辨率设�
 ```
 
 ## css实现三角形
+
 ```
 .triangle{ 
      width:0;
@@ -499,12 +513,15 @@ bootstrap是一个比较流行的响应式前端框架，利用bootstrap的栅�
 
 ## 什么是圣杯布局和双飞翼布局，并说下实现原理
 两者的功能相同，都是为了实现一个两侧宽度固定，中间宽度自适应的三栏布局。
+
 ### 圣杯
 <img src="../../../../images/cup.jpg" width="80%">
 1. header和footer占屏幕全部高度，高度固定
 2. 中间的contaier部分是一个三栏布局
 3. left和right宽度固定，middle自适应填满整个区域；高度为三栏中最大的高度；
+
 #### 浮动布局(兼容性最好但是略显复杂)
+
 ```
 <body>
         <header>header</header>
@@ -516,7 +533,9 @@ bootstrap是一个比较流行的响应式前端框架，利用bootstrap的栅�
         <footer>footer</footer>
 </body>
 ```
+
 header和footer就直接定高，width设为100%就好;container也设为100%；left和right定宽；middle宽度100%；让container下的div都向左浮动。
+
 ```
 header,footer{
     height:100px;
@@ -548,7 +567,9 @@ header,footer{
     background-color: #b0f9c2;
 }
 ```
+
 因为middle先渲染的且宽度为百分百，所以left和right被挤到了下面；为了让他们都在一行显示，让left左外边距向左偏移整行的宽度；让right的左外边距向左偏移right自身的宽度。
+
 ```
 .left{
     ...
@@ -559,7 +580,9 @@ header,footer{
     margin-left: -300px;
 }
 ```
+
 然而middle里的内容被left覆盖了。。我们需要给container部分设置左右padding，向中间挤压，然后将left和right设置成相对定位，将其固定到正确位置。
+
 ```
 .container{
    ...
@@ -567,7 +590,9 @@ header,footer{
     padding-right:300px;
 }
 ```
+
 将div.left和div.right设置相对定位。并给container设置高度，其子级div高度为百分百。
+
 ```
 .container>div{
     ...
@@ -587,7 +612,9 @@ header,footer{
     right:-300px;
 }
 ```
+
 #### flex布局
+
 ```
  <body>
     <header>header</header>
@@ -599,14 +626,18 @@ header,footer{
     <footer>footer</footer>
 </body>
 ```
+
 flex布局非常简单，只需在container中设置flex即可。两边和上面代码一样就不贴了。
+
 ```
 .container{
     display: flex;
     flex-direction: row;
 }
 ```
+
 #### grid布局
+
 ```
 body{
     display:grid;
@@ -682,11 +713,13 @@ data-代表自定义属性，可以在所有的 HTML 元素中嵌入数据
 websocket,shareworker,localstorage,cookies
 
 ## 实现不使用border画出1px高的线
+
 ```
 <div style="height:1px;overflow:hidden;background:red"></div>
 ```
 
 ## 怎么让Chrome支持小于12px 的文字
+
 ```
 .shrink{
       -webkit-transform:scale(0.8);
@@ -715,6 +748,7 @@ websocket,shareworker,localstorage,cookies
 TODO
 
 ## 平移放大一个元素
+
 ```
 transform: translateX(10px)
 transform:scale(2)
@@ -744,6 +778,7 @@ css精灵又称雪碧图
 雪碧图减轻了服务器的请求次数，提高了页面性能
 
 ## 针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？
+
 ```
 <meta name = "viewport" content = "width=device-width,initial-scale = 1.0,maximum-scale = 1.0">
 ```
