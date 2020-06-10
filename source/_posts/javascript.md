@@ -470,7 +470,7 @@ console.log(new Person('xiaowang', 160).name)
 
 **如果显示的return一个对象，则new获取的是显示返回的object，但是如果显示返回一个原始值，则会返回this。**
 
-### 包装类
+## 包装类
 
 ```
 var num = 123;
@@ -498,7 +498,7 @@ str.length = 2 ;
 console.log(str.length); // 4
 ```
 
-### 原型，原型链，call、apply
+### 原型，原型链
 原型是function对象的一个属性，定义了构造函数制造出的对象的公共祖先，通过该构造函数产生的对象，可以继承原型的属性和方法，原型也是对象。
 
 ```
@@ -517,4 +517,712 @@ person.say(); // 'hehe'
 ```
 
 - 利用原型的嗯对象和方法可以提取对象的共有属性
-- 
+- delete可以删除对象自身的属性，但是不能删除原型上的属性
+- 查看原型--》隐式属性_proto_
+- 查看对象的构造函数-->constructor 隐式，可修改
+
+```
+Person.prototype.name = 'abc'
+
+function Person() {
+    //var this = { _proto_ = Person.prototype}
+}
+
+var obj = {
+    name: 'sunny'
+}
+
+var person = new Person();
+
+Person.prototype.name = 'cherry' // 可以修改person的name
+Person.prototype = {
+    name : 'cherry'
+} // 不能修改name 修改了原型，_proto_指向原空间
+```
+
+#### 原型链
+
+```
+Grand.prototype.lastName = 'Gao';
+function Grand() {
+    
+}
+
+var grand = new Grand();
+
+Father.prototype = grand;
+function Father() {
+    this.name = 'aa';
+    this.fortune = {
+        car1: 'visa'
+    }
+}
+
+var father = new Father();
+
+Son.prototype = father;
+function Son() {
+    this.hobbit = 'music';
+}
+
+var son = new Son();
+
+son.lastName // Gao
+son.toString // 所有原型的最终原型是object.prototype
+
+son.fortune.car1 = 'jsk'; // 引用值，调用修改
+```
+
+后代无法增删改查父代的属性。
+
+例外：引用值
+
+```
+// a.sayName() sayName里面的this指向时，谁调用的这个方法,this指向谁
+
+Person.prototype = {
+    name:  'a',
+    sayName: function() {
+        console.log(this.name)
+    }
+}
+
+function Person() {
+    this.name = 'b'
+}
+
+var person = new Person();
+
+person.sayName() // b
+person.prototype.sayName(); // a
+```
+
+- 绝大多数的对象最终都会继承自Object,prototype  object.create(null) 没有_proto_
+- object.create(原型)
+- undefined null没有原型，没有toString
+
+#### 插播：浮点数计算精度偏差怎么处理？
+*100后取整。
+
+原因：浮点数转换为二进制计算，例如0.1会转换为无限循环的二进制，计算机会自动截断为52位
+
+解决方案：
+计算出使浮点数都变成整数的最小整数倍，先放大进行计算，结果再缩小。
+
+面试有时候会问这个问题，真的是闲的蛋疼，为什么前端要进行数据计算呢？可靠吗？
+
+<span id="callapply"></span>
+### call/apply（必问题）
+- 作用：改变this指向
+- 区别：后面传参形式不同
+
+
+```
+function Person(name. age) {
+    this.name = name;
+    this.age = age;
+}
+
+var person = new Person('a', 100);
+
+var obj = {};
+
+Person.call() // Person
+Person.call(obj, 'b', 300);// this = obj
+
+obj.name // b
+```
+this指向call的第一个参数，其他传参顺次放在call的后面几个参数中。
+
+```
+function Person(name, age, sex) {
+    this.name = name;
+    this.age = age;
+    this.sex = sex;
+}
+
+function Student(name, age, sex, grade, tel) {
+    // var this = {};
+    Person.call(this, name, age, sex);
+    Person.apply(this,[name, age, sex]);
+    // this = {name, age, sex} 
+    this.grade = grade;
+    this.tel = tel;
+}
+
+var student = new Student('a', 10, 'female', 3, 139);
+```
+
+call要把实参按照形参的个数穿进去
+apply传的是一个实参列表的数组
+
+### 继承
+- 原型链
+
+  过多的继承了无用属性
+  
+- 借用构造函数call／apply
+   
+  不能继承借用构造函数的原型
+  
+  每次构造函数都要多走一个函数
+
+- 共享原型
+   
+  不能随便改变自己的原型
+
+```
+Father.prototype.lastName = 'G';
+function Father() {
+    
+}
+
+function Son() {
+    
+}
+
+// Son.prototype = Father.prototype;
+
+/**
+问题是，父子互相影响，指向同一个位置
+function inherit(Target, Origin) {
+    Target.prototype = Origin.Prototype;
+}
+
+inherit(Son, Father);
+
+var son = new Son();
+**/
+
+//function F() {}
+//F.prototype = Father.prototype;
+//Son.prototype = new F();
+
+// 面试常见问题：你能实现一个继承吗？
+// 圣杯模式
+function inherit(Target, Origin) {
+    function F() {}
+    F.prototype = Origin.prototype;
+    Target.prototype = new F();
+    Target.prototype.constructor = Target; //解决son._proto_ --> new F()._proto_-->Father.prototype 作用域链紊乱
+}
+
+// 雅虎的解决方案
+var inherit = (function() {
+    var F = function() {} // 私有化变量
+    return function (Target, Origin) {
+        F.prototype = Origin.prototype;
+        Target.prototype = new F();
+        Target.prototype.constructor = Target;
+        Target.prototype.uber = Father.prototype;
+    }
+    // 闭包的第三点作用，实现封装，属性私有化
+}());
+```
+
+#### 命名空间
+管理变量，防止全局污染，适用于模块开发。
+
+
+#### 实现链式调用
+
+```
+var a = {
+    smock: function() {
+        console.log('1111')
+        return this;
+    },
+    drink: function() {
+        console.log('1111')
+        return this;
+    },
+    eat: function() {
+        console.log('1111')
+        return this;
+    }
+}
+
+a.smock().drink();
+```
+
+#### 属性名
+obj.name ===== obj['name']
+
+
+#### 对象遍历
+for...in... 遍历属性的key值
+- hasOwnProperty()
+- in
+- A instanceof B A对象是不是B构造函数构造出来的，看A的原型链上有没有B的原型
+
+应用：
+- typeOf判断时数组和对象返回的都是'object'
+- 可以用xx instanceof Array换原来的this,深度拷贝的时候可以用来区分数组和对象
+
+```
+var obj = {
+    name: '123',
+    age: '123',
+    sex: 'male',
+    _proto_: {
+        lastname: 'deng'
+    }
+}
+
+for(var prop in obj) {
+    console.log(obj.prop); // undefined  相当于 obj['prop']
+    console.log(obj[prop]); // 会遍历出原型上的属性，系统自带的不会打印
+
+    if(obj.hasOwnProperty(prop)) {
+        console.log(obj[prop]); // 不会遍历出原型上的属性
+    }
+}
+
+[] instanceof Array //true
+[] instanceof Object // true
+```
+
+## this
+
+```
+var x = 1, y = z = 0;
+function add(n) {
+    return n = n + 1;
+}
+
+y = add(x); // 4
+
+function add(n) {
+    return n = n + 3;
+}
+
+z = add(x); // 4
+```
+预编译，后一个同名函数体会覆盖前面函数。
+
+```
+function foo(x) {
+    console.log(arguments);
+    return x;
+}
+
+foo(1,2,3,4,5) // 打印1,2,3,4,5
+
+function foo(x) {
+    console.log(arguments);
+    return x;
+}(1,2,3,4,5) // undefined
+
+(function foo(x) {
+    console.log(arguments)
+    reutrn x;
+})(1,2,3,4,5) // 1,2,3,4,5
+
+fucntion foo() { 
+    bar.apply(null, arguments);
+}
+function bar() {
+    console.log(arguments);
+}
+foo(1,2,3,4,5) // 1,2,3,4,5
+```
+
+```
+{} == {} // false
+
+isNaN('123') // NaN
+```
+
+### this
+- 函数预编译过程 this-->window
+- 全局作用域里 this-->window
+- <a href="#callapply">call/apply改变函数运行时的this指向</a>
+- obj.func()；func()里面的this指向obj
+
+```
+fucntion test(c) {
+    var a = 123;
+    function b() {}
+}
+
+AO {
+    arguments: [1],
+    this: window,
+    c: 1,
+    a: undefined,
+    b: function() {}
+}
+
+test(1)
+
+new test(); // var this = Object.create(test.prototype)
+```
+
+```
+var name  = '222'
+
+var a = {
+    name : '111',
+    say: function() {
+        console.log(this.name);
+    }
+}
+var fun = a.say; // function函数引用
+
+fun(); // 222，全局范围内执行 this指向window
+
+a.say(); // 111， this指向a
+
+var b = {
+    name: '333',
+    say: function(fun) {
+        fun(); // fun（）执行指向预编译，不是this.fun()
+    }
+}
+b.say(a.say); // 222， fun（）执行指向预编译
+b.say = a.say;
+b.say(); // 333
+```
+
+```
+var foo = 123;
+function print() {
+    this.foo = 234;
+    console.log(foo)
+}
+
+print(); // 234
+new print(); // 123
+```
+
+```
+var a = 5;
+function test() {
+    a = 0;
+    alert(a);
+    alert(this.a);
+    var a;
+    alert(a);
+}
+
+test(); // 0 5 0
+
+new test(); // 0 undefined 0 
+```
+
+```
+var b = {a: '002'};
+function print() {
+    bar.a = 'a';
+    Object.prototype.b = 'b';
+    return function inner() {
+        console.log(bar.a); // a
+        console.log(bar.b); // b
+    }
+}
+
+print()();
+```
+
+#### arguments
+- arguments.callee 指向函数的引用
+
+```
+// 立即执行函数无法递归调用
+var num = (fucntion(n){
+    if(n == 1) {
+        return 1;
+    }
+
+    return n = n * arguments.callee(n-1);
+}(100))
+```
+
+- func.caller 谁调用的，没什么用
+
+## 克隆
+
+- 原始值克隆（浅拷贝）
+
+```
+var obj = {
+    name: 'abc',
+    age: 123,
+    sex: 'female'
+};
+
+var obj1 = {};
+
+function clone(origin, target) {
+    var target = target || {};
+    for(var prop in origin) {
+        target[prop] = origin[prop];
+    }
+
+    return target;
+}
+
+clone(obj, obj1);
+```
+
+- 深拷贝
+
+```
+function deepClone(origin, target) {
+    var target = target || {};
+
+    var toStr = Object.prototype.toString;
+
+    arrStr = "[object Array]";
+
+    for(var prop in origin) {
+        if(origin.hasOwnProperty(prop)) {
+            if (typeof(origin[prop]) == 'object') {
+                
+                if(toStr.call(origin[prop] == arrStr) {
+                    target[prop] = [];
+                } else {
+                    target[prop] = {};
+                }
+                
+                deepClone(origin[prop], target[prop]);
+
+            } else {
+                target[prop] = origin[prop];
+            }
+        }
+    }
+    return target;
+}
+```
+
+```
+Object.prototype.toString.call(undefined);
+"[object Undefined]"
+
+Object.prototype.toString.call(null);
+"[object Null]"
+
+Object.prototype.toString.call('');
+"[object String]"
+
+Object.prototype.toString.call({});
+"[object Object]"
+
+Object.prototype.toString.call(function(){});
+"[object Function]"
+
+Object.prototype.toString.call(123);
+"[object Number]"
+```
+
+## 数组和数组方法
+
+```
+var arr = [];
+var arr1 = new Array();
+```
+
+- 改变原数组
+
+push pop shift unshift sort reverse
+
+splice
+
+- 不改变原数组
+
+concat join
+
+split  toString  slice
+
+```
+// 实现一个push
+var arr = [1, 2]；
+Array.prototype.push = function() {
+    for(var i = 0; i< arguments.length; i++) {
+        this[this.length] = arguments[i];
+    }
+
+    return this.length;
+}
+
+// 实现一个pop
+Array.prototype.pop = function() {
+    this.length = this.length - 1;
+
+    return this.length
+}
+```
+
+- shift()方法：移除数组中的第一项并返回该项
+
+```
+Array.prototype.shift = function() {
+    var newArr = [];
+    var len = this. length;
+    
+    if (len === 0) {
+        return
+    }
+    
+    for(var i=1; i < len; i++) {
+        newArr[i-1] = this[i];
+    }
+    
+    var value = this[0];
+    this.length = 0;
+    
+    for(var i = 0; i < len-1; i++) {
+        this[i] = newArr[i];
+    }
+    
+    return value;
+}
+```
+
+- unshift()方法：在数组的前端添加项
+
+```
+Array.prototype.unshift = function() {
+    var len = this.length;
+    if (len == 0) {
+        return [];
+    }
+    var newArr = [];
+    for(var i = 0; i < arguemnts.length; i++) {
+        newArr[i] = arguments[i];
+    }
+    for(var j = 0; j < len; j++) {
+        newArr[arguments.length + j] = this.[j];
+    }
+    
+    this.length = 0;
+    for(var k = 0; k < newArr.length; k++) {
+        this[k] = newArr[k];
+    }
+    
+    return this;
+}
+```
+
+- reverse() 数组逆转顺序
+
+```
+Array.prototype.reverse = function() {
+    var len = this.length;
+    
+    if(len === 0) {
+        return [];
+    }
+    
+    var newArr = [];
+    for(var i = 0; i < len; i++) {
+        newArr[i] = this[len-i];
+    }
+    ...
+}
+```
+
+- slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对像，原始数组不会改变。
+
+- splice()方法通过删除现有元素和/或添加新元素来更改一个数组的内容。
+
+区别：
+
+splice(截取开始位置，截取长度，插入数据) 方法会直接对数组进行修改。
+
+slice()不对数组进行修改，原数组不会改变。
+
+splice() 返回值为被操作的值。
+
+slice()以新的字符串返回被提取的部分。
+
+- sort() 无序数组排序，按ascll排序
+
+可通过function来自定义
+1.必须传两个形参
+2.规则是看返回值，返回负数，前面的数放在前面，返回正数，后面的数在前，为零不动
+
+```
+array.sort(function(a, b) {
+  return b - a; //正数，b>a，b在前，则是倒序排序
+})
+
+// 有序数组，乱序
+array.sort(function)
+```
+
+### 类数组
+
+```
+var obj = {
+    '0': 'a',
+    '1': 'b',
+    '2': 'c',
+    'length': 3,
+    'push': Array.prototype.push
+}
+
+obj.push(d) // 对象插入'3':'d'，且length变了
+```
+
+- 索引属性
+- 有length
+- 最好加上push
+
+原理：
+
+```
+Array.prototype.push = function(target) {
+    this[this.length] = target;
+    length ++;
+}
+```
+
+### 编程题-数组去重，要求在原型链上编程
+
+```
+Array.prototype.unique = function() {
+    if(this.length === 0) {
+        return [];
+    }
+    var arrMap = {};
+    for(var i = 0; i < this.length; i++) {
+        arrMap[this[i]] = i;
+    }
+    this.length = 0;
+    let j = 0;
+    for(var prop in arrMap) {
+        this[j] = prop;
+        j++;
+    }
+    return this;
+}
+```
+
+### 实现精准类型判断
+
+```
+fucntion type(target) {
+    var template = {
+        "[object Array]": 'array',
+        "[object String]": 'string - object',
+        "[object Boolean]": 'boolean - object',
+        "[object Object]": 'object',
+        "[object Number]": 'number - object'
+    }
+    if(target === null) {
+        return null;
+    }
+    
+    if (typeof(target === 'object')){
+        // 数组，对象，包装类
+        var toStr = Object.prototype.toString.call(target);
+        
+        return tmplate[toStr];
+    }
+    
+    return typeof(target)
+}
+```
+

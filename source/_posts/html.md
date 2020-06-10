@@ -375,6 +375,28 @@ flex-shrink: <number>; /* default 1 */ 缩小比例
 flex-basis: <length> | auto; /* default auto */ 项目占主轴空间
 flex: none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ] 以上三个的缩写
 
+```
+.item {
+    flex: 0%;
+}
+/*等价于*/
+.item {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
+}
+
+.item {
+    flex: 20px;
+}
+/*等价于*/
+.item {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 20px;
+}
+```
+
 ## 阐述px与em、rem的区别，以及你知道的其他css单位
 px就是pixel像素的缩写，相对长度单位。常用于PC端的字体单位
 em相对于当前父元素的font-size（并不是固定的）
@@ -754,23 +776,42 @@ transform: translateX(10px)
 transform:scale(2)
 ```
 
-## css中动画实现方式
-
-TODO
-
 ## 你知道的CSS预处理器，以及预处理器作用
 
-TODO
+CSS 预处理器定义了一种新的语言，其基本思想是，用一种专门的编程语言，为 CSS 增加了一些编程的特性，将 CSS 作为目标生成文件，然后开发者就只要使用这种语言进行 CSS 的编码工作。转化成通俗易懂的话来说就是“用一种专门的编程语言，进行 Web 页面样式设计，再通过编译器转化为正常的 CSS 文件，以供项目使用”。
+
+sass，less
 
 ## 如何解决CSS模块化
 
-TODO
+- 样式私有化
+- 避免被其他样式文件污染
+- 可复用
+
+三种方案
+- 就是通过每个页面根节点唯一类名，然后加上CSS后代选择器的方式来实现私有样式，这种方式是最简单，基本上和模块化不搭边，他只适合在比较小的前端中使用。
+- Vue中scoped方案，通过给每个模块生成一个唯一的属性值，然后将该属性添加到每个dom节点上，然后配合CSS的属性选择器来时实现私有样式，这种方式只能解决样式私有化的问题，但是也架不住被其他样式文件干扰
+- 开启css-loader的modules,使用CSS Modules方案，它不仅能实现样式的私有化，还能有效的避免被其他样式文件干扰，只是他需要借助webpack进行进行编译，写法上也有点不一样。
+
+<a href="https://blog.csdn.net/xiangzhihong8/article/details/53195926?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase">css模块化，细读</a>
 
 ## li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？
+浏览器的默认行为是把inline元素间的空白字符（空格换行tab）渲染成一个空格，也就是我们上面的代码<li>换行后会产生换行字符，而它会变成一个空格，当然空格就占用一个字符的宽度。
 
+解决方案
+
+方法一：既然是因为<li>换行导致的，那就可以将<li>代码全部写在一排
+
+方法二：我们为了代码美观以及方便修改，很多时候我们不可能将<li>全部写在一排，那怎么办？既然是空格占一个字符的宽度，那我们索性就将<ul>内的字符尺寸直接设为0
 
 ## 描述一下你对渐进增强和优雅降级的理解
+优雅降级和渐进增强的理解：
+- 渐进增强 ：针对低版本浏览器进行构建页面，保证最基本的功能，然后再针对高级浏览器进行效果、交互等改进和追加功能达到更好的用户体验。
+- 优雅降级 ：一开始就构建完整的功能，然后再针对低版本浏览器进行兼容。
 
+区别：
+
+优雅降级是从复杂的现状开始，并试图减少用户体验的供给，而渐进增强则是从一个非常基础的 ，能够起作用的版本开始，并不断扩充，以适应未来环境的需要。降级(功能衰减)意味着往回看; 而渐进增强则意味着朝前看，同时保证其根基处于安全地带。
 
 ## 解释css sprites，如何使用
 css精灵又称雪碧图
