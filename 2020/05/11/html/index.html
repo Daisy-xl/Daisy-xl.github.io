@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    HTML/CSS基础 |  雪凝姐姐
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="雪凝姐姐" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-html"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  HTML/CSS基础
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/05/11/html/" class="article-date">
+  <time datetime="2020-05-10T16:00:00.000Z" itemprop="datePublished">2020-05-11</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/HTML%E3%80%81CSS/">HTML、CSS</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">7.9k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">31 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>关于HTML和CSS的那些事，日常温习~</p>
+<a id="more"></a>
+
+
+<p>行内元素有哪儿些？块级元素有哪儿些？空元素（void）有哪儿些？<br>行内： a b span input button img select textarea<br>块级：div ul ol li dt h1-h6 p<br>空： br hr link meta</p>
+<h3 id="html标签"><a href="#html标签" class="headerlink" title="html标签"></a>html标签</h3><p>HTML超文本标记语言<br>h1-h6  ol li div span<br>meta： name+content 关键字，描述  charset字符集<br>ul li：导航栏类结构，父子结构好，通用型，可维护<br>&amp;nbsp空格  &amp;lt小于号   &amp;gt大于号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src&#x3D;&quot;&quot; alt&#x3D;&quot;图片占位符，出错时展示&quot; title&#x3D;&quot;鼠标划过提示&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a href&#x3D;&quot;指向的目标地址&quot; target&#x3D;&quot;_blank&quot;&gt;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>超文本引用 内容任意 target在新标签页打开</li>
+<li>a href=“#id“可作为锚点，跳回页面指定元素位置，可做置顶，双击置顶也可以</li>
+<li>打电话 <code>&lt;a href=&quot;tel: 17610603269&quot;&gt;&lt;/a&gt;</code> mailto:发邮件</li>
+<li>协议限定符：<code>&lt;a href=&quot;javascript:while(1){alert(&#39;让你手欠&#39;)&quot;&gt;&lt;/a&gt;</code></li>
+</ol>
+<p>form表单:发送数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;form method&#x3D;&quot;get&#x2F;post&quot; action&#x3D;&quot;发送后端地址&quot;&gt;</span><br><span class="line">    &lt;p&gt;username: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;userName&quot; placeholder&#x3D;&quot;默认展示的文案&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;p&gt;password: &lt;input type&#x3D;&quot;password&quot; name&#x3D;&quot;password&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;  checked&#x3D;&quot;checked&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;radio&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;登陆&quot;&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;checkbox&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select name&#x3D;&quot;province&quot;&gt; </span><br><span class="line">        &lt;option&gt;beijing&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;shanghai&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;tianjin&lt;&#x2F;option&gt;</span><br><span class="line">    &lt;&#x2F;select&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>提交后name绑定的名称和值都会拼接到url后面，密码用md5加密</p>
+<h3 id="meta标签的常用属性"><a href="#meta标签的常用属性" class="headerlink" title="meta标签的常用属性"></a>meta标签的常用属性</h3><ul>
+<li>设置字符集 charset</li>
+<li>声明浏览器及版本 </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv&#x3D;&quot;X-UA-Compatible&quot; content&#x3D;&quot;IE&#x3D;edge,chrome&#x3D;1&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>viewport屏幕可视区域</li>
+<li>Pragma禁止本地缓存</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv&#x3D;&quot;Pragma&quot; contect&#x3D;&quot;no-cache&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SEO优化部分：关键字，描述，作者等</li>
+</ul>
+<h3 id="浏览器及其内核"><a href="#浏览器及其内核" class="headerlink" title="浏览器及其内核"></a>浏览器及其内核</h3><p>IE      triden<br>Google  Chrome  webkit–&gt;blint<br>Safari  webkit<br>FireFox Gecko<br>Opera   Presto</p>
+<h3 id="Css层叠样式表"><a href="#Css层叠样式表" class="headerlink" title="Css层叠样式表"></a>Css层叠样式表</h3><ul>
+<li>内联样式</li>
+<li>页面级样式</li>
+<li>外部链接文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;link ref&#x3D;&quot;stylesheet&quot; type&#x3D;&quot;text&#x2F;css&quot; href&#x3D;&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="选择器及其权重"><a href="#选择器及其权重" class="headerlink" title="选择器及其权重"></a>选择器及其权重</h4><ul>
+<li>!important Infinity</li>
+<li>行间样式 1000</li>
+<li>id 100</li>
+<li>class 10</li>
+<li>标签 1</li>
+<li>通配符 0</li>
+</ul>
+<h4 id="复杂选择器"><a href="#复杂选择器" class="headerlink" title="复杂选择器"></a>复杂选择器</h4><ul>
+<li>父子选择器 div span {} 祖先也可以，不限制直接父子</li>
+<li>直接父子 div &gt; span</li>
+<li>并列选择器 div.demo 不加空格，表示同一个标签下的某个class</li>
+<li>分组选择器 div,span 公用一个代码块</li>
+</ul>
+<p>浏览器处理父子选择器的顺序：自右向左。</p>
+<p>不管什么关系的选择器，权重都直接相加。相同权重的相同样式后面覆盖前面。</p>
+<h4 id="font-size"><a href="#font-size" class="headerlink" title="font-size"></a>font-size</h4><p>设置的字体的高，从而设置字体大小</p>
+<h4 id="font-weight"><a href="#font-weight" class="headerlink" title="font-weight"></a>font-weight</h4><p>设置元素的粗细，bold,,lighter,normal,bolder或者数字<br>bolder是否有效取决于字体包可否设置成更粗的样式</p>
+<h4 id="font-style"><a href="#font-style" class="headerlink" title="font-style"></a>font-style</h4><p>设置斜体 italic，normal</p>
+<h4 id="font-family"><a href="#font-family" class="headerlink" title="font-family"></a>font-family</h4><p>字体，默认宋体</p>
+<h4 id="color"><a href="#color" class="headerlink" title="color"></a>color</h4><p>设置字体颜色</p>
+<ul>
+<li>英文单词</li>
+<li>颜色代码 r()g()b() 每两位代表一个16进制的颜色 00-ff</li>
+<li>颜色函数 rgb(0-255，0-255，0-255)</li>
+</ul>
+<h4 id="border-粗细，类型，颜色"><a href="#border-粗细，类型，颜色" class="headerlink" title="border:粗细，类型，颜色"></a>border:粗细，类型，颜色</h4><p>border-width<br>border-style<br>border-color<br>画三角形利用border-left-color:transparent</p>
+<h4 id="text"><a href="#text" class="headerlink" title="text-"></a>text-</h4><p>text-align对齐方式<br>text-indent：2em 首行缩进<br>line-height=1.2倍的font-size丢对应的height<br>text-decoration: underline,overline,line-through，none</p>
+<h3 id="行级元素与块级元素"><a href="#行级元素与块级元素" class="headerlink" title="行级元素与块级元素"></a>行级元素与块级元素</h3><h4 id="行级元素-span-a-strong-em-del"><a href="#行级元素-span-a-strong-em-del" class="headerlink" title="行级元素 span a strong em del"></a>行级元素 span a strong em del</h4><ul>
+<li>内容决定元素所占位置</li>
+<li>不可以通过css改变宽高</li>
+<li>行级元素只能嵌套行级元素</li>
+<li>行级元素增加样式float和绝对定位，就会被自动转换成inline-block</li>
+</ul>
+<h4 id="块级元素-div-p-input-ul-ol-li-form-address"><a href="#块级元素-div-p-input-ul-ol-li-form-address" class="headerlink" title="块级元素 div p input ul ol li form address"></a>块级元素 div p input ul ol li form address</h4><ul>
+<li>独占一行</li>
+<li>可以通过css改变宽高</li>
+<li>块级元素可以嵌套任何元素</li>
+</ul>
+<h4 id="行级块元素-img"><a href="#行级块元素-img" class="headerlink" title="行级块元素 img"></a>行级块元素 img</h4><ul>
+<li>内容决定大小</li>
+<li>可以改宽高</li>
+</ul>
+<p>行级块元素外部文本和元素底对齐，如果行级块元素内部有文本，外部文本和内部文本底对齐！！</p>
+<h3 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h3><h4 id="absolute"><a href="#absolute" class="headerlink" title="absolute"></a>absolute</h4><ul>
+<li>脱离原来位置进行定位</li>
+<li>配合top left</li>
+<li>相对于最近的有定位的父级进行定位，如果没有，相对于文档定位</li>
+</ul>
+<h4 id="relative"><a href="#relative" class="headerlink" title="relative"></a>relative</h4><ul>
+<li>保留原来位置进行定位</li>
+<li>相对于自己原来的位置进行定位</li>
+</ul>
+<h4 id="fixed"><a href="#fixed" class="headerlink" title="fixed"></a>fixed</h4><p>固定定位</p>
+<h3 id="两栏布局"><a href="#两栏布局" class="headerlink" title="两栏布局"></a>两栏布局</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;div class&#x3D;&quot;right&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;left&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.right &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    right: 0;</span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background-color: black;</span><br><span class="line">    opacity: 0.5;</span><br><span class="line">&#125;</span><br><span class="line">.left &#123;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background-color: aqua;</span><br><span class="line">    margin-right: 100px;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;先写右边是因为，先写左边沾满了一行，右边只能在第二行调整位置</span><br></pre></td></tr></table></figure>
+
+<h3 id="经典bug"><a href="#经典bug" class="headerlink" title="经典bug"></a>经典bug</h3><ul>
+<li>margin塌陷<br>父子都设置了margin-left，子在父内右移<br>都设置了margin-top，子top需要大于父top才会相对向下</li>
+</ul>
+<p>解决方案：<br>1.父加border，影响图纸还原程度<br>2.bfc块级格式化上下文 ，每个盒子里面有一个完整的规则，可以通过特定的手段改变特定盒子的规则，使用的就是bfc方案。给父级添加bfc样式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">position：absolute </span><br><span class="line">float:left&#x2F;right</span><br><span class="line">overflow:hidden 引发问题移除部分隐藏</span><br><span class="line">display:inline-block</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>兄弟元素margin合并 </li>
+</ul>
+<p>1.加父层隔离开，改变文档解决<br>2.不解决，计算像素</p>
+<h3 id="float浮动"><a href="#float浮动" class="headerlink" title="float浮动"></a>float浮动</h3><p>站队的边界是父级的边界。</p>
+<ul>
+<li>浮动元素产生了浮动流<br>所有产生了浮动流的元素，块级元素看不到它们，产生了bfc的元素及文本类属性的元素以及文本可以看到。</li>
+<li>清除浮动流</li>
+</ul>
+<p>1.块级父级元素包浮动元素，清除浮动流，在子元素尾增加标签添加样式clear: both<br>2.伪元素，伪元素::after 必须写content，是行级元素，限制块级元素</p>
+<h3 id="理解BFC？形成条件？"><a href="#理解BFC？形成条件？" class="headerlink" title="理解BFC？形成条件？"></a>理解BFC？形成条件？</h3><p>BFC:块格式化上下文，是一个独立的布局环境，可以理解为一个容器，在这个容器内按照一定的规则进行物品摆放，并且不会影响其他环境中的物品。</p>
+<p>BFC的特性：<br>1.是一个独立的容器，容器内子元素不会影响容器外的元素<br>2.BFC区域不会与float的元素区域重叠<br>3.计算BFC高度时，浮动元素也参与计算<br>4.垂直方向上的距离由margin决定<br>5.内部的box会在垂直方向上一个接一个的摆放</p>
+<p>形成条件：<br>1.浮动元素 float: left | right | inherit(none除外)<br>2.position: absolte或者fixed定位<br>3.display: inline-block | inline-flex | tebel-cell<br>4.overflow: hidden | auto | scroll</p>
+<h3 id="文字溢出"><a href="#文字溢出" class="headerlink" title="文字溢出"></a>文字溢出</h3><ul>
+<li>单行文本</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">width:200px;</span><br><span class="line">white-space:nowrap;</span><br><span class="line">text-overflow:ellipsis;</span><br><span class="line">overflow:hidden;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>多行文本<br>设置宽高<br>overflow: hidden</li>
+</ul>
+<h3 id="background-image"><a href="#background-image" class="headerlink" title="background-image"></a>background-image</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">background-image: url();</span><br><span class="line">background-size: 宽  高;</span><br><span class="line">background-repeat: no-repeat&#x2F;x-repeat&#x2F;y-repeat;</span><br><span class="line">background-position: center center；</span><br></pre></td></tr></table></figure>
+
+<h3 id="父子块级元素，内容水平居中"><a href="#父子块级元素，内容水平居中" class="headerlink" title="父子块级元素，内容水平居中"></a>父子块级元素，内容水平居中</h3><p>子元素设置margin: 0 auto，中间宽度固定，左右边距自适应</p>
+<h3 id="伪类与伪元素"><a href="#伪类与伪元素" class="headerlink" title="伪类与伪元素"></a>伪类与伪元素</h3><p>伪类： 用于向某些选择器添加特殊的效果（span:first-child），不互斥可叠加使用<br>伪元素：用于将特殊的想过添加到某些选择器(span:befor)，在一个选择器中只能出现一次，且只能出现在末尾</p>
+<h3 id="隐藏元素的方法"><a href="#隐藏元素的方法" class="headerlink" title="隐藏元素的方法"></a>隐藏元素的方法</h3><p>display:nonde 元素不可见，且不占用文档空间<br>visibility:hidden 隐藏元素，但依然占用文档空间<br>opacity：0 元素完全透明<br>position: absolute 设置left为一个很大的负值，元素飘出可见区<br>transform: scale(0) 设置元素缩放为无限小，元素不可见，但位置保留</p>
+<h2 id="补充：HTML5"><a href="#补充：HTML5" class="headerlink" title="补充：HTML5"></a>补充：HTML5</h2><h3 id="HTML5的新特性"><a href="#HTML5的新特性" class="headerlink" title="HTML5的新特性"></a>HTML5的新特性</h3><ul>
+<li>语义化更好的标签 header footer nav section等</li>
+<li>用于媒介回放的video和audio</li>
+<li>canvas画布</li>
+<li>拖放drag</li>
+<li>表单控件，calendar，date，time，email，url，search</li>
+<li>存储功能：localStorage和sessionStorage</li>
+<li>新的技术webworker,websocket,Geolocation</li>
+</ul>
+<h3 id="SVG与canvas的区别"><a href="#SVG与canvas的区别" class="headerlink" title="SVG与canvas的区别"></a>SVG与canvas的区别</h3><p>SVG 是一种使用 XML 描述 2D 图形的语言<br>Canvas 通过 JavaScript 来绘制 2D 图形<br>SVG 基于 XML，这意味着 SVG DOM 中的每个元素都是可用的，在SVG 中，每个被绘制的图形均被视为对象<br>如果 SVG 对象的属性发生变化，那么浏览器能够自动重现图形<br>Canvas 是逐像素进行渲染的<br>在 canvas 中，一旦图形被绘制完成，它就不会继续得到浏览器的关注<br>如果其位置发生变化，那么整个场景也需要重新绘制，包括任何或许已被图形覆盖的对象</p>
+<h3 id="rgba（）和opacity的透明效果有什么不同？"><a href="#rgba（）和opacity的透明效果有什么不同？" class="headerlink" title="rgba（）和opacity的透明效果有什么不同？"></a>rgba（）和opacity的透明效果有什么不同？</h3><p>raba()只作用于元素自身的颜色或背景色，子元素不继承透明效果<br>opacity作用于元素及元素内的所有内容的透明度</p>
+<h3 id="cookies-sessionStorage-localStorage的区别"><a href="#cookies-sessionStorage-localStorage的区别" class="headerlink" title="cookies,sessionStorage,localStorage的区别"></a>cookies,sessionStorage,localStorage的区别</h3><ul>
+<li>cookies是往往用于存储用户身份信息，加密后存储，数据大小不超过4k，关闭浏览器等不会清除，除非手动清除cookies或者到期</li>
+<li>sessionStorage 不发数据给服务器，存储大小比较大，浏览器关闭后自动删除</li>
+<li>localStorage 不发数据给服务器，存储大小比较大，存储持久，不主动删除数据不会丢失</li>
+</ul>
+<h3 id="浏览器是怎么对HTML5的离线储存资源进行管理和加载的？"><a href="#浏览器是怎么对HTML5的离线储存资源进行管理和加载的？" class="headerlink" title="浏览器是怎么对HTML5的离线储存资源进行管理和加载的？"></a>浏览器是怎么对HTML5的离线储存资源进行管理和加载的？</h3><p>1）在线的情况下，浏览器发现 html 标签有 manifest 属性，它会请求 manifest 文件<br>2）如果是第一次访问app，那么浏览器就会根据 manifest 文件的内容下载相应的资源并且进行离线存储<br>3）如果已经访问过app且资源已经离线存储了，浏览器会对比新的 manifest 文件与旧的 manifest 文件，如果文件没有发生改变，就不做任何操作。如果文件改变了，那么就会重新下载文件中的资源并进行离线存储<br>4）离线的情况下，浏览器就直接使用离线存储的资源</p>
+<h2 id="水平居中、垂直居中的方法有哪些？"><a href="#水平居中、垂直居中的方法有哪些？" class="headerlink" title="水平居中、垂直居中的方法有哪些？"></a>水平居中、垂直居中的方法有哪些？</h2><h3 id="水平居中"><a href="#水平居中" class="headerlink" title="水平居中"></a>水平居中</h3><ul>
+<li><p>inline-block子元素实现水平居中（父级设置text-align:center）</p>
+</li>
+<li><p>块级元素可以使用width配合margin:0 auto使用 或者display:table配合margin: 0 auto</p>
+</li>
+<li><p>绝对定位实现水平居中：父元素相对定位。子元素绝对定位，上下左右都设置为0，overfolow设为auto避免溢出，子元素需要设置宽度，否则被拉伸</p>
+</li>
+<li><p>flex布局（IE9以下不支持）<br>flex属性是flex-grow（放大比例）, flex-shrink（缩小比例） 和 flex-basis（项目占据主轴空间）的简写，默认值为0 1 auto<br>注意，设为 Flex 布局以后，子元素的float、clear和vertical-align属性将失效。<br>单个元素水平居中  伸缩容器上 display:flex; justify-content:center;<br>多个元素水平居中 增加width<br>伸缩项目上加 margin: 0 auto</p>
+</li>
+<li><p>栅格布局grid(IE10以下不支持)<br>容器上设置   display:grid; justify-items:center;<br>或网格项目中设置 justify-self: center 或 margin: 0 auto</p>
+</li>
+</ul>
+<h3 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h3><ul>
+<li><p>新增inline-block兄弟元素，设置vertical-align</p>
+</li>
+<li><p>绝对定位配合transform位移<br>除了可以使用margin-top把div往上偏移之外，CSS3的transform属性也可以实现这个功能，通过设置div的transform: translateY(-50%)，意思是使得div向上平移（translate）自身高度的一半(50%)。</p>
+</li>
+</ul>
+<p>margin: 0 auto; /<em>水平居中</em>/ position: relative;<br>top: 50%; /<em>偏移</em>/ transform: translateY(-50%);</p>
+<ul>
+<li><p>使用flex弹性盒子布局display:flex<br>display: flex;<br>align-items: center; /<em>定义body的元素垂直居中</em>/<br>justify-content: center; /<em>定义body的里的元素水平居中</em>/</p>
+</li>
+<li><p>未知高度的块级子元素，采用table-cell + vertical-align<br>父元素设置为display: table，子元素设置成为display: table-cell;vertical-align: middle;</p>
+</li>
+<li><p>已知高度的块级子元素，采用绝对定位和负边距<br>position: absolute; top: 50%; height: 240px; margin-top: -120px;</p>
+</li>
+</ul>
+<h2 id="你理解的flex弹性盒子布局"><a href="#你理解的flex弹性盒子布局" class="headerlink" title="你理解的flex弹性盒子布局"></a>你理解的flex弹性盒子布局</h2><p>用于不同尺寸屏幕中创建可自动伸缩的布局，任何一个容器都可以指定为flex布局<br>设置里flex布局后，float,clear,vertical-align失效</p>
+<p>容器默认存在两根轴：水平主轴和垂直的交叉轴，主轴开始位置叫main start 结束位置叫main end，交叉轴的开始位置叫cross start，结束位置脚cross end。</p>
+<p>容器属性：<br>flex-direction: row | row-reverse | column | column-reverse<br>flex-wrap: nowrap | wrap | wrap-reverse<br>flex-flow: direction wrap<br>justify-content: flex-start | flex-end | center | space-between |space-around;<br>align-items: flex-start | flex-end | center | baseline | stretch;<br>align-content: flex-start | flex-end | center | space-between | space-around | stretch;</p>
+<p>项目属性:<br>flex-grow: <number>; /* default 0 <em>/ 放大比例<br>flex-shrink: <number>; /</em> default 1 <em>/ 缩小比例<br>flex-basis: <length> | auto; /</em> default auto */ 项目占主轴空间<br>flex: none | [ &lt;’flex-grow’&gt; &lt;’flex-shrink’&gt;? || &lt;’flex-basis’&gt; ] 以上三个的缩写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">.item &#123;</span><br><span class="line">    flex: 0%;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;*等价于*&#x2F;</span><br><span class="line">.item &#123;</span><br><span class="line">    flex-grow: 1;</span><br><span class="line">    flex-shrink: 1;</span><br><span class="line">    flex-basis: 0%;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.item &#123;</span><br><span class="line">    flex: 20px;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;*等价于*&#x2F;</span><br><span class="line">.item &#123;</span><br><span class="line">    flex-grow: 1;</span><br><span class="line">    flex-shrink: 1;</span><br><span class="line">    flex-basis: 20px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="阐述px与em、rem的区别，以及你知道的其他css单位"><a href="#阐述px与em、rem的区别，以及你知道的其他css单位" class="headerlink" title="阐述px与em、rem的区别，以及你知道的其他css单位"></a>阐述px与em、rem的区别，以及你知道的其他css单位</h2><p>px就是pixel像素的缩写，相对长度单位。常用于PC端的字体单位<br>em相对于当前父元素的font-size（并不是固定的）<br>rem相对于HTML根元素的font</p>
+<p>其他css单位：<br>%百分比，一般来说就是相对于父元素<br>vw是相对视口（viewport）的宽度而定的，长度等于视口宽度的1/100<br>vh是相对视口（viewport）的高度而定的，长度等于视口高度的1/100<br>vm css3新单位，相对于视口的宽度或高度中较小的那个</p>
+<h3 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h3><p>所谓依赖根元素来计算的方式，就是先给予html元素一个font-size，然后我们所有的rem就根据这个font-size来计算<br>例如：html{ font-size:16px;}<br>那么我们这里的1rem就应该这么来计算：1x16=16px=1rem；浏览器默认为16px可能造成rem计算上的麻烦和多位小数，所以，我们也可以进行这种方式的初始化根元素：</p>
+<p>html{<br>   font-size=62.5% //这里就是10/16x100%=62.5% 也就是默认10px的字号<br>}<br>这样初始化之后，我们来进行rem计算的时候，就会减少许多的麻烦。</p>
+<h3 id="name-属性的-viewport-值（移动屏幕的缩放）"><a href="#name-属性的-viewport-值（移动屏幕的缩放）" class="headerlink" title="name 属性的 viewport 值（移动屏幕的缩放）"></a>name 属性的 viewport 值（移动屏幕的缩放）</h3><p>也就是可视区域。对于桌面浏览器，我们都很清楚 viewport 是什么，就是除去了所有工具栏、状态栏、滚动条等等之后用于看网页的区域，这是真正有效的区域。由于移动设备屏幕宽度不同于传统 web，因此我们需要改变 viewport 值。</p>
+<p>实际上我们可以操作的属性有 4 个：<br>width – // viewport 的宽度 （范围从 200 到 10,000，默认为 980 像素）<br>height – // viewport 的高度 （范围从 223 到 10,000 ）<br>initial-scale – // 初始的缩放比例 （范围从 &gt; 0 到 10）<br>minimum-scale – // 允许用户缩放到的最小比例<br>maximum-scale – // 允许用户缩放到的最大比例<br>user-scalable – // 用户是否可以手动缩放 (no，yes)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1.0, maximum-scale&#x3D;1.0, user-scalable&#x3D;no&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="移动设备上如何在不同分辨率下计算出根元素需要的font-size值？"><a href="#移动设备上如何在不同分辨率下计算出根元素需要的font-size值？" class="headerlink" title="移动设备上如何在不同分辨率下计算出根元素需要的font-size值？"></a>移动设备上如何在不同分辨率下计算出根元素需要的font-size值？</h3><h4 id="1-基于css"><a href="#1-基于css" class="headerlink" title="1.基于css"></a>1.基于css</h4><img src="../../../../images/rem01.jpg" width="80%">
+可以看出分辨率计算规则：
+基准640宽度下屏幕对比比例为1 font-size为20px
+320下 font-size 应该设置为才20/640=0.5
+那么如何来根据不同分辨率定义font-size呢？当然是媒体查询了
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@media only screen and (min-device-width: 320px)and (-webkit-min-device-pixel-ratio: 2) &#123;</span><br><span class="line">   &#x2F;&#x2F;针对iPhone 4, 5c,5s, 所有iPhone6的放大模式，个别iPhone6的标准模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:10px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">@media only screen and (min-device-width: 375px)and (-webkit-min-device-pixel-ratio: 2) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对大多数iPhone6的标准模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:12px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br><span class="line">@media only screen and (min-device-width: 375px)and (-webkit-min-device-pixel-ratio: 3) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对所有iPhone6+的放大模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:16px;&lt;br&gt;　　&#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line">@media only screen and (min-device-width:412px) and (-webkit-min-device-pixel-ratio: 3) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对所有iPhone6+的标准模式,414px写为412px是由于三星Nexus 6为412px，可一并处理&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:20px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@media only screen and (-webkit-device-pixel-ratio:.75)&#123; &#x2F;*低分辨率小尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@media only screen and (-webkit-device-pixel-ratio:1)&#123; &#x2F;*普通分辨率普通尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@media only screen and (-webkit-device-pixel-ratio:1.5)&#123; &#x2F;*高分辨率大尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-js"><a href="#2-js" class="headerlink" title="2.js"></a>2.js</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docEl.style.fontSize &#x3D; 20 * (clientWidth &#x2F; 320) + &#39;px&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>rem布局需要基于根元素的基准量来做的，不同屏幕分辨率设置不同的基准量，那么对UI的还原度就会很高，但是…发现了一个rem的问题…就是如果页面设计比较看重元素间隔和高度的话…那么用rem布局就会比较难受</p>
+<h2 id="实现左边固定宽度，右边自适应（不限于一种方法）"><a href="#实现左边固定宽度，右边自适应（不限于一种方法）" class="headerlink" title="实现左边固定宽度，右边自适应（不限于一种方法）"></a>实现左边固定宽度，右边自适应（不限于一种方法）</h2><p>1）浮动布局（左侧固定宽度并且左浮动，右侧使用margin-left）<br>2）使用定位（左侧固定宽度并且绝对定位，右侧使用margin-left）<br>3）overflow（左侧固定宽并且左浮动，右侧加overflow：hidden）<br>4）flex布局（父级元素设置display:flex，左侧设置固定宽，右侧flex:1）</p>
+<h2 id="使用css实现一个持续的动画"><a href="#使用css实现一个持续的动画" class="headerlink" title="使用css实现一个持续的动画"></a>使用css实现一个持续的动画</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">.animat&#123;</span><br><span class="line">     width:20px;</span><br><span class="line">     height:20px;</span><br><span class="line">     background:red;</span><br><span class="line">     position:relative;</span><br><span class="line">     animation:mymove 3s infinite;        </span><br><span class="line">&#125;</span><br><span class="line">@keyframes mymove&#123;</span><br><span class="line">     from&#123;left:0px;&#125;</span><br><span class="line">     to&#123;left:200px;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="css实现三角形"><a href="#css实现三角形" class="headerlink" title="css实现三角形"></a>css实现三角形</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.triangle&#123; </span><br><span class="line">     width:0;</span><br><span class="line">     height:0;</span><br><span class="line">     border-width:20px;</span><br><span class="line">     border-style:solid;</span><br><span class="line">     border-color:transparent transparent red transparent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="移动端开发中有哪些常用的布局？"><a href="#移动端开发中有哪些常用的布局？" class="headerlink" title="移动端开发中有哪些常用的布局？"></a>移动端开发中有哪些常用的布局？</h2><ul>
+<li><p>百分比流式布局<br>流动布局与固定宽度布局基本不同点就在于对网站尺寸的测量单位不同，流动布局就是使用百分比来代替px作为单位。<br>优点是流动布局可以很好解决自适应需求。<br>缺点是不够灵活，添加元素时，需要更改其他元素的值</p>
+</li>
+<li><p>flex布局<br>Flexbox是CSS3引入的新的布局模式，也称为弹性布局，他会根据页面的剩余宽度自动分配空间。 它决定了元素如何在页面上排列，使它们能在不同的屏幕尺寸和设备下可预测地展现出来。它能够扩展和收缩 flex 容器内的元素， 以最大限度地填充可用空间。Flexbox布局最适合应用程序的组件和小规模的布局，而网格布局更适合那些更大规模的布局。</p>
+</li>
+<li><p>媒体查询+rem布局<br>使用媒体查询可以根据不同的设备宽度加载不同的css样式。rem是一个相对单位，会根据根节点的字体大小来计算的，使用媒体查询和rem可以实现移动端的响应式。</p>
+</li>
+<li><p>固定宽度做法<br>在标签里把 viewport 加好,然后设想整个网页的宽度为 320px 即可。 其他地方根据 PC 端来布局。<br>缺点:大屏手机显示网页比较宽,固定布局宽度参照永远是 320px,导致左右两 边会有空白。</p>
+</li>
+<li><p>bootstrap布局<br>bootstrap是一个比较流行的响应式前端框架，利用bootstrap的栅格系统可以实现响应式的移动端布局。栅格系统：Bootstrap中定义了一套响应式的网格系统，其使用方式就是将一个容器划分成12列，然后通过col-xx-xx的类名控制每一列的占比， 在使用的时候，我们给相应的div设置col-lg-2 col-md-3 col-sm-4 col-xs-6，以此完成布局。</p>
+</li>
+</ul>
+<h2 id="什么是圣杯布局和双飞翼布局，并说下实现原理"><a href="#什么是圣杯布局和双飞翼布局，并说下实现原理" class="headerlink" title="什么是圣杯布局和双飞翼布局，并说下实现原理"></a>什么是圣杯布局和双飞翼布局，并说下实现原理</h2><p>两者的功能相同，都是为了实现一个两侧宽度固定，中间宽度自适应的三栏布局。</p>
+<h3 id="圣杯"><a href="#圣杯" class="headerlink" title="圣杯"></a>圣杯</h3><img src="../../../../images/cup.jpg" width="80%">
+1. header和footer占屏幕全部高度，高度固定
+2. 中间的contaier部分是一个三栏布局
+3. left和right宽度固定，middle自适应填满整个区域；高度为三栏中最大的高度；
+
+<h4 id="浮动布局-兼容性最好但是略显复杂"><a href="#浮动布局-兼容性最好但是略显复杂" class="headerlink" title="浮动布局(兼容性最好但是略显复杂)"></a>浮动布局(兼容性最好但是略显复杂)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;body&gt;</span><br><span class="line">        &lt;header&gt;header&lt;&#x2F;header&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;container&quot;&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;middle&quot;&gt;middle&lt;&#x2F;div&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;left&quot;&gt;left&lt;&#x2F;div&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;right&quot;&gt;right&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line">        &lt;footer&gt;footer&lt;&#x2F;footer&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br></pre></td></tr></table></figure>
+
+<p>header和footer就直接定高，width设为100%就好;container也设为100%；left和right定宽；middle宽度100%；让container下的div都向左浮动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">header,footer&#123;</span><br><span class="line">    height:100px;</span><br><span class="line">    width:100%; </span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line">.container&#123;</span><br><span class="line">    height:200px;</span><br><span class="line">&#125;</span><br><span class="line">.container&gt;div&#123;</span><br><span class="line">    float: left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    width:200px;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    width:300px;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.middle&#123;</span><br><span class="line">    width:100%;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: #b0f9c2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为middle先渲染的且宽度为百分百，所以left和right被挤到了下面；为了让他们都在一行显示，让left左外边距向左偏移整行的宽度；让right的左外边距向左偏移right自身的宽度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.left&#123;</span><br><span class="line">    ...</span><br><span class="line">     margin-left: -100%;</span><br><span class="line">&#125;</span><br><span class="line">.right&#123;</span><br><span class="line">    ...</span><br><span class="line">    margin-left: -300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而middle里的内容被left覆盖了。。我们需要给container部分设置左右padding，向中间挤压，然后将left和right设置成相对定位，将其固定到正确位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.container&#123;</span><br><span class="line">   ...</span><br><span class="line">    padding-left:200px;</span><br><span class="line">    padding-right:300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将div.left和div.right设置相对定位。并给container设置高度，其子级div高度为百分百。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">.container&gt;div&#123;</span><br><span class="line">    ...</span><br><span class="line">    height:100%;</span><br><span class="line">    position: relative;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    ...</span><br><span class="line">    position:relative;</span><br><span class="line">    left:-200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    ...</span><br><span class="line">    position:relative;</span><br><span class="line">    right:-300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="flex布局"><a href="#flex布局" class="headerlink" title="flex布局"></a>flex布局</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> &lt;body&gt;</span><br><span class="line">    &lt;header&gt;header&lt;&#x2F;header&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;container&quot;&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;left&quot;&gt;left&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;middle&quot;&gt;middle&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;right&quot;&gt;right&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;footer&gt;footer&lt;&#x2F;footer&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br></pre></td></tr></table></figure>
+
+<p>flex布局非常简单，只需在container中设置flex即可。两边和上面代码一样就不贴了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.container&#123;</span><br><span class="line">    display: flex;</span><br><span class="line">    flex-direction: row;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="grid布局"><a href="#grid布局" class="headerlink" title="grid布局"></a>grid布局</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">body&#123;</span><br><span class="line">    display:grid;</span><br><span class="line">&#125;</span><br><span class="line">header&#123;</span><br><span class="line">    grid-row:1;</span><br><span class="line">    grid-column:1&#x2F;5;</span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line">footer&#123;</span><br><span class="line">    grid-row:3;</span><br><span class="line">    grid-column:1&#x2F;5;</span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:1&#x2F;2;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:4&#x2F;5;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.middle&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:2&#x2F;4;</span><br><span class="line">    background-color: #b0f9c2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="双飞翼布局"><a href="#双飞翼布局" class="headerlink" title="双飞翼布局"></a>双飞翼布局</h3><p>双飞翼布局：对圣杯布局（使用相对定位对以后布局有局限性）的改进，消除相对定位<br>原理：主体元素上设置左右边距，预留两翼位置。左右两栏使用浮动和负边距归位，消除相对定位</p>
+<h2 id="align-content与align-items的区别？"><a href="#align-content与align-items的区别？" class="headerlink" title="align-content与align-items的区别？"></a>align-content与align-items的区别？</h2><p>align-content:center对单行是没有效果的<br>而align-items:center不管是对单行还是多行都有效果<br>我们日常开发中用的比较多的就是align-items</p>
+<h2 id="去除inline-block出现间距的几种方法"><a href="#去除inline-block出现间距的几种方法" class="headerlink" title="去除inline-block出现间距的几种方法"></a>去除inline-block出现间距的几种方法</h2><p>造成空白间隙的原因是在标签和标签之间使用了空格或换行符。</p>
+<ul>
+<li>移除空格和换行符</li>
+<li>设置父元素吃的font-size为0，子元素重新设置font-size</li>
+<li>利用负margin-left（不推荐，具体负margin多少取决于字体的大小）</li>
+<li>letter-spacing（字符边距）：负值 or word-spacing（单词边距） 负值</li>
+</ul>
+<h2 id="title和h1-b和strong，i和em的区别"><a href="#title和h1-b和strong，i和em的区别" class="headerlink" title="title和h1,b和strong，i和em的区别"></a>title和h1,b和strong，i和em的区别</h2><p>title属性没有明确意义只表示是个标题，H1则表示层次明确的标题，对页面信息的抓取有很大的影响<br>b是一个实体标签，展示强调内容。strong是标明重点内容，有语气加强的含义<br>i内容展示为斜体，em表示强调的文本</p>
+<h2 id="、、三者之间区别"><a href="#、、三者之间区别" class="headerlink" title="、、三者之间区别"></a><script>、<script defer>、<script async>三者之间区别</h2><p>没有defer或async属性，浏览器会立即加载并执行相应的脚本<br>有了async属性，表示后续文档的加载和渲染与js脚本的加载和执行是并行进行的，即异步执行<br>有了defer属性，加载后续文档的过程和js脚本的加载是并行进行的（此时仅加载不执行）<br>defer和async在网络加载过程是一致的，都是异步执行<br>两者的区别在于脚本加载完成之后何时执行<br>如果存在多个有defer属性的脚本，那么它们是按照加载顺序执行脚本的<br>对于async，它的加载和执行是紧挨的，无论声明顺序如何，只要加载完成立刻执行</p>
+<h2 id="data-的用法，以及他的优势"><a href="#data-的用法，以及他的优势" class="headerlink" title="data-的用法，以及他的优势"></a>data-的用法，以及他的优势</h2><p>data-代表自定义属性，可以在所有的 HTML 元素中嵌入数据<br>自定义的数据可以让页面拥有更好的交互体验<br>属性名不要包含大写字母，在 data- 后必须至少有一个字符<br>该属性可以是任何字符串<br>自定义属性前缀 "data-" 会被客户端忽略</p>
+<h2 id="实现多个标签页之间通信"><a href="#实现多个标签页之间通信" class="headerlink" title="实现多个标签页之间通信"></a>实现多个标签页之间通信</h2><p>websocket,shareworker,localstorage,cookies</p>
+<h2 id="实现不使用border画出1px高的线"><a href="#实现不使用border画出1px高的线" class="headerlink" title="实现不使用border画出1px高的线"></a>实现不使用border画出1px高的线</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;div style&#x3D;&quot;height:1px;overflow:hidden;background:red&quot;&gt;&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="怎么让Chrome支持小于12px-的文字"><a href="#怎么让Chrome支持小于12px-的文字" class="headerlink" title="怎么让Chrome支持小于12px 的文字"></a>怎么让Chrome支持小于12px 的文字</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.shrink&#123;</span><br><span class="line">      -webkit-transform:scale(0.8);</span><br><span class="line">       -o-transform:scale(1);</span><br><span class="line">       display:inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一个满屏-品-字布局-如何设计"><a href="#一个满屏-品-字布局-如何设计" class="headerlink" title="一个满屏 品 字布局 如何设计?"></a>一个满屏 品 字布局 如何设计?</h2><p>上面的div宽100%<br>下面的两个div分别宽50%<br>然后用float或者inline使其不换行即可</p>
+<h2 id="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"><a href="#经常遇到的浏览器的兼容性有哪些？解决方法是什么？" class="headerlink" title="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"></a>经常遇到的浏览器的兼容性有哪些？解决方法是什么？</h2><p>1）PNG24位的图片在ie6浏览器上出现背景，解决方案是做成PNG8<br>2）浏览器默认的margin和padding不同。解决方案：*{margin:0;padding:0;}<br>3）Chrome中文界面下默认会将小于12px的文本强制按照12px显示，可通过加入CSS属性-webkit-text-size-adjust:none解决<br>4）IE下，可以使用获取常规属性的方法来获取自定义属性，也可以使用getAttribute()获取自定义的属性<br>在FireFox下，只能使用getAttribute()获取自定义属性；解决方法：统一通过getAttribute()获取自定义属性<br>5）IE下，even对象有x,y属性，但是没有pageX,pageY属性<br>在Firefox下，even对象有pageX,pageY属性，但是没有x,y属性<br>解决方法：(条件注释)缺点是在IE浏览器下可能会增加额外的HTTP请求数</p>
+<p>TODO</p>
+<h2 id="平移放大一个元素"><a href="#平移放大一个元素" class="headerlink" title="平移放大一个元素"></a>平移放大一个元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">transform: translateX(10px)</span><br><span class="line">transform:scale(2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="你知道的CSS预处理器，以及预处理器作用"><a href="#你知道的CSS预处理器，以及预处理器作用" class="headerlink" title="你知道的CSS预处理器，以及预处理器作用"></a>你知道的CSS预处理器，以及预处理器作用</h2><p>CSS 预处理器定义了一种新的语言，其基本思想是，用一种专门的编程语言，为 CSS 增加了一些编程的特性，将 CSS 作为目标生成文件，然后开发者就只要使用这种语言进行 CSS 的编码工作。转化成通俗易懂的话来说就是“用一种专门的编程语言，进行 Web 页面样式设计，再通过编译器转化为正常的 CSS 文件，以供项目使用”。</p>
+<p>sass，less</p>
+<h2 id="如何解决CSS模块化"><a href="#如何解决CSS模块化" class="headerlink" title="如何解决CSS模块化"></a>如何解决CSS模块化</h2><ul>
+<li>样式私有化</li>
+<li>避免被其他样式文件污染</li>
+<li>可复用</li>
+</ul>
+<p>三种方案</p>
+<ul>
+<li>就是通过每个页面根节点唯一类名，然后加上CSS后代选择器的方式来实现私有样式，这种方式是最简单，基本上和模块化不搭边，他只适合在比较小的前端中使用。</li>
+<li>Vue中scoped方案，通过给每个模块生成一个唯一的属性值，然后将该属性添加到每个dom节点上，然后配合CSS的属性选择器来时实现私有样式，这种方式只能解决样式私有化的问题，但是也架不住被其他样式文件干扰</li>
+<li>开启css-loader的modules,使用CSS Modules方案，它不仅能实现样式的私有化，还能有效的避免被其他样式文件干扰，只是他需要借助webpack进行进行编译，写法上也有点不一样。</li>
+</ul>
+<p><a href="https://blog.csdn.net/xiangzhihong8/article/details/53195926?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase" target="_blank" rel="noopener">css模块化，细读</a></p>
+<h2 id="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"><a href="#li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？" class="headerlink" title="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"></a>li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？</h2><p>浏览器的默认行为是把inline元素间的空白字符（空格换行tab）渲染成一个空格，也就是我们上面的代码<li>换行后会产生换行字符，而它会变成一个空格，当然空格就占用一个字符的宽度。</p>
+<p>解决方案</p>
+<p>方法一：既然是因为<li>换行导致的，那就可以将<li>代码全部写在一排</p>
+<p>方法二：我们为了代码美观以及方便修改，很多时候我们不可能将<li>全部写在一排，那怎么办？既然是空格占一个字符的宽度，那我们索性就将<ul>内的字符尺寸直接设为0</p>
+<h2 id="描述一下你对渐进增强和优雅降级的理解"><a href="#描述一下你对渐进增强和优雅降级的理解" class="headerlink" title="描述一下你对渐进增强和优雅降级的理解"></a>描述一下你对渐进增强和优雅降级的理解</h2><p>优雅降级和渐进增强的理解：</p>
+<ul>
+<li>渐进增强 ：针对低版本浏览器进行构建页面，保证最基本的功能，然后再针对高级浏览器进行效果、交互等改进和追加功能达到更好的用户体验。</li>
+<li>优雅降级 ：一开始就构建完整的功能，然后再针对低版本浏览器进行兼容。</li>
+</ul>
+<p>区别：</p>
+<p>优雅降级是从复杂的现状开始，并试图减少用户体验的供给，而渐进增强则是从一个非常基础的 ，能够起作用的版本开始，并不断扩充，以适应未来环境的需要。降级(功能衰减)意味着往回看; 而渐进增强则意味着朝前看，同时保证其根基处于安全地带。</p>
+<h2 id="解释css-sprites，如何使用"><a href="#解释css-sprites，如何使用" class="headerlink" title="解释css sprites，如何使用"></a>解释css sprites，如何使用</h2><p>css精灵又称雪碧图<br>将多个小图片整个到一张大的背景图上，再利用repeat、position进行精准操作<br>雪碧图减轻了服务器的请求次数，提高了页面性能</p>
+<h2 id="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"><a href="#针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？" class="headerlink" title="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"></a>针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta name &#x3D; &quot;viewport&quot; content &#x3D; &quot;width&#x3D;device-width,initial-scale &#x3D; 1.0,maximum-scale &#x3D; 1.0&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="简述几个css-hack"><a href="#简述几个css-hack" class="headerlink" title="简述几个css hack"></a>简述几个css hack</h2><p>(1) 图片间隙<br>　　在div中插入图片，图片会将div下方撑大3px。hack1：将<div>与<img>写在同一行。hack2：给<img>添加display：block；<br>　　dt li 中的图片间隙。hack：给<img>添加display：block；<br>(2) 默认高度，IE6以下版本中，部分块元素，拥有默认高度（低于18px）<br>　　hack1：给元素添加：font-size：0；<br>　　hack2：声明：overflow：hidden；<br>　　表单行高不一致<br>　　hack1：给表单添加声明：float：left；height： ；border： 0；<br>　　鼠标指针<br>　　hack：若统一某一元素鼠标指针为手型：cursor：pointer；<br>　　当li内的a转化块元素时，给a设置float，IE里面会出现阶梯状<br>　　hack1：给a加display：inline-block；<br>　　hack2：给li加float：left；</p>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/05/11/html/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSS/" rel="tag">CSS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML/" rel="tag">HTML</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/05/16/javascript/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            javascript基础
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/04/09/mianshi03/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Web前端常见面试题——性能优化与安全篇</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "l38Ubkh54FW4ofQeggqmrQWd-gzGzoHsz",
+    app_key: "uCmoewcxSurxM1xgHGIx31a6",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="雪凝姐姐"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpeg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpeg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+
+<script src="/js/clickLove.js"></script>
+
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=446512502&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

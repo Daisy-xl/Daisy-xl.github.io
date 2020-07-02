@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    javascript基础 |  雪凝姐姐
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="雪凝姐姐" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-javascript"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  javascript基础
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/05/16/javascript/" class="article-date">
+  <time datetime="2020-05-15T16:00:00.000Z" itemprop="datePublished">2020-05-16</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Javascript/">Javascript</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">5.4k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">25 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>关于Javascript的那些事，日常温习~<br>原创文章，转载请注明出处。</p>
+<a id="more"></a>
+
+<h3 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h3><ul>
+<li>解释性语言，比变异性语言稍慢，但是优点是可以跨平台</li>
+<li>单线程，轮短时间片，把每一个任务分解成小的时间片段，送到队列中执行</li>
+<li>ES标准</li>
+<li>三大部分 ES BOM DOM</li>
+</ul>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ul>
+<li>声明</li>
+<li>赋值</li>
+</ul>
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><ul>
+<li>原始值 stack栈 先进后出，栈内存之间赋值是copy<br>Number, Boolean, String, undefined, null</li>
+<li>引用值 heap堆 在栈内存中放出堆内存的地址，赋值后copy前一个值，即对应的堆的地址，操作同一个引用会有连锁反应。新赋值会打开关联<br>array  [], object, function, …data, RegExp</li>
+</ul>
+<h3 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h3><ul>
+<li>比较运算符</li>
+<li>逻辑运算符</li>
+</ul>
+<h3 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h3><h3 id="循环语句"><a href="#循环语句" class="headerlink" title="循环语句"></a>循环语句</h3><p>forEach，for in， for of区别</p>
+<ul>
+<li>forEach<br>forEach专门用来循环数组，可以直接取到元素，同时也可以取到index值<br>问题：存在局限性，不能continue跳过或者break终止循环，没有返回值，不能return</li>
+<li>for…in<br>一般循环遍历的都是对象的属性，遍历对象本身的所有可枚举属性，以及对象从其构造函数原型中继承的属性<br>问题：key会变成字符串类型</li>
+<li>for of<br>for of是ES6新引入的特性。修复了ES5中for in的不足<br>允许遍历 Arrays（数组）、Strings（字符串）、Maps（映射）、Sets（集合）等可迭代的数据结构<br>for of 支持return, 只能遍历数组不能遍历对象（遍历对象需要通过和Object.keys()搭配使用）</li>
+</ul>
+<h3 id="typeof类型"><a href="#typeof类型" class="headerlink" title="typeof类型"></a>typeof类型</h3><p>typeof()  未定义的值不包错，返回字符串型的’undefined’</p>
+<ul>
+<li>number</li>
+<li>string</li>
+<li>object:  对象 数组 null（历史遗留问题，以前浏览器认为Null表示空对象）</li>
+<li>undefined</li>
+<li>function</li>
+</ul>
+<h4 id="显式类型转换"><a href="#显式类型转换" class="headerlink" title="显式类型转换"></a>显式类型转换</h4><ul>
+<li>Number()类型转换为数字，undefined转为NaN，123AB转为NaN，即使转换为NaN类型也是number</li>
+<li>parseInt （目标，目标进制）舍小数位转换为整数，Null，undefined，a，都是NaN，123abc转为122，目标进制转十进制</li>
+<li>parseFloat </li>
+<li>String() 所有东西都转为字符串</li>
+<li>Boolean()</li>
+<li>a.toString(目标进制) undefined和Null不能用，十进制转目标进制</li>
+</ul>
+<h4 id="隐式类型转换"><a href="#隐式类型转换" class="headerlink" title="隐式类型转换"></a>隐式类型转换</h4><ul>
+<li>isNaN() 先Number再和NAN比较</li>
+<li>++  –     - 转数字，Number</li>
+<li>+两侧有一个string则调用string</li>
+<li>+-/* Number</li>
+<li>&lt;&gt; 数字优先.都是字符串转为ascall码</li>
+<li>== != </li>
+<li>undefined == null != 0</li>
+<li>NaN != NaN</li>
+</ul>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;  函数声明</span><br><span class="line">function test() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 函数表达式</span><br><span class="line">&#x2F;&#x2F; test打印出整个函数体</span><br><span class="line">var a &#x3D; function() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; a打印函数体</span><br><span class="line">var b &#x3D; funtion test() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; b打印函数体 test打印报错，函数表达式中的函数名无意义</span><br><span class="line"></span><br><span class="line">a.name &#x2F;&#x2F; a</span><br><span class="line">b.name &#x2F;&#x2F; test</span><br></pre></td></tr></table></figure>
+
+<h3 id="形参、实参"><a href="#形参、实参" class="headerlink" title="形参、实参"></a>形参、实参</h3><p>arguments-函数内的实参列表<br>函数名.length 形参梳数量<br>arguments和形参不是一个值，但是是互相绑定的，改变一个则另一个也改变</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function sum(a, b, c) &#123;</span><br><span class="line">    a &#x3D; 2; </span><br><span class="line">    arguments[0] &#x3D; 3;</span><br><span class="line">    &#x2F;&#x2F; a &#x3D; argument[2] &#x3D;&#x3D;&#x3D;2</span><br><span class="line"></span><br><span class="line">    c &#x3D; 4;</span><br><span class="line">    arguments[2] &#x2F;&#x2F; undefined</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sum(1, 2);</span><br></pre></td></tr></table></figure>
+
+<p>实参列表赋值的时候有几个，arguments就有几个，长度对应才会映射。</p>
+<p>递归的代码是最简单的，但是是效率最低的。（阶乘 菲薄纳西数列）</p>
+<ul>
+<li>找规律</li>
+<li>找出口</li>
+</ul>
+<h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><p>js：单线程，解释性语言</p>
+<ul>
+<li>语法分析，通篇扫描</li>
+<li>预编译</li>
+<li>解释执行</li>
+</ul>
+<p>函数声明整体提升，函数会被提升到逻辑的最前面。</p>
+<p>变量，声明提升，赋值不提升。</p>
+<p>函数和变量重名无法解决。</p>
+<p>未经声明的变量会变成全局变量。<br>全局的任何变量即使声明了，也归window所有。</p>
+<p>window就是全局的域。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var a &#x3D; b &#x3D; 123;</span><br><span class="line">    &#x2F;&#x2F; 先把123赋值给未经声明的b，未经声明的b挂载到全局的window上</span><br><span class="line">    &#x2F;&#x2F; 再声明一个a，把b的值赋给a</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test();</span><br><span class="line"></span><br><span class="line">a &#x2F;&#x2F; undefined</span><br><span class="line">b &#x2F;&#x2F; 123</span><br></pre></td></tr></table></figure>
+
+<p>预编译发生在函数执行的前一刻:</p>
+<ul>
+<li>创建AO对象（执行期上下文）</li>
+<li>找形参和变量声明，将变量和形参名作为AO属性名，值为undefined</li>
+<li>形参和实参统一</li>
+<li>在函数体里面找函数声明，值赋予函数体</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line">AO &#123;</span><br><span class="line">    a: function a () &#123;&#125;</span><br><span class="line">    b: undefined</span><br><span class="line">    d: function d () &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">**&#x2F;</span><br><span class="line"></span><br><span class="line">function fn(a) &#123;</span><br><span class="line">    console.log(a); &#x2F;&#x2F; function</span><br><span class="line">    </span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line"></span><br><span class="line">    console.log(a); &#x2F;&#x2F; 123</span><br><span class="line">    </span><br><span class="line">    function a () &#123;&#125; &#x2F;&#x2F; 函数声明已经提升了，不再执行</span><br><span class="line"></span><br><span class="line">    console.log(a); &#x2F;&#x2F; 123</span><br><span class="line"></span><br><span class="line">    var b &#x3D; function() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    console.log(b); &#x2F;&#x2F; function</span><br><span class="line"></span><br><span class="line">    function d () &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn(1);</span><br></pre></td></tr></table></figure>
+
+<p>全局预编译</p>
+<ul>
+<li>生成一个GO对象 === window</li>
+</ul>
+<h3 id="作用域，作用域链"><a href="#作用域，作用域链" class="headerlink" title="作用域，作用域链"></a>作用域，作用域链</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test.name</span><br><span class="line">test.[[scope]] &#x2F;&#x2F; 隐式属性，仅供引擎存取，就是作用域，存储的是执行期上下文的集合</span><br></pre></td></tr></table></figure>
+
+<p>作用域链：[[scope]]中所存储的执行期上下文对象的集合，这个集合呈链式链接，这种链式链接即作用域链。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function a() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">var glob &#x3D; 100;</span><br><span class="line">a();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; a defined a.[[scope]] --&gt; 0: GO &#123; &#125;</span><br><span class="line">&#x2F;&#x2F; a doing   a.[[scope]] --&gt; 0: AO &#123; &#125; 1: GO &#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>从函数作用域链的顶端依次向下查找。</p>
+<h3 id="立即执行函数，闭包"><a href="#立即执行函数，闭包" class="headerlink" title="立即执行函数，闭包"></a>立即执行函数，闭包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function a() &#123;</span><br><span class="line">    var num &#x3D; 100;</span><br><span class="line">    funttion b() &#123;</span><br><span class="line">        num++;</span><br><span class="line">        console.log(num);</span><br><span class="line">    &#125;</span><br><span class="line">    return b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var demo &#x3D; a(); &#x2F;&#x2F; 执行完a销毁了执行上下文，b保留着aAO</span><br><span class="line"></span><br><span class="line">demo(); &#x2F;&#x2F; 101</span><br><span class="line">demo(); &#x2F;&#x2F; 102</span><br></pre></td></tr></table></figure>
+
+<p>a产生了GO和aAO</p>
+<p>b拿到a的成果AO</p>
+<p>b每次执行都在基础上执行新的bAO，但是a的AO是不丢掉的，所以num在aAO上叠加。</p>
+<p>闭包：党内部函数被保存到外部时，将会生成闭包。闭包会导致原有作用域链不释放，造成内存泄漏。</p>
+<ul>
+<li><p>实现共有变量：<br>利用闭包实现计数器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function add() &#123;</span><br><span class="line">    var count &#x3D; 0;</span><br><span class="line">    function demo () &#123;</span><br><span class="line">        count ++;</span><br><span class="line">        console.log(count);</span><br><span class="line">    &#125;</span><br><span class="line">    return demo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var counter &#x3D; add();</span><br><span class="line">counter(); &#x2F;&#x2F; 1</span><br><span class="line">counter(); &#x2F;&#x2F; 2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以做缓存</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">   var num &#x3D; 100;</span><br><span class="line">   function a() &#123;</span><br><span class="line">       num ++;</span><br><span class="line">   &#125;</span><br><span class="line">   function b() &#123;</span><br><span class="line">       num --;</span><br><span class="line">   &#125;</span><br><span class="line">   return [a, b]; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line">myArr[0](); &#x2F;&#x2F; 101</span><br><span class="line">myArr[1](); &#x2F;&#x2F; 100</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> function eater() &#123;</span><br><span class="line">    var food &#x3D; &#39;&#39;</span><br><span class="line"></span><br><span class="line">    var obj &#x3D; &#123;</span><br><span class="line">        eat: function() &#123;</span><br><span class="line">            food &#x3D; &#39;&#39;; </span><br><span class="line">        &#125;,</span><br><span class="line">        push: function(myFood) &#123;</span><br><span class="line">            food &#x3D; myFood;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return obj</span><br><span class="line">&#125;;</span><br><span class="line">var eater1 &#x3D; eater();</span><br><span class="line">eater1.push(&#39;banan&#39;);</span><br><span class="line">eater1.eat();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现私有化</p>
+</li>
+<li><p>模块化开发</p>
+</li>
+</ul>
+<h3 id="立即执行函数"><a href="#立即执行函数" class="headerlink" title="立即执行函数"></a>立即执行函数</h3><p>针对初始化功能的函数，执行后立即释放空间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var num &#x3D; (function(形参) &#123;</span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line">    var b &#x3D; 234;</span><br><span class="line">    return a;</span><br><span class="line">&#125;(实参))</span><br><span class="line"></span><br><span class="line">abc() &#x2F;&#x2F; 报错</span><br></pre></td></tr></table></figure>
+<p>能被执行符号执行的表达式，忽略表达式的名字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+ function test() &#123;</span><br><span class="line">   console.log(&#39;a&#39;);</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">test(); &#x2F;&#x2F; 报错</span><br></pre></td></tr></table></figure>
+
+<h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var arr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">        arr[i] &#x3D; function() &#123;</span><br><span class="line">            doocument.write(i + &#39;&#39;);</span><br><span class="line">        &#125; &#x2F;&#x2F; 赋值语句，函数体内先不执行，只是一个函数引用</span><br><span class="line">    &#125;</span><br><span class="line">    return arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line"></span><br><span class="line">for(var j &#x3D; 0; j &lt; 10; j++) &#123;</span><br><span class="line">    myArr[j](); &#x2F;&#x2F; 执行的时候才执行上面的function，这个时候i已经变成了10，并被保存到外部</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打印结果 10个10</p>
+<p>解决方案：</p>
+<ul>
+<li>立即执行函数（无法控制执行时机）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr[i] &#x3D; function() &#123;</span><br><span class="line">            doocument.write(i + &#39;&#39;);</span><br><span class="line">        &#125;()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>闭包+ 立即执行函数解决</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var arr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">        (function(j) &#123;</span><br><span class="line">            arr[j] &#x3D; function() &#123;</span><br><span class="line">                document.write(j + &#39;&#39;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;(i)) &#x2F;&#x2F; 会形成10个函数，i立即变现</span><br><span class="line">    &#125;</span><br><span class="line">    return arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line"></span><br><span class="line">for(var j &#x3D; 0; j &lt; 10; j++) &#123;</span><br><span class="line">    myArr[j](); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>闭包</strong>：两个或多个函数互相嵌套，把内部的函数保存到外面，导致原有作用域链不被释放，造成内存泄漏。</p>
+<h4 id="eg-给一个li列表添加onclick方法"><a href="#eg-给一个li列表添加onclick方法" class="headerlink" title="eg: 给一个li列表添加onclick方法"></a>eg: 给一个li列表添加onclick方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">&lt;&#x2F;ul&gt;</span><br><span class="line"></span><br><span class="line">function test() &#123;</span><br><span class="line">    var liCollection &#x3D; document.getElementByTagName(&#39;li&#39;);</span><br><span class="line">    for(var i&#x3D;0; i&lt; liCollection.length; i++) &#123;</span><br><span class="line">        &#x2F;*liCollection[i].onclick &#x3D; function() &#123;</span><br><span class="line">            console.log(i + &#39;&#39;); &#x2F;&#x2F; 点击会打印全部是4</span><br><span class="line">        &#125;*&#x2F;</span><br><span class="line">        (function(j) &#123;</span><br><span class="line">            liCollection[j].onclick &#x3D; function() &#123;</span><br><span class="line">            </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;(i))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test();</span><br></pre></td></tr></table></figure>
+
+<h3 id="对象，包装类"><a href="#对象，包装类" class="headerlink" title="对象，包装类"></a>对象，包装类</h3><h4 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h4><p>属性和方法的集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;daisy&#39;,</span><br><span class="line">    age: 27,</span><br><span class="line">    health: 100,</span><br><span class="line">    drink: function() &#123;</span><br><span class="line">        this.health ++;</span><br><span class="line">        &#x2F;&#x2F; obj.health ++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="增-查，删，改"><a href="#增-查，删，改" class="headerlink" title="增,查，删，改"></a>增,查，删，改</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">obj.wife &#x3D; &#39;ooo&#39;; &#x2F;&#x2F; 增</span><br><span class="line"> </span><br><span class="line">obj.name; &#x2F;&#x2F; 查</span><br><span class="line"></span><br><span class="line">obj.age &#x3D; 28; &#x2F;&#x2F; 改</span><br><span class="line"></span><br><span class="line">delete obj.name; &#x2F;&#x2F; 删</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建方法"><a href="#创建方法" class="headerlink" title="创建方法"></a>创建方法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var obj &#x3D; &#123;&#125; &#x2F;&#x2F; 对象字面量</span><br><span class="line"></span><br><span class="line">var obj &#x3D; new Object(); &#x2F;&#x2F;系统自带的构造函数</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 自定义构造函数</span><br><span class="line">function Person() &#123;</span><br><span class="line">    this.name &#x3D; &#39;sss&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ver person &#x3D; new Person(); &#x2F;&#x2F; 函数通过new</span><br></pre></td></tr></table></figure>
+
+<p>由于函数和构造函数很相似，因此构造函数命名规则是大驼峰式。</p>
+<h4 id="构造函数内部原理"><a href="#构造函数内部原理" class="headerlink" title="构造函数内部原理"></a>构造函数内部原理</h4><ul>
+<li>new操作符调用函数</li>
+<li>new会在函数体内部最顶端会隐式生成一个var this = {} 空对象</li>
+<li>new会在函数末尾隐式加一个return this</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function Person(name, height) &#123;</span><br><span class="line">    &#x2F;&#x2F; var this &#x3D; &#123;&#125;;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.height &#x3D; height;</span><br><span class="line">    this.say &#x3D; function() &#123;</span><br><span class="line">        console.log(this.say);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">console.log(new Person(&#39;xiaowang&#39;, 160).name)</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果显示的return一个对象，则new获取的是显示返回的object，但是如果显示返回一个原始值，则会返回this。</strong></p>
+<h2 id="包装类"><a href="#包装类" class="headerlink" title="包装类"></a>包装类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var num &#x3D; 123;</span><br><span class="line">var num1 &#x3D; new Number(123); &#x2F;&#x2F; 变成对象</span><br><span class="line">num1 * 2 &#x2F;&#x2F; 246 运算后变回原始值 </span><br><span class="line"></span><br><span class="line">new String(&#39;abc&#39;) </span><br><span class="line">new Boolean(&#39;true&#39;)</span><br></pre></td></tr></table></figure>
+
+<p>原始值没有属性和方法，对象可以有。</p>
+<p>原始值没有属性和方法，但是添加属性会先创建一个对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 包装类</span><br><span class="line">var num &#x3D; 4;</span><br><span class="line">num.len &#x3D; 3;</span><br><span class="line">&#x2F;&#x2F;new Number(4).len &#x3D; 3; delete</span><br><span class="line">console.log(num.len); &#x2F;&#x2F; 再new  Number(4).len 但是是新的，返回undefined</span><br><span class="line"></span><br><span class="line">var str &#x3D; &#39;abcd&#39;;</span><br><span class="line">str.length &#x3D; 2 ;</span><br><span class="line">&#x2F;&#x2F; new String(&#39;abcd&#39;).length; delete</span><br><span class="line">console.log(str.length); &#x2F;&#x2F; 4</span><br></pre></td></tr></table></figure>
+
+<h3 id="原型，原型链"><a href="#原型，原型链" class="headerlink" title="原型，原型链"></a>原型，原型链</h3><p>原型是function对象的一个属性，定义了构造函数制造出的对象的公共祖先，通过该构造函数产生的对象，可以继承原型的属性和方法，原型也是对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; Person.prototype--原型 &#x3D; &#123;&#125; 是祖先</span><br><span class="line">Person.prototype.name &#x3D; &#39;hehe&#39;;</span><br><span class="line">Person.prototype.say &#x3D; function() &#123;</span><br><span class="line">    console.log(&#39;hehe&#39;)</span><br><span class="line">&#125;</span><br><span class="line">function Person() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line">person.name &#x2F;&#x2F; &#39;hehe&#39;</span><br><span class="line">person.say(); &#x2F;&#x2F; &#39;hehe&#39;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用原型的嗯对象和方法可以提取对象的共有属性</li>
+<li>delete可以删除对象自身的属性，但是不能删除原型上的属性</li>
+<li>查看原型–》隐式属性<em>proto</em></li>
+<li>查看对象的构造函数–&gt;constructor 隐式，可修改</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Person.prototype.name &#x3D; &#39;abc&#39;</span><br><span class="line"></span><br><span class="line">function Person() &#123;</span><br><span class="line">    &#x2F;&#x2F;var this &#x3D; &#123; _proto_ &#x3D; Person.prototype&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;sunny&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line"></span><br><span class="line">Person.prototype.name &#x3D; &#39;cherry&#39; &#x2F;&#x2F; 可以修改person的name</span><br><span class="line">Person.prototype &#x3D; &#123;</span><br><span class="line">    name : &#39;cherry&#39;</span><br><span class="line">&#125; &#x2F;&#x2F; 不能修改name 修改了原型，_proto_指向原空间</span><br></pre></td></tr></table></figure>
+
+<h4 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">Grand.prototype.lastName &#x3D; &#39;Gao&#39;;</span><br><span class="line">function Grand() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var grand &#x3D; new Grand();</span><br><span class="line"></span><br><span class="line">Father.prototype &#x3D; grand;</span><br><span class="line">function Father() &#123;</span><br><span class="line">    this.name &#x3D; &#39;aa&#39;;</span><br><span class="line">    this.fortune &#x3D; &#123;</span><br><span class="line">        car1: &#39;visa&#39;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var father &#x3D; new Father();</span><br><span class="line"></span><br><span class="line">Son.prototype &#x3D; father;</span><br><span class="line">function Son() &#123;</span><br><span class="line">    this.hobbit &#x3D; &#39;music&#39;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var son &#x3D; new Son();</span><br><span class="line"></span><br><span class="line">son.lastName &#x2F;&#x2F; Gao</span><br><span class="line">son.toString &#x2F;&#x2F; 所有原型的最终原型是object.prototype</span><br><span class="line"></span><br><span class="line">son.fortune.car1 &#x3D; &#39;jsk&#39;; &#x2F;&#x2F; 引用值，调用修改</span><br></pre></td></tr></table></figure>
+
+<p>后代无法增删改查父代的属性。</p>
+<p>例外：引用值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; a.sayName() sayName里面的this指向时，谁调用的这个方法,this指向谁</span><br><span class="line"></span><br><span class="line">Person.prototype &#x3D; &#123;</span><br><span class="line">    name:  &#39;a&#39;,</span><br><span class="line">    sayName: function() &#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Person() &#123;</span><br><span class="line">    this.name &#x3D; &#39;b&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line"></span><br><span class="line">person.sayName() &#x2F;&#x2F; b</span><br><span class="line">person.prototype.sayName(); &#x2F;&#x2F; a</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>绝大多数的对象最终都会继承自Object,prototype  object.create(null) 没有<em>proto</em></li>
+<li>object.create(原型)</li>
+<li>undefined null没有原型，没有toString</li>
+</ul>
+<h4 id="插播：浮点数计算精度偏差怎么处理？"><a href="#插播：浮点数计算精度偏差怎么处理？" class="headerlink" title="插播：浮点数计算精度偏差怎么处理？"></a>插播：浮点数计算精度偏差怎么处理？</h4><p>*100后取整。</p>
+<p>原因：浮点数转换为二进制计算，例如0.1会转换为无限循环的二进制，计算机会自动截断为52位</p>
+<p>解决方案：<br>计算出使浮点数都变成整数的最小整数倍，先放大进行计算，结果再缩小。</p>
+<p>面试有时候会问这个问题，真的是闲的蛋疼，为什么前端要进行数据计算呢？可靠吗？</p>
+<p><span id="callapply"></span></p>
+<h3 id="call-apply（必问题）"><a href="#call-apply（必问题）" class="headerlink" title="call/apply（必问题）"></a>call/apply（必问题）</h3><ul>
+<li>作用：改变this指向</li>
+<li>区别：后面传参形式不同</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function Person(name. age) &#123;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person(&#39;a&#39;, 100);</span><br><span class="line"></span><br><span class="line">var obj &#x3D; &#123;&#125;;</span><br><span class="line"></span><br><span class="line">Person.call() &#x2F;&#x2F; Person</span><br><span class="line">Person.call(obj, &#39;b&#39;, 300);&#x2F;&#x2F; this &#x3D; obj</span><br><span class="line"></span><br><span class="line">obj.name &#x2F;&#x2F; b</span><br></pre></td></tr></table></figure>
+<p>this指向call的第一个参数，其他传参顺次放在call的后面几个参数中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function Person(name, age, sex) &#123;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">    this.sex &#x3D; sex;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Student(name, age, sex, grade, tel) &#123;</span><br><span class="line">    &#x2F;&#x2F; var this &#x3D; &#123;&#125;;</span><br><span class="line">    Person.call(this, name, age, sex);</span><br><span class="line">    Person.apply(this,[name, age, sex]);</span><br><span class="line">    &#x2F;&#x2F; this &#x3D; &#123;name, age, sex&#125; </span><br><span class="line">    this.grade &#x3D; grade;</span><br><span class="line">    this.tel &#x3D; tel;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var student &#x3D; new Student(&#39;a&#39;, 10, &#39;female&#39;, 3, 139);</span><br></pre></td></tr></table></figure>
+
+<p>call要把实参按照形参的个数穿进去<br>apply传的是一个实参列表的数组</p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><ul>
+<li><p>原型链</p>
+<p>过多的继承了无用属性</p>
+</li>
+<li><p>借用构造函数call／apply</p>
+<p>不能继承借用构造函数的原型</p>
+<p>每次构造函数都要多走一个函数</p>
+</li>
+<li><p>共享原型</p>
+<p>不能随便改变自己的原型</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">Father.prototype.lastName &#x3D; &#39;G&#39;;</span><br><span class="line">function Father() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Son() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Son.prototype &#x3D; Father.prototype;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line">问题是，父子互相影响，指向同一个位置</span><br><span class="line">function inherit(Target, Origin) &#123;</span><br><span class="line">    Target.prototype &#x3D; Origin.Prototype;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">inherit(Son, Father);</span><br><span class="line"></span><br><span class="line">var son &#x3D; new Son();</span><br><span class="line">**&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;function F() &#123;&#125;</span><br><span class="line">&#x2F;&#x2F;F.prototype &#x3D; Father.prototype;</span><br><span class="line">&#x2F;&#x2F;Son.prototype &#x3D; new F();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 面试常见问题：你能实现一个继承吗？</span><br><span class="line">&#x2F;&#x2F; 圣杯模式</span><br><span class="line">function inherit(Target, Origin) &#123;</span><br><span class="line">    function F() &#123;&#125;</span><br><span class="line">    F.prototype &#x3D; Origin.prototype;</span><br><span class="line">    Target.prototype &#x3D; new F();</span><br><span class="line">    Target.prototype.constructor &#x3D; Target; &#x2F;&#x2F;解决son._proto_ --&gt; new F()._proto_--&gt;Father.prototype 作用域链紊乱</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 雅虎的解决方案</span><br><span class="line">var inherit &#x3D; (function() &#123;</span><br><span class="line">    var F &#x3D; function() &#123;&#125; &#x2F;&#x2F; 私有化变量</span><br><span class="line">    return function (Target, Origin) &#123;</span><br><span class="line">        F.prototype &#x3D; Origin.prototype;</span><br><span class="line">        Target.prototype &#x3D; new F();</span><br><span class="line">        Target.prototype.constructor &#x3D; Target;</span><br><span class="line">        Target.prototype.uber &#x3D; Father.prototype;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 闭包的第三点作用，实现封装，属性私有化</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure>
+
+<h4 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h4><p>管理变量，防止全局污染，适用于模块开发。</p>
+<h4 id="实现链式调用"><a href="#实现链式调用" class="headerlink" title="实现链式调用"></a>实现链式调用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var a &#x3D; &#123;</span><br><span class="line">    smock: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;,</span><br><span class="line">    drink: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;,</span><br><span class="line">    eat: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">a.smock().drink();</span><br></pre></td></tr></table></figure>
+
+<h4 id="属性名"><a href="#属性名" class="headerlink" title="属性名"></a>属性名</h4><p>obj.name ===== obj[‘name’]</p>
+<h4 id="对象遍历"><a href="#对象遍历" class="headerlink" title="对象遍历"></a>对象遍历</h4><p>for…in… 遍历属性的key值</p>
+<ul>
+<li>hasOwnProperty()</li>
+<li>in</li>
+<li>A instanceof B A对象是不是B构造函数构造出来的，看A的原型链上有没有B的原型</li>
+</ul>
+<p>应用：</p>
+<ul>
+<li>typeOf判断时数组和对象返回的都是’object’</li>
+<li>可以用xx instanceof Array换原来的this,深度拷贝的时候可以用来区分数组和对象</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;123&#39;,</span><br><span class="line">    age: &#39;123&#39;,</span><br><span class="line">    sex: &#39;male&#39;,</span><br><span class="line">    _proto_: &#123;</span><br><span class="line">        lastname: &#39;deng&#39;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for(var prop in obj) &#123;</span><br><span class="line">    console.log(obj.prop); &#x2F;&#x2F; undefined  相当于 obj[&#39;prop&#39;]</span><br><span class="line">    console.log(obj[prop]); &#x2F;&#x2F; 会遍历出原型上的属性，系统自带的不会打印</span><br><span class="line"></span><br><span class="line">    if(obj.hasOwnProperty(prop)) &#123;</span><br><span class="line">        console.log(obj[prop]); &#x2F;&#x2F; 不会遍历出原型上的属性</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[] instanceof Array &#x2F;&#x2F;true</span><br><span class="line">[] instanceof Object &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+
+<h2 id="this"><a href="#this" class="headerlink" title="this"></a>this</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var x &#x3D; 1, y &#x3D; z &#x3D; 0;</span><br><span class="line">function add(n) &#123;</span><br><span class="line">    return n &#x3D; n + 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">y &#x3D; add(x); &#x2F;&#x2F; 4</span><br><span class="line"></span><br><span class="line">function add(n) &#123;</span><br><span class="line">    return n &#x3D; n + 3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">z &#x3D; add(x); &#x2F;&#x2F; 4</span><br></pre></td></tr></table></figure>
+<p>预编译，后一个同名函数体会覆盖前面函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">function foo(x) &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">    return x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(1,2,3,4,5) &#x2F;&#x2F; 打印1,2,3,4,5</span><br><span class="line"></span><br><span class="line">function foo(x) &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">    return x;</span><br><span class="line">&#125;(1,2,3,4,5) &#x2F;&#x2F; undefined</span><br><span class="line"></span><br><span class="line">(function foo(x) &#123;</span><br><span class="line">    console.log(arguments)</span><br><span class="line">    reutrn x;</span><br><span class="line">&#125;)(1,2,3,4,5) &#x2F;&#x2F; 1,2,3,4,5</span><br><span class="line"></span><br><span class="line">fucntion foo() &#123; </span><br><span class="line">    bar.apply(null, arguments);</span><br><span class="line">&#125;</span><br><span class="line">function bar() &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">&#125;</span><br><span class="line">foo(1,2,3,4,5) &#x2F;&#x2F; 1,2,3,4,5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#125; &#x3D;&#x3D; &#123;&#125; &#x2F;&#x2F; false</span><br><span class="line"></span><br><span class="line">isNaN(&#39;123&#39;) &#x2F;&#x2F; NaN</span><br></pre></td></tr></table></figure>
+
+<h3 id="this-1"><a href="#this-1" class="headerlink" title="this"></a>this</h3><ul>
+<li>函数预编译过程 this–&gt;window</li>
+<li>全局作用域里 this–&gt;window</li>
+<li><a href="#callapply">call/apply改变函数运行时的this指向</a></li>
+<li>obj.func()；func()里面的this指向obj</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">fucntion test(c) &#123;</span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line">    function b() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">AO &#123;</span><br><span class="line">    arguments: [1],</span><br><span class="line">    this: window,</span><br><span class="line">    c: 1,</span><br><span class="line">    a: undefined,</span><br><span class="line">    b: function() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test(1)</span><br><span class="line"></span><br><span class="line">new test(); &#x2F;&#x2F; var this &#x3D; Object.create(test.prototype)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">var name  &#x3D; &#39;222&#39;</span><br><span class="line"></span><br><span class="line">var a &#x3D; &#123;</span><br><span class="line">    name : &#39;111&#39;,</span><br><span class="line">    say: function() &#123;</span><br><span class="line">        console.log(this.name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">var fun &#x3D; a.say; &#x2F;&#x2F; function函数引用</span><br><span class="line"></span><br><span class="line">fun(); &#x2F;&#x2F; 222，全局范围内执行 this指向window</span><br><span class="line"></span><br><span class="line">a.say(); &#x2F;&#x2F; 111， this指向a</span><br><span class="line"></span><br><span class="line">var b &#x3D; &#123;</span><br><span class="line">    name: &#39;333&#39;,</span><br><span class="line">    say: function(fun) &#123;</span><br><span class="line">        fun(); &#x2F;&#x2F; fun（）执行指向预编译，不是this.fun()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">b.say(a.say); &#x2F;&#x2F; 222， fun（）执行指向预编译</span><br><span class="line">b.say &#x3D; a.say;</span><br><span class="line">b.say(); &#x2F;&#x2F; 333</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var foo &#x3D; 123;</span><br><span class="line">function print() &#123;</span><br><span class="line">    this.foo &#x3D; 234;</span><br><span class="line">    console.log(foo)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print(); &#x2F;&#x2F; 234</span><br><span class="line">new print(); &#x2F;&#x2F; 123</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">var a &#x3D; 5;</span><br><span class="line">function test() &#123;</span><br><span class="line">    a &#x3D; 0;</span><br><span class="line">    alert(a);</span><br><span class="line">    alert(this.a);</span><br><span class="line">    var a;</span><br><span class="line">    alert(a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test(); &#x2F;&#x2F; 0 5 0</span><br><span class="line"></span><br><span class="line">new test(); &#x2F;&#x2F; 0 undefined 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var b &#x3D; &#123;a: &#39;002&#39;&#125;;</span><br><span class="line">function print() &#123;</span><br><span class="line">    bar.a &#x3D; &#39;a&#39;;</span><br><span class="line">    Object.prototype.b &#x3D; &#39;b&#39;;</span><br><span class="line">    return function inner() &#123;</span><br><span class="line">        console.log(bar.a); &#x2F;&#x2F; a</span><br><span class="line">        console.log(bar.b); &#x2F;&#x2F; b</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print()();</span><br></pre></td></tr></table></figure>
+
+<h4 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h4><ul>
+<li>arguments.callee 指向函数的引用</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 立即执行函数无法递归调用</span><br><span class="line">var num &#x3D; (fucntion(n)&#123;</span><br><span class="line">    if(n &#x3D;&#x3D; 1) &#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return n &#x3D; n * arguments.callee(n-1);</span><br><span class="line">&#125;(100))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>func.caller 谁调用的，没什么用</li>
+</ul>
+<h2 id="克隆"><a href="#克隆" class="headerlink" title="克隆"></a>克隆</h2><ul>
+<li>原始值克隆（浅拷贝）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;abc&#39;,</span><br><span class="line">    age: 123,</span><br><span class="line">    sex: &#39;female&#39;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">var obj1 &#x3D; &#123;&#125;;</span><br><span class="line"></span><br><span class="line">function clone(origin, target) &#123;</span><br><span class="line">    var target &#x3D; target || &#123;&#125;;</span><br><span class="line">    for(var prop in origin) &#123;</span><br><span class="line">        target[prop] &#x3D; origin[prop];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return target;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">clone(obj, obj1);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>深拷贝</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">function deepClone(origin, target) &#123;</span><br><span class="line">    var target &#x3D; target || &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    var toStr &#x3D; Object.prototype.toString;</span><br><span class="line"></span><br><span class="line">    arrStr &#x3D; &quot;[object Array]&quot;;</span><br><span class="line"></span><br><span class="line">    for(var prop in origin) &#123;</span><br><span class="line">        if(origin.hasOwnProperty(prop)) &#123;</span><br><span class="line">            if (typeof(origin[prop]) &#x3D;&#x3D; &#39;object&#39;) &#123;</span><br><span class="line">                </span><br><span class="line">                if(toStr.call(origin[prop] &#x3D;&#x3D; arrStr) &#123;</span><br><span class="line">                    target[prop] &#x3D; [];</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    target[prop] &#x3D; &#123;&#125;;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                deepClone(origin[prop], target[prop]);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                target[prop] &#x3D; origin[prop];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Object.prototype.toString.call(undefined);</span><br><span class="line">&quot;[object Undefined]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(null);</span><br><span class="line">&quot;[object Null]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(&#39;&#39;);</span><br><span class="line">&quot;[object String]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(&#123;&#125;);</span><br><span class="line">&quot;[object Object]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(function()&#123;&#125;);</span><br><span class="line">&quot;[object Function]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(123);</span><br><span class="line">&quot;[object Number]&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组和数组方法"><a href="#数组和数组方法" class="headerlink" title="数组和数组方法"></a>数组和数组方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var arr &#x3D; [];</span><br><span class="line">var arr1 &#x3D; new Array();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>改变原数组</li>
+</ul>
+<p>push pop shift unshift sort reverse</p>
+<p>splice</p>
+<ul>
+<li>不改变原数组</li>
+</ul>
+<p>concat join</p>
+<p>split  toString  slice</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 实现一个push</span><br><span class="line">var arr &#x3D; [1, 2]；</span><br><span class="line">Array.prototype.push &#x3D; function() &#123;</span><br><span class="line">    for(var i &#x3D; 0; i&lt; arguments.length; i++) &#123;</span><br><span class="line">        this[this.length] &#x3D; arguments[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return this.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 实现一个pop</span><br><span class="line">Array.prototype.pop &#x3D; function() &#123;</span><br><span class="line">    this.length &#x3D; this.length - 1;</span><br><span class="line"></span><br><span class="line">    return this.length</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>shift()方法：移除数组中的第一项并返回该项</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Array.prototype.shift &#x3D; function() &#123;</span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    var len &#x3D; this. length;</span><br><span class="line">    </span><br><span class="line">    if (len &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for(var i&#x3D;1; i &lt; len; i++) &#123;</span><br><span class="line">        newArr[i-1] &#x3D; this[i];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var value &#x3D; this[0];</span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    </span><br><span class="line">    for(var i &#x3D; 0; i &lt; len-1; i++) &#123;</span><br><span class="line">        this[i] &#x3D; newArr[i];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>unshift()方法：在数组的前端添加项</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Array.prototype.unshift &#x3D; function() &#123;</span><br><span class="line">    var len &#x3D; this.length;</span><br><span class="line">    if (len &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; arguemnts.length; i++) &#123;</span><br><span class="line">        newArr[i] &#x3D; arguments[i];</span><br><span class="line">    &#125;</span><br><span class="line">    for(var j &#x3D; 0; j &lt; len; j++) &#123;</span><br><span class="line">        newArr[arguments.length + j] &#x3D; this.[j];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    for(var k &#x3D; 0; k &lt; newArr.length; k++) &#123;</span><br><span class="line">        this[k] &#x3D; newArr[k];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>reverse() 数组逆转顺序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Array.prototype.reverse &#x3D; function() &#123;</span><br><span class="line">    var len &#x3D; this.length;</span><br><span class="line">    </span><br><span class="line">    if(len &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; len; i++) &#123;</span><br><span class="line">        newArr[i] &#x3D; this[len-i];</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对像，原始数组不会改变。</p>
+</li>
+<li><p>splice()方法通过删除现有元素和/或添加新元素来更改一个数组的内容。</p>
+</li>
+</ul>
+<p>区别：</p>
+<p>splice(截取开始位置，截取长度，插入数据) 方法会直接对数组进行修改。</p>
+<p>slice()不对数组进行修改，原数组不会改变。</p>
+<p>splice() 返回值为被操作的值。</p>
+<p>slice()以新的字符串返回被提取的部分。</p>
+<ul>
+<li>sort() 无序数组排序，按ascll排序</li>
+</ul>
+<p>可通过function来自定义<br>1.必须传两个形参<br>2.规则是看返回值，返回负数，前面的数放在前面，返回正数，后面的数在前，为零不动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">array.sort(function(a, b) &#123;</span><br><span class="line">  return b - a; &#x2F;&#x2F;正数，b&gt;a，b在前，则是倒序排序</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 有序数组，乱序</span><br><span class="line">array.sort(function)</span><br></pre></td></tr></table></figure>
+
+<h3 id="类数组"><a href="#类数组" class="headerlink" title="类数组"></a>类数组</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    &#39;0&#39;: &#39;a&#39;,</span><br><span class="line">    &#39;1&#39;: &#39;b&#39;,</span><br><span class="line">    &#39;2&#39;: &#39;c&#39;,</span><br><span class="line">    &#39;length&#39;: 3,</span><br><span class="line">    &#39;push&#39;: Array.prototype.push</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">obj.push(d) &#x2F;&#x2F; 对象插入&#39;3&#39;:&#39;d&#39;，且length变了</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>索引属性</li>
+<li>有length</li>
+<li>最好加上push</li>
+</ul>
+<p>原理：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Array.prototype.push &#x3D; function(target) &#123;</span><br><span class="line">    this[this.length] &#x3D; target;</span><br><span class="line">    length ++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="编程题-数组去重，要求在原型链上编程"><a href="#编程题-数组去重，要求在原型链上编程" class="headerlink" title="编程题-数组去重，要求在原型链上编程"></a>编程题-数组去重，要求在原型链上编程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Array.prototype.unique &#x3D; function() &#123;</span><br><span class="line">    if(this.length &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    var arrMap &#x3D; &#123;&#125;;</span><br><span class="line">    for(var i &#x3D; 0; i &lt; this.length; i++) &#123;</span><br><span class="line">        arrMap[this[i]] &#x3D; i;</span><br><span class="line">    &#125;</span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    let j &#x3D; 0;</span><br><span class="line">    for(var prop in arrMap) &#123;</span><br><span class="line">        this[j] &#x3D; prop;</span><br><span class="line">        j++;</span><br><span class="line">    &#125;</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现精准类型判断"><a href="#实现精准类型判断" class="headerlink" title="实现精准类型判断"></a>实现精准类型判断</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">fucntion type(target) &#123;</span><br><span class="line">    var template &#x3D; &#123;</span><br><span class="line">        &quot;[object Array]&quot;: &#39;array&#39;,</span><br><span class="line">        &quot;[object String]&quot;: &#39;string - object&#39;,</span><br><span class="line">        &quot;[object Boolean]&quot;: &#39;boolean - object&#39;,</span><br><span class="line">        &quot;[object Object]&quot;: &#39;object&#39;,</span><br><span class="line">        &quot;[object Number]&quot;: &#39;number - object&#39;</span><br><span class="line">    &#125;</span><br><span class="line">    if(target &#x3D;&#x3D;&#x3D; null) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if (typeof(target &#x3D;&#x3D;&#x3D; &#39;object&#39;))&#123;</span><br><span class="line">        &#x2F;&#x2F; 数组，对象，包装类</span><br><span class="line">        var toStr &#x3D; Object.prototype.toString.call(target);</span><br><span class="line">        </span><br><span class="line">        return tmplate[toStr];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return typeof(target)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/05/16/javascript/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Javascript/" rel="tag">Javascript</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/05/16/html5/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            HTML5疑难杂症
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/05/11/html/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">HTML/CSS基础</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "l38Ubkh54FW4ofQeggqmrQWd-gzGzoHsz",
+    app_key: "uCmoewcxSurxM1xgHGIx31a6",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        Copyrights &copy;
+        2020
+        <i class="ri-heart-fill heart_icon"></i> John Doe
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        
+        Powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+        <span class="division">|</span>
+        Theme - <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="雪凝姐姐"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpeg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpeg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+
+<script src="/js/clickLove.js"></script>
+
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=446512502&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

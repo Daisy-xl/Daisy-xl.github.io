@@ -1,0 +1,1038 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Vue源码学习</title>
+    <url>/2020/06/09/vueSource/</url>
+    <content><![CDATA[<p>VUE源码分析，用于日常记录~</p>
+<a id="more"></a>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>Roolup可以作为纯js库的模块打包器。</p>
+<ul>
+<li>生成npm项目,package.json</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm init -y</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装开发依赖</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm install @babel&#x2F;preset-env @babel&#x2F;core rollup rollup-plugin-babel rollup-plugin-serve cross-env -D</span><br></pre></td></tr></table></figure>
+
+<p>@babel/preset-env @babel/core ES6转换为ES5<br>rollup rolliup-plugin-babel rolliup-plugin-serve  配合rollup和babel使用</p>
+<ul>
+<li>配置rollup.config.js</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">import babel from &#39;rollup-plugin-babel&#39;;</span><br><span class="line">import serve from &#39;rollup-plugin-serve&#39;;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">    input: &#39;.&#x2F;src&#x2F;index.js&#39;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        format: &#39;umd&#39;, &#x2F;&#x2F; 统一模块规范，默认将打包后的结果挂在到window</span><br><span class="line">        file: &#39;dist&#x2F;vue.js&#39;, &#x2F;&#x2F;打包出的vue.js文件</span><br><span class="line">        name: &#39;Vue&#39;, &#x2F;&#x2F;  &#x2F;&#x2F; 打包后的全局变量的名字</span><br><span class="line">        sourcemap: true &#x2F;&#x2F; 可以看到打包后的ES6源码，方便调试，</span><br><span class="line">    &#125;,</span><br><span class="line">    plugins: [</span><br><span class="line">        babel( &#123; &#x2F;&#x2F; 配置babel 解析es6</span><br><span class="line">            exclude: &quot;node_modules&#x2F;**&quot; &#x2F;&#x2F; 移除文件操作</span><br><span class="line">        &#125;),</span><br><span class="line">        serve(&#123; &#x2F;&#x2F; 配置本地服务</span><br><span class="line">            open: true, &#x2F;&#x2F; 默认打开</span><br><span class="line">            openPage: &#39;&#x2F;public&#x2F;index.html&#39;, &#x2F;&#x2F; 本地服务打开的页面</span><br><span class="line">            port: 3000, &#x2F;&#x2F;本地服务端口号</span><br><span class="line">            contentBase: &#39;&#39;</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置.babelrc</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;presets&quot;: [</span><br><span class="line">        &quot;@babel&#x2F;preset-env&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置启动脚本<br>在package.json中配置script</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;build:dev&quot;: &quot;rollup -c&quot;,</span><br><span class="line">&quot;serve&quot;: &quot;cross-env ENV&#x3D;development rollup -c -w&quot;</span><br></pre></td></tr></table></figure>
+
+<p>运行 npm run serve</p>
+<p>自动打开本地端口3000的服务</p>
+<h2 id="VUE显示数据原理"><a href="#VUE显示数据原理" class="headerlink" title="VUE显示数据原理"></a>VUE显示数据原理</h2><h3 id="入口实现"><a href="#入口实现" class="headerlink" title="入口实现"></a>入口实现</h3><p>首先看一下vue是怎么使用数据绑定的呢？</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">const vm &#x3D; new Vue(&#123;</span><br><span class="line">    el: &#39;#app&#39;,</span><br><span class="line">    &#x2F;&#x2F; 数据会被进行观测，响应式数据变化，操作数据可以更新视图</span><br><span class="line">    &#x2F;&#x2F; 对对象的所有属性，使用defineProperty进行重新定义get和set</span><br><span class="line">    data() &#123;</span><br><span class="line">        return &#123;</span><br><span class="line">            msg: &#39;zzz&#39;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，在new的时候需要传入一个对象</p>
+<p>index.js</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function Vue(options) &#123;</span><br><span class="line">    &#x2F;&#x2F; 对传入的结构进行初始化操作</span><br><span class="line">    this._init(options);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default Vue;</span><br></pre></td></tr></table></figure>
+
+<p>这里的_init方法对于页面和组件都需要通用，因此可以挂载到Vue的原型上</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Vue.protptype._init &#x3D; function(options) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以采用模块化开发</p>
+<p>抽象到一个新的init.js中</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export function initMixin(Vue) &#123;</span><br><span class="line">    Vue.prototype._init &#x3D; function() &#123;</span><br><span class="line">        &#x2F;&#x2F; Vue内部$options就是用户传入的所有参数</span><br><span class="line"></span><br><span class="line">        const vm &#x3D; this;</span><br><span class="line">        vm.$options &#x3D; options;&#x2F;&#x2F; 用户传入的参数</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需要在index.js中import这个方法，就可以调用原型上的this._init方法了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 1.import</span><br><span class="line">import &#123; initMixin &#125; from &#39;.&#x2F;init&#39;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2.调用</span><br><span class="line">initMixin(); &#x2F;&#x2F; 给Vue原型上增加init方法</span><br></pre></td></tr></table></figure>
+
+<p>init方法中初始化vue状态</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 初始化状态</span><br><span class="line">initState(vm)</span><br></pre></td></tr></table></figure>
+
+<p>根据不同属性进行初始化操作,initState.js</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export function initState(vm)&#123;</span><br><span class="line">    const opts &#x3D; vm.$options;</span><br><span class="line">    </span><br><span class="line">    opts.props &amp;&amp; initProps(vm);</span><br><span class="line">    </span><br><span class="line">    opts.methods &amp;&amp; initMethod(vm);</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 初始化data</span><br><span class="line">    opts.data &amp;&amp; initData(vm);</span><br><span class="line">    </span><br><span class="line">    opts.computed &amp;&amp; initComputed(vm);</span><br><span class="line">    </span><br><span class="line">    opts.watch &amp;&amp; initWatch(vm);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">function initProps()&#123;&#125;</span><br><span class="line">function initMethod()&#123;&#125;</span><br><span class="line">function initData(vm)&#123;</span><br><span class="line">    console.log(vm.$options.data)</span><br><span class="line">&#125;</span><br><span class="line">function initComputed()&#123;&#125;</span><br><span class="line">function initWatch()&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上，入口基本实现，入口本身就是一个Vue的构造函数。</p>
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><p>initData()</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let data &#x3D; vm.$options.data;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;  如果传入的data是函数，则执行函数，且this需要指向vue实例的this</span><br><span class="line">&#x2F;&#x2F; vm._data就是检测后的数据</span><br><span class="line"></span><br><span class="line">data &#x3D; vm._data &#x3D; typeof(data) &#x3D;&#x3D;&#x3D; &#39;function&#39; ? data.call(vm): data;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 观测数据，实现响应式</span><br><span class="line">observe(data);</span><br></pre></td></tr></table></figure>
+
+<h3 id="新增observer文件夹，内部index-js内部到处导出observer方法实现数据观测和劫持"><a href="#新增observer文件夹，内部index-js内部到处导出observer方法实现数据观测和劫持" class="headerlink" title="新增observer文件夹，内部index.js内部到处导出observer方法实现数据观测和劫持"></a>新增observer文件夹，内部index.js内部到处导出observer方法实现数据观测和劫持</h3><p>observer/index.js</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export function observer(data) &#123;</span><br><span class="line">    &#x2F;&#x2F; 对象就是使用defineProperty实现响应式原理</span><br><span class="line">    &#x2F;&#x2F; 如果这个不是非空对象或数组，就不需要监控</span><br><span class="line">    &#x2F;&#x2F; 此处可以抽到一个工具类方法中再导入使用 util.js中一个isObject方法</span><br><span class="line">    if(typeof data &#x3D;&#x3D;&#x3D; &#39;object&#39; &amp;&amp; data !&#x3D; null)&#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Observer(data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Observer定义为一个class</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> &#x2F;&#x2F; 观测值</span><br><span class="line">constructor(value)&#123;</span><br><span class="line">    this.walk(value);</span><br><span class="line">&#125;</span><br><span class="line">walk(data)&#123; &#x2F;&#x2F; 让对象上的所有属性依次进行观测</span><br><span class="line">    let keys &#x3D; Object.keys(data);</span><br><span class="line">    for(let i &#x3D; 0; i &lt; keys.length; i++)&#123;</span><br><span class="line">        let key &#x3D; keys[i];</span><br><span class="line">        let value &#x3D; data[key];</span><br><span class="line">        defineReactive(data,key,value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时已经可以实现基本数据类型的观测，但是如果类型是引用值，还是观测不到内部的数据变化</p>
+<p>在defineProperty内部先递归调用，set方法内也递归调用observer</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">observer(value);&#x2F;&#x2F; 如果传入的值还是一个object的话，就做递归循环检测</span><br></pre></td></tr></table></figure>
+
+<p>** 这也是vue2监控数据变化性能不高的原因 **</p>
+<h3 id="数组监控"><a href="#数组监控" class="headerlink" title="数组监控"></a>数组监控</h3><p>Observer对数组索引进行拦截，性能差且直接更改索引的概率很低</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if(Array.isArray(data)) &#123;</span><br><span class="line">    &#x2F;&#x2F;  函数劫持，重写数组，改变数组本身的方法可以监测到</span><br><span class="line">    data._proto_ &#x3D; arrayMethod; &#x2F;&#x2F; 原型链向上查找，先找自己重写的方法</span><br><span class="line">    this.observeArray(data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">observeArray(value)&#123;</span><br><span class="line">    for(let i &#x3D; 0 ; i &lt; value.length ;i ++)&#123;</span><br><span class="line">        observe(value[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数劫持改写数组方法"><a href="#函数劫持改写数组方法" class="headerlink" title="函数劫持改写数组方法"></a>函数劫持改写数组方法</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let oldArrayMethods &#x3D; Array.prototype; &#x2F;&#x2F; 获取数组原型上的方法</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 创造一个全新的对象，可以找到数组原型上的方法，修改对象时，不会影响原数组的原型</span><br><span class="line">export let arrayMethods &#x3D; Object.create(oldArrayMethods);</span><br><span class="line"></span><br><span class="line">let methods &#x3D; [</span><br><span class="line">    &#39;push&#39;,</span><br><span class="line">    &#39;pop&#39;,</span><br><span class="line">    &#39;shift&#39;,</span><br><span class="line">    &#39;unshift&#39;,</span><br><span class="line">    &#39;reverse&#39;,</span><br><span class="line">    &#39;sort&#39;,</span><br><span class="line">    &#39;splice&#39;</span><br><span class="line">];</span><br><span class="line">methods.forEach(method &#x3D;&gt; &#123;</span><br><span class="line">    arrayMethods[method] &#x3D; function (...args) &#123;</span><br><span class="line">        const result &#x3D; oldArrayProtoMethods[method].apply(this, args);</span><br><span class="line">        const ob &#x3D; this.__ob__;</span><br><span class="line">        let inserted;</span><br><span class="line">        &#x2F;&#x2F;  push unshift splice都可以新增属性，新增的属性可能是一个对象属性</span><br><span class="line">        &#x2F;&#x2F; 内部还对数组中的引用类型进行了劫持</span><br><span class="line">        switch (method) &#123;</span><br><span class="line">            case &#39;push&#39;:</span><br><span class="line">            case &#39;unshift&#39;:</span><br><span class="line">                inserted &#x3D; args;</span><br><span class="line">                break;</span><br><span class="line">            case &#39;splice&#39;:</span><br><span class="line">                inserted &#x3D; args.slice(2)</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        if (inserted) ob.observeArray(inserted); &#x2F;&#x2F; 对新增的每一项进行观测</span><br><span class="line">        return result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>observer方法中增加防重复监控</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if(data._ob_ instanceof Observer) &#123;&#x2F;&#x2F; 防止对象被重复观测</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="VUE模板解析"><a href="#VUE模板解析" class="headerlink" title="VUE模板解析"></a>VUE模板解析</h2><p>将template编译成render函数</p>
+<p>vue2中模板编译可以选择性的添加。</p>
+<ul>
+<li>runtimeonly 只在运行时使用，无法解析用户传递的template属性</li>
+<li>runtime with compiler，可以实现模板编译的</li>
+</ul>
+<p>如何将模板变成render函数 -》返回的时虚拟节点</p>
+<p>模板引擎原理，必须用with</p>
+<ul>
+<li>实现一个解析器，可以解析html模板，目的时把他变成ast（抽象）语法树，用一个树结构描述当前标签内容</li>
+<li>虚拟节点时描述dom的，是使用对象来描述html结构的。ast是描述html语法的。</li>
+</ul>
+<p>将html本身变成js语法 render函数</p>
+<p>模板编译原理：</p>
+<ul>
+<li>先把我们的代码转化成ast语法树 parser</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">const ncname &#x3D; &#96;[a-zA-Z_][\\-\\.0-9_a-zA-Z]*&#96;;  &#x2F;&#x2F; 匹配标签名</span><br><span class="line">const qnameCapture &#x3D; &#96;((?:$&#123;ncname&#125;\\:)?$&#123;ncname&#125;)&#96;;</span><br><span class="line">const startTagOpen &#x3D; new RegExp(&#96;^&lt;$&#123;qnameCapture&#125;&#96;); &#x2F;&#x2F; 标签开头的正则 捕获的内容是标签名</span><br><span class="line">const endTag &#x3D; new RegExp(&#96;^&lt;\\&#x2F;$&#123;qnameCapture&#125;[^&gt;]*&gt;&#96;); &#x2F;&#x2F; 匹配标签结尾的 &lt;&#x2F;div&gt;</span><br><span class="line">const attribute &#x3D; &#x2F;^\s*([^\s&quot;&#39;&lt;&gt;\&#x2F;&#x3D;]+)(?:\s*(&#x3D;)\s*(?:&quot;([^&quot;]*)&quot;+|&#39;([^&#39;]*)&#39;+|([^\s&quot;&#39;&#x3D;&lt;&gt;&#96;]+)))?&#x2F;; &#x2F;&#x2F; 匹配属性的</span><br><span class="line">const startTagClose &#x3D; &#x2F;^\s*(\&#x2F;?)&gt;&#x2F;; &#x2F;&#x2F; 匹配标签结束的 &gt;</span><br><span class="line">const defaultTagRE &#x3D; &#x2F;\&#123;\&#123;((?:.|\r?\n)+?)\&#125;\&#125;&#x2F;g &#x2F;&#x2F; &#123;&#123; xxxxx  &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 解析html</span><br><span class="line">export function parserHTML(html) &#123;</span><br><span class="line">    while(html)&#123;</span><br><span class="line">        </span><br><span class="line">        let textEnd &#x3D; html.indexOf(&#39;&lt;&#39;);</span><br><span class="line">        &#x2F;&#x2F; 匹配到标签&lt; ，解析标签</span><br><span class="line">        if(textEnd &#x3D;&#x3D; 0)&#123;</span><br><span class="line">            const startTagMatch &#x3D; parseStartTag();</span><br><span class="line">            if(startTagMatch)&#123;</span><br><span class="line">                start(startTagMatch.tagName,startTagMatch.attrs);</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">            const endTagMatch &#x3D; html.match(endTag);</span><br><span class="line">            if(endTagMatch)&#123;</span><br><span class="line">                advance(endTagMatch[0].length);</span><br><span class="line">                end(endTagMatch[1]);</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; 如果&lt;没有，说明是文本</span><br><span class="line">        let text;</span><br><span class="line">        if(textEnd &gt;&#x3D; 0)&#123;</span><br><span class="line">            text &#x3D; html.substring(0,textEnd);</span><br><span class="line">        &#125;</span><br><span class="line">        if(text)&#123;</span><br><span class="line">            advance(text.length);</span><br><span class="line">            chars(text);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    function advance(n)&#123;</span><br><span class="line">        html &#x3D; html.substring(n);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 解析标签开头</span><br><span class="line">    function parseStartTag()&#123;</span><br><span class="line">        const start &#x3D; html.match(startTagOpen);</span><br><span class="line">        if(start)&#123;</span><br><span class="line">            const match &#x3D; &#123;</span><br><span class="line">                tagName:start[1], &#x2F;&#x2F; 标签名，span div</span><br><span class="line">                attrs:[]</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; 匹配到的部分截掉</span><br><span class="line">            advance(start[0].length);</span><br><span class="line"></span><br><span class="line">            let attr,end;</span><br><span class="line">            &#x2F;&#x2F; 匹配标签上的属性，未到标签头闭合处且匹配属性规则</span><br><span class="line">            while(!(end &#x3D; html.match(startTagClose)) &amp;&amp; (attr &#x3D; html.match(attribute)))&#123;</span><br><span class="line"></span><br><span class="line">                &#x2F;&#x2F; 匹配上的截断</span><br><span class="line">                advance(attr[0].length);</span><br><span class="line">                match.attrs.push(&#123;name:attr[1],value:attr[3]&#125;); &#x2F;&#x2F; 存入属性名和属性值</span><br><span class="line">            &#125;</span><br><span class="line">            if(end)&#123;</span><br><span class="line">                &#x2F;&#x2F; 到标签头&gt;处，截断</span><br><span class="line">                advance(end[0].length);</span><br><span class="line">                return match</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>标记静态树，树得遍历标记 markup</li>
+<li>通过ast产生的语法树，生成代码–》render函数 codegen</li>
+</ul>
+<h2 id="知识重点"><a href="#知识重点" class="headerlink" title="知识重点"></a>知识重点</h2><ul>
+<li><p>Vue中响应式数据原理</p>
+</li>
+<li><p>Vue中模板编译原理</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>VUE</category>
+      </categories>
+      <tags>
+        <tag>VUE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CSS3疑难杂症</title>
+    <url>/2020/05/16/css3/</url>
+    <content><![CDATA[<p>CSS3的一些疑难杂症及解决方案，不断补充~</p>
+<a id="more"></a>
+]]></content>
+      <categories>
+        <category>CSS</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+        <tag>CSS3</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTML5疑难杂症</title>
+    <url>/2020/05/16/html5/</url>
+    <content><![CDATA[<p>HTML5的一些疑难杂症及解决方案，不断补充~</p>
+<a id="more"></a>
+
+<h2 id="移动端1px像素问题"><a href="#移动端1px像素问题" class="headerlink" title="移动端1px像素问题"></a>移动端1px像素问题</h2><p>开发过程中发现，移动端写的边框1px，在有些设备中较粗，有些设备中又好像很正常，主要原因是不同易懂设备的像素密度是不同的。<br>window对象中有一个devicePixelRadio属性，可以反映css中的设备像素比。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
+<li><p>伪类+transform<br>即去掉原先元素的border，利用:before或after来重做border，并transform的scale缩小为原来的一半，原先的元素相对定位，新作的border绝对定位。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">li &#123;</span><br><span class="line">    position: relative;</span><br><span class="line">&#125;</span><br><span class="line">li:after &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    bottom: 0;</span><br><span class="line">    left: 0;</span><br><span class="line">    content: &#39;&#39;;</span><br><span class="line">    width: 100%;</span><br><span class="line">    height: 1px;</span><br><span class="line">    border-top: 1px solid black;</span><br><span class="line">    transform: scaleY(0.5);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>viewport + rem(ios)<br>viewport结合rem解决像素比问题<br>通过设置对应viewport的rem基准值，这种方式就可以像以前一样轻松愉快的写1px了.<br>在devicePixelRatio = 2 时，输出viewport</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;initial-scale&#x3D;0.5, maximum-scale&#x3D;0.5, minimum-scale&#x3D;0.5, user-scalable&#x3D;no&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>在devicePixelRatio = 3 时，输出viewport：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;initial-scale&#x3D;0.3333333333333333, maximum-scale&#x3D;0.3333333333333333, minimum-scale&#x3D;0.3333333333333333, user-scalable&#x3D;no&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用box-shadow模拟边框<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.box-1px &#123;</span><br><span class="line">  box-shadow: inset 0px -1px 1px -1px black;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="inline-block元素中间的间距问题"><a href="#inline-block元素中间的间距问题" class="headerlink" title="inline-block元素中间的间距问题"></a>inline-block元素中间的间距问题</h2><p>display:inline-block，简单来说就是将对象呈现为inline对象，但是对象的内容作为block对象呈现，之后的内联对象会排列在同一行</p>
+<p>比如两个input，默认中间会产生一些间距</p>
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><ul>
+<li><p>元素放在一行（最low最粗暴的方案） </p>
+</li>
+<li><p>父级font-size设置为0，chrome浏览器需要设置来满足兼容性-webkit-text-size-adjust:none;</p>
+</li>
+<li><p>margin负值，压缩后会出问题</p>
+</li>
+<li><p>letter-sapcing （opera浏览器会有1像素间距）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> .box&#123;</span><br><span class="line">      letter-spacing: -5px;</span><br><span class="line">&#125;</span><br><span class="line">.box input&#123;</span><br><span class="line">      letter-spacing: 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>HTML</category>
+      </categories>
+      <tags>
+        <tag>HTML</tag>
+        <tag>HTML5</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>javascript基础</title>
+    <url>/2020/05/16/javascript/</url>
+    <content><![CDATA[<p>关于Javascript的那些事，日常温习~<br>原创文章，转载请注明出处。</p>
+<a id="more"></a>
+
+<h3 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h3><ul>
+<li>解释性语言，比变异性语言稍慢，但是优点是可以跨平台</li>
+<li>单线程，轮短时间片，把每一个任务分解成小的时间片段，送到队列中执行</li>
+<li>ES标准</li>
+<li>三大部分 ES BOM DOM</li>
+</ul>
+<h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ul>
+<li>声明</li>
+<li>赋值</li>
+</ul>
+<h3 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h3><ul>
+<li>原始值 stack栈 先进后出，栈内存之间赋值是copy<br>Number, Boolean, String, undefined, null</li>
+<li>引用值 heap堆 在栈内存中放出堆内存的地址，赋值后copy前一个值，即对应的堆的地址，操作同一个引用会有连锁反应。新赋值会打开关联<br>array  [], object, function, …data, RegExp</li>
+</ul>
+<h3 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h3><ul>
+<li>比较运算符</li>
+<li>逻辑运算符</li>
+</ul>
+<h3 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h3><h3 id="循环语句"><a href="#循环语句" class="headerlink" title="循环语句"></a>循环语句</h3><p>forEach，for in， for of区别</p>
+<ul>
+<li>forEach<br>forEach专门用来循环数组，可以直接取到元素，同时也可以取到index值<br>问题：存在局限性，不能continue跳过或者break终止循环，没有返回值，不能return</li>
+<li>for…in<br>一般循环遍历的都是对象的属性，遍历对象本身的所有可枚举属性，以及对象从其构造函数原型中继承的属性<br>问题：key会变成字符串类型</li>
+<li>for of<br>for of是ES6新引入的特性。修复了ES5中for in的不足<br>允许遍历 Arrays（数组）、Strings（字符串）、Maps（映射）、Sets（集合）等可迭代的数据结构<br>for of 支持return, 只能遍历数组不能遍历对象（遍历对象需要通过和Object.keys()搭配使用）</li>
+</ul>
+<h3 id="typeof类型"><a href="#typeof类型" class="headerlink" title="typeof类型"></a>typeof类型</h3><p>typeof()  未定义的值不包错，返回字符串型的’undefined’</p>
+<ul>
+<li>number</li>
+<li>string</li>
+<li>object:  对象 数组 null（历史遗留问题，以前浏览器认为Null表示空对象）</li>
+<li>undefined</li>
+<li>function</li>
+</ul>
+<h4 id="显式类型转换"><a href="#显式类型转换" class="headerlink" title="显式类型转换"></a>显式类型转换</h4><ul>
+<li>Number()类型转换为数字，undefined转为NaN，123AB转为NaN，即使转换为NaN类型也是number</li>
+<li>parseInt （目标，目标进制）舍小数位转换为整数，Null，undefined，a，都是NaN，123abc转为122，目标进制转十进制</li>
+<li>parseFloat </li>
+<li>String() 所有东西都转为字符串</li>
+<li>Boolean()</li>
+<li>a.toString(目标进制) undefined和Null不能用，十进制转目标进制</li>
+</ul>
+<h4 id="隐式类型转换"><a href="#隐式类型转换" class="headerlink" title="隐式类型转换"></a>隐式类型转换</h4><ul>
+<li>isNaN() 先Number再和NAN比较</li>
+<li>++  –     - 转数字，Number</li>
+<li>+两侧有一个string则调用string</li>
+<li>+-/* Number</li>
+<li>&lt;&gt; 数字优先.都是字符串转为ascall码</li>
+<li>== != </li>
+<li>undefined == null != 0</li>
+<li>NaN != NaN</li>
+</ul>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><h3 id="函数声明"><a href="#函数声明" class="headerlink" title="函数声明"></a>函数声明</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;  函数声明</span><br><span class="line">function test() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 函数表达式</span><br><span class="line">&#x2F;&#x2F; test打印出整个函数体</span><br><span class="line">var a &#x3D; function() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; a打印函数体</span><br><span class="line">var b &#x3D; funtion test() &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; b打印函数体 test打印报错，函数表达式中的函数名无意义</span><br><span class="line"></span><br><span class="line">a.name &#x2F;&#x2F; a</span><br><span class="line">b.name &#x2F;&#x2F; test</span><br></pre></td></tr></table></figure>
+
+<h3 id="形参、实参"><a href="#形参、实参" class="headerlink" title="形参、实参"></a>形参、实参</h3><p>arguments-函数内的实参列表<br>函数名.length 形参梳数量<br>arguments和形参不是一个值，但是是互相绑定的，改变一个则另一个也改变</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function sum(a, b, c) &#123;</span><br><span class="line">    a &#x3D; 2; </span><br><span class="line">    arguments[0] &#x3D; 3;</span><br><span class="line">    &#x2F;&#x2F; a &#x3D; argument[2] &#x3D;&#x3D;&#x3D;2</span><br><span class="line"></span><br><span class="line">    c &#x3D; 4;</span><br><span class="line">    arguments[2] &#x2F;&#x2F; undefined</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sum(1, 2);</span><br></pre></td></tr></table></figure>
+
+<p>实参列表赋值的时候有几个，arguments就有几个，长度对应才会映射。</p>
+<p>递归的代码是最简单的，但是是效率最低的。（阶乘 菲薄纳西数列）</p>
+<ul>
+<li>找规律</li>
+<li>找出口</li>
+</ul>
+<h3 id="预编译"><a href="#预编译" class="headerlink" title="预编译"></a>预编译</h3><p>js：单线程，解释性语言</p>
+<ul>
+<li>语法分析，通篇扫描</li>
+<li>预编译</li>
+<li>解释执行</li>
+</ul>
+<p>函数声明整体提升，函数会被提升到逻辑的最前面。</p>
+<p>变量，声明提升，赋值不提升。</p>
+<p>函数和变量重名无法解决。</p>
+<p>未经声明的变量会变成全局变量。<br>全局的任何变量即使声明了，也归window所有。</p>
+<p>window就是全局的域。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var a &#x3D; b &#x3D; 123;</span><br><span class="line">    &#x2F;&#x2F; 先把123赋值给未经声明的b，未经声明的b挂载到全局的window上</span><br><span class="line">    &#x2F;&#x2F; 再声明一个a，把b的值赋给a</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test();</span><br><span class="line"></span><br><span class="line">a &#x2F;&#x2F; undefined</span><br><span class="line">b &#x2F;&#x2F; 123</span><br></pre></td></tr></table></figure>
+
+<p>预编译发生在函数执行的前一刻:</p>
+<ul>
+<li>创建AO对象（执行期上下文）</li>
+<li>找形参和变量声明，将变量和形参名作为AO属性名，值为undefined</li>
+<li>形参和实参统一</li>
+<li>在函数体里面找函数声明，值赋予函数体</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line">AO &#123;</span><br><span class="line">    a: function a () &#123;&#125;</span><br><span class="line">    b: undefined</span><br><span class="line">    d: function d () &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">**&#x2F;</span><br><span class="line"></span><br><span class="line">function fn(a) &#123;</span><br><span class="line">    console.log(a); &#x2F;&#x2F; function</span><br><span class="line">    </span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line"></span><br><span class="line">    console.log(a); &#x2F;&#x2F; 123</span><br><span class="line">    </span><br><span class="line">    function a () &#123;&#125; &#x2F;&#x2F; 函数声明已经提升了，不再执行</span><br><span class="line"></span><br><span class="line">    console.log(a); &#x2F;&#x2F; 123</span><br><span class="line"></span><br><span class="line">    var b &#x3D; function() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    console.log(b); &#x2F;&#x2F; function</span><br><span class="line"></span><br><span class="line">    function d () &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn(1);</span><br></pre></td></tr></table></figure>
+
+<p>全局预编译</p>
+<ul>
+<li>生成一个GO对象 === window</li>
+</ul>
+<h3 id="作用域，作用域链"><a href="#作用域，作用域链" class="headerlink" title="作用域，作用域链"></a>作用域，作用域链</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test.name</span><br><span class="line">test.[[scope]] &#x2F;&#x2F; 隐式属性，仅供引擎存取，就是作用域，存储的是执行期上下文的集合</span><br></pre></td></tr></table></figure>
+
+<p>作用域链：[[scope]]中所存储的执行期上下文对象的集合，这个集合呈链式链接，这种链式链接即作用域链。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function a() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">var glob &#x3D; 100;</span><br><span class="line">a();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; a defined a.[[scope]] --&gt; 0: GO &#123; &#125;</span><br><span class="line">&#x2F;&#x2F; a doing   a.[[scope]] --&gt; 0: AO &#123; &#125; 1: GO &#123; &#125;</span><br></pre></td></tr></table></figure>
+<p>从函数作用域链的顶端依次向下查找。</p>
+<h3 id="立即执行函数，闭包"><a href="#立即执行函数，闭包" class="headerlink" title="立即执行函数，闭包"></a>立即执行函数，闭包</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function a() &#123;</span><br><span class="line">    var num &#x3D; 100;</span><br><span class="line">    funttion b() &#123;</span><br><span class="line">        num++;</span><br><span class="line">        console.log(num);</span><br><span class="line">    &#125;</span><br><span class="line">    return b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var demo &#x3D; a(); &#x2F;&#x2F; 执行完a销毁了执行上下文，b保留着aAO</span><br><span class="line"></span><br><span class="line">demo(); &#x2F;&#x2F; 101</span><br><span class="line">demo(); &#x2F;&#x2F; 102</span><br></pre></td></tr></table></figure>
+
+<p>a产生了GO和aAO</p>
+<p>b拿到a的成果AO</p>
+<p>b每次执行都在基础上执行新的bAO，但是a的AO是不丢掉的，所以num在aAO上叠加。</p>
+<p>闭包：党内部函数被保存到外部时，将会生成闭包。闭包会导致原有作用域链不释放，造成内存泄漏。</p>
+<ul>
+<li><p>实现共有变量：<br>利用闭包实现计数器</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function add() &#123;</span><br><span class="line">    var count &#x3D; 0;</span><br><span class="line">    function demo () &#123;</span><br><span class="line">        count ++;</span><br><span class="line">        console.log(count);</span><br><span class="line">    &#125;</span><br><span class="line">    return demo();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var counter &#x3D; add();</span><br><span class="line">counter(); &#x2F;&#x2F; 1</span><br><span class="line">counter(); &#x2F;&#x2F; 2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以做缓存</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">   var num &#x3D; 100;</span><br><span class="line">   function a() &#123;</span><br><span class="line">       num ++;</span><br><span class="line">   &#125;</span><br><span class="line">   function b() &#123;</span><br><span class="line">       num --;</span><br><span class="line">   &#125;</span><br><span class="line">   return [a, b]; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line">myArr[0](); &#x2F;&#x2F; 101</span><br><span class="line">myArr[1](); &#x2F;&#x2F; 100</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> function eater() &#123;</span><br><span class="line">    var food &#x3D; &#39;&#39;</span><br><span class="line"></span><br><span class="line">    var obj &#x3D; &#123;</span><br><span class="line">        eat: function() &#123;</span><br><span class="line">            food &#x3D; &#39;&#39;; </span><br><span class="line">        &#125;,</span><br><span class="line">        push: function(myFood) &#123;</span><br><span class="line">            food &#x3D; myFood;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return obj</span><br><span class="line">&#125;;</span><br><span class="line">var eater1 &#x3D; eater();</span><br><span class="line">eater1.push(&#39;banan&#39;);</span><br><span class="line">eater1.eat();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>实现私有化</p>
+</li>
+<li><p>模块化开发</p>
+</li>
+</ul>
+<h3 id="立即执行函数"><a href="#立即执行函数" class="headerlink" title="立即执行函数"></a>立即执行函数</h3><p>针对初始化功能的函数，执行后立即释放空间</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var num &#x3D; (function(形参) &#123;</span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line">    var b &#x3D; 234;</span><br><span class="line">    return a;</span><br><span class="line">&#125;(实参))</span><br><span class="line"></span><br><span class="line">abc() &#x2F;&#x2F; 报错</span><br></pre></td></tr></table></figure>
+<p>能被执行符号执行的表达式，忽略表达式的名字</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">+ function test() &#123;</span><br><span class="line">   console.log(&#39;a&#39;);</span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line">test(); &#x2F;&#x2F; 报错</span><br></pre></td></tr></table></figure>
+
+<h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var arr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">        arr[i] &#x3D; function() &#123;</span><br><span class="line">            doocument.write(i + &#39;&#39;);</span><br><span class="line">        &#125; &#x2F;&#x2F; 赋值语句，函数体内先不执行，只是一个函数引用</span><br><span class="line">    &#125;</span><br><span class="line">    return arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line"></span><br><span class="line">for(var j &#x3D; 0; j &lt; 10; j++) &#123;</span><br><span class="line">    myArr[j](); &#x2F;&#x2F; 执行的时候才执行上面的function，这个时候i已经变成了10，并被保存到外部</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>打印结果 10个10</p>
+<p>解决方案：</p>
+<ul>
+<li>立即执行函数（无法控制执行时机）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">arr[i] &#x3D; function() &#123;</span><br><span class="line">            doocument.write(i + &#39;&#39;);</span><br><span class="line">        &#125;()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>闭包+ 立即执行函数解决</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    var arr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; 10; i++) &#123;</span><br><span class="line">        (function(j) &#123;</span><br><span class="line">            arr[j] &#x3D; function() &#123;</span><br><span class="line">                document.write(j + &#39;&#39;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;(i)) &#x2F;&#x2F; 会形成10个函数，i立即变现</span><br><span class="line">    &#125;</span><br><span class="line">    return arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var myArr &#x3D; test();</span><br><span class="line"></span><br><span class="line">for(var j &#x3D; 0; j &lt; 10; j++) &#123;</span><br><span class="line">    myArr[j](); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>闭包</strong>：两个或多个函数互相嵌套，把内部的函数保存到外面，导致原有作用域链不被释放，造成内存泄漏。</p>
+<h4 id="eg-给一个li列表添加onclick方法"><a href="#eg-给一个li列表添加onclick方法" class="headerlink" title="eg: 给一个li列表添加onclick方法"></a>eg: 给一个li列表添加onclick方法</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">    &lt;li&gt;a&lt;&#x2F;li&gt;</span><br><span class="line">&lt;&#x2F;ul&gt;</span><br><span class="line"></span><br><span class="line">function test() &#123;</span><br><span class="line">    var liCollection &#x3D; document.getElementByTagName(&#39;li&#39;);</span><br><span class="line">    for(var i&#x3D;0; i&lt; liCollection.length; i++) &#123;</span><br><span class="line">        &#x2F;*liCollection[i].onclick &#x3D; function() &#123;</span><br><span class="line">            console.log(i + &#39;&#39;); &#x2F;&#x2F; 点击会打印全部是4</span><br><span class="line">        &#125;*&#x2F;</span><br><span class="line">        (function(j) &#123;</span><br><span class="line">            liCollection[j].onclick &#x3D; function() &#123;</span><br><span class="line">            </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;(i))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test();</span><br></pre></td></tr></table></figure>
+
+<h3 id="对象，包装类"><a href="#对象，包装类" class="headerlink" title="对象，包装类"></a>对象，包装类</h3><h4 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h4><p>属性和方法的集合</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;daisy&#39;,</span><br><span class="line">    age: 27,</span><br><span class="line">    health: 100,</span><br><span class="line">    drink: function() &#123;</span><br><span class="line">        this.health ++;</span><br><span class="line">        &#x2F;&#x2F; obj.health ++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="增-查，删，改"><a href="#增-查，删，改" class="headerlink" title="增,查，删，改"></a>增,查，删，改</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">obj.wife &#x3D; &#39;ooo&#39;; &#x2F;&#x2F; 增</span><br><span class="line"> </span><br><span class="line">obj.name; &#x2F;&#x2F; 查</span><br><span class="line"></span><br><span class="line">obj.age &#x3D; 28; &#x2F;&#x2F; 改</span><br><span class="line"></span><br><span class="line">delete obj.name; &#x2F;&#x2F; 删</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建方法"><a href="#创建方法" class="headerlink" title="创建方法"></a>创建方法</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var obj &#x3D; &#123;&#125; &#x2F;&#x2F; 对象字面量</span><br><span class="line"></span><br><span class="line">var obj &#x3D; new Object(); &#x2F;&#x2F;系统自带的构造函数</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 自定义构造函数</span><br><span class="line">function Person() &#123;</span><br><span class="line">    this.name &#x3D; &#39;sss&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ver person &#x3D; new Person(); &#x2F;&#x2F; 函数通过new</span><br></pre></td></tr></table></figure>
+
+<p>由于函数和构造函数很相似，因此构造函数命名规则是大驼峰式。</p>
+<h4 id="构造函数内部原理"><a href="#构造函数内部原理" class="headerlink" title="构造函数内部原理"></a>构造函数内部原理</h4><ul>
+<li>new操作符调用函数</li>
+<li>new会在函数体内部最顶端会隐式生成一个var this = {} 空对象</li>
+<li>new会在函数末尾隐式加一个return this</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function Person(name, height) &#123;</span><br><span class="line">    &#x2F;&#x2F; var this &#x3D; &#123;&#125;;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.height &#x3D; height;</span><br><span class="line">    this.say &#x3D; function() &#123;</span><br><span class="line">        console.log(this.say);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; return this;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">console.log(new Person(&#39;xiaowang&#39;, 160).name)</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果显示的return一个对象，则new获取的是显示返回的object，但是如果显示返回一个原始值，则会返回this。</strong></p>
+<h2 id="包装类"><a href="#包装类" class="headerlink" title="包装类"></a>包装类</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var num &#x3D; 123;</span><br><span class="line">var num1 &#x3D; new Number(123); &#x2F;&#x2F; 变成对象</span><br><span class="line">num1 * 2 &#x2F;&#x2F; 246 运算后变回原始值 </span><br><span class="line"></span><br><span class="line">new String(&#39;abc&#39;) </span><br><span class="line">new Boolean(&#39;true&#39;)</span><br></pre></td></tr></table></figure>
+
+<p>原始值没有属性和方法，对象可以有。</p>
+<p>原始值没有属性和方法，但是添加属性会先创建一个对象。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 包装类</span><br><span class="line">var num &#x3D; 4;</span><br><span class="line">num.len &#x3D; 3;</span><br><span class="line">&#x2F;&#x2F;new Number(4).len &#x3D; 3; delete</span><br><span class="line">console.log(num.len); &#x2F;&#x2F; 再new  Number(4).len 但是是新的，返回undefined</span><br><span class="line"></span><br><span class="line">var str &#x3D; &#39;abcd&#39;;</span><br><span class="line">str.length &#x3D; 2 ;</span><br><span class="line">&#x2F;&#x2F; new String(&#39;abcd&#39;).length; delete</span><br><span class="line">console.log(str.length); &#x2F;&#x2F; 4</span><br></pre></td></tr></table></figure>
+
+<h3 id="原型，原型链"><a href="#原型，原型链" class="headerlink" title="原型，原型链"></a>原型，原型链</h3><p>原型是function对象的一个属性，定义了构造函数制造出的对象的公共祖先，通过该构造函数产生的对象，可以继承原型的属性和方法，原型也是对象。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; Person.prototype--原型 &#x3D; &#123;&#125; 是祖先</span><br><span class="line">Person.prototype.name &#x3D; &#39;hehe&#39;;</span><br><span class="line">Person.prototype.say &#x3D; function() &#123;</span><br><span class="line">    console.log(&#39;hehe&#39;)</span><br><span class="line">&#125;</span><br><span class="line">function Person() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line">person.name &#x2F;&#x2F; &#39;hehe&#39;</span><br><span class="line">person.say(); &#x2F;&#x2F; &#39;hehe&#39;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>利用原型的嗯对象和方法可以提取对象的共有属性</li>
+<li>delete可以删除对象自身的属性，但是不能删除原型上的属性</li>
+<li>查看原型–》隐式属性<em>proto</em></li>
+<li>查看对象的构造函数–&gt;constructor 隐式，可修改</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Person.prototype.name &#x3D; &#39;abc&#39;</span><br><span class="line"></span><br><span class="line">function Person() &#123;</span><br><span class="line">    &#x2F;&#x2F;var this &#x3D; &#123; _proto_ &#x3D; Person.prototype&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;sunny&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line"></span><br><span class="line">Person.prototype.name &#x3D; &#39;cherry&#39; &#x2F;&#x2F; 可以修改person的name</span><br><span class="line">Person.prototype &#x3D; &#123;</span><br><span class="line">    name : &#39;cherry&#39;</span><br><span class="line">&#125; &#x2F;&#x2F; 不能修改name 修改了原型，_proto_指向原空间</span><br></pre></td></tr></table></figure>
+
+<h4 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Grand.prototype.lastName &#x3D; &#39;Gao&#39;;</span><br><span class="line">function Grand() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var grand &#x3D; new Grand();</span><br><span class="line"></span><br><span class="line">Father.prototype &#x3D; grand;</span><br><span class="line">function Father() &#123;</span><br><span class="line">    this.name &#x3D; &#39;aa&#39;;</span><br><span class="line">    this.fortune &#x3D; &#123;</span><br><span class="line">        car1: &#39;visa&#39;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var father &#x3D; new Father();</span><br><span class="line"></span><br><span class="line">Son.prototype &#x3D; father;</span><br><span class="line">function Son() &#123;</span><br><span class="line">    this.hobbit &#x3D; &#39;music&#39;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var son &#x3D; new Son();</span><br><span class="line"></span><br><span class="line">son.lastName &#x2F;&#x2F; Gao</span><br><span class="line">son.toString &#x2F;&#x2F; 所有原型的最终原型是object.prototype</span><br><span class="line"></span><br><span class="line">son.fortune.car1 &#x3D; &#39;jsk&#39;; &#x2F;&#x2F; 引用值，调用修改</span><br></pre></td></tr></table></figure>
+
+<p>后代无法增删改查父代的属性。</p>
+<p>例外：引用值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; a.sayName() sayName里面的this指向时，谁调用的这个方法,this指向谁</span><br><span class="line"></span><br><span class="line">Person.prototype &#x3D; &#123;</span><br><span class="line">    name:  &#39;a&#39;,</span><br><span class="line">    sayName: function() &#123;</span><br><span class="line">        console.log(this.name)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Person() &#123;</span><br><span class="line">    this.name &#x3D; &#39;b&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line"></span><br><span class="line">person.sayName() &#x2F;&#x2F; b</span><br><span class="line">person.prototype.sayName(); &#x2F;&#x2F; a</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>绝大多数的对象最终都会继承自Object,prototype  object.create(null) 没有<em>proto</em></li>
+<li>object.create(原型)</li>
+<li>undefined null没有原型，没有toString</li>
+</ul>
+<h4 id="插播：浮点数计算精度偏差怎么处理？"><a href="#插播：浮点数计算精度偏差怎么处理？" class="headerlink" title="插播：浮点数计算精度偏差怎么处理？"></a>插播：浮点数计算精度偏差怎么处理？</h4><p>*100后取整。</p>
+<p>原因：浮点数转换为二进制计算，例如0.1会转换为无限循环的二进制，计算机会自动截断为52位</p>
+<p>解决方案：<br>计算出使浮点数都变成整数的最小整数倍，先放大进行计算，结果再缩小。</p>
+<p>面试有时候会问这个问题，真的是闲的蛋疼，为什么前端要进行数据计算呢？可靠吗？</p>
+<p><span id="callapply"></span></p>
+<h3 id="call-apply（必问题）"><a href="#call-apply（必问题）" class="headerlink" title="call/apply（必问题）"></a>call/apply（必问题）</h3><ul>
+<li>作用：改变this指向</li>
+<li>区别：后面传参形式不同</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function Person(name. age) &#123;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person(&#39;a&#39;, 100);</span><br><span class="line"></span><br><span class="line">var obj &#x3D; &#123;&#125;;</span><br><span class="line"></span><br><span class="line">Person.call() &#x2F;&#x2F; Person</span><br><span class="line">Person.call(obj, &#39;b&#39;, 300);&#x2F;&#x2F; this &#x3D; obj</span><br><span class="line"></span><br><span class="line">obj.name &#x2F;&#x2F; b</span><br></pre></td></tr></table></figure>
+<p>this指向call的第一个参数，其他传参顺次放在call的后面几个参数中。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function Person(name, age, sex) &#123;</span><br><span class="line">    this.name &#x3D; name;</span><br><span class="line">    this.age &#x3D; age;</span><br><span class="line">    this.sex &#x3D; sex;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Student(name, age, sex, grade, tel) &#123;</span><br><span class="line">    &#x2F;&#x2F; var this &#x3D; &#123;&#125;;</span><br><span class="line">    Person.call(this, name, age, sex);</span><br><span class="line">    Person.apply(this,[name, age, sex]);</span><br><span class="line">    &#x2F;&#x2F; this &#x3D; &#123;name, age, sex&#125; </span><br><span class="line">    this.grade &#x3D; grade;</span><br><span class="line">    this.tel &#x3D; tel;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var student &#x3D; new Student(&#39;a&#39;, 10, &#39;female&#39;, 3, 139);</span><br></pre></td></tr></table></figure>
+
+<p>call要把实参按照形参的个数穿进去<br>apply传的是一个实参列表的数组</p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><ul>
+<li><p>原型链</p>
+<p>过多的继承了无用属性</p>
+</li>
+<li><p>借用构造函数call／apply</p>
+<p>不能继承借用构造函数的原型</p>
+<p>每次构造函数都要多走一个函数</p>
+</li>
+<li><p>共享原型</p>
+<p>不能随便改变自己的原型</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Father.prototype.lastName &#x3D; &#39;G&#39;;</span><br><span class="line">function Father() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function Son() &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Son.prototype &#x3D; Father.prototype;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line">问题是，父子互相影响，指向同一个位置</span><br><span class="line">function inherit(Target, Origin) &#123;</span><br><span class="line">    Target.prototype &#x3D; Origin.Prototype;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">inherit(Son, Father);</span><br><span class="line"></span><br><span class="line">var son &#x3D; new Son();</span><br><span class="line">**&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;function F() &#123;&#125;</span><br><span class="line">&#x2F;&#x2F;F.prototype &#x3D; Father.prototype;</span><br><span class="line">&#x2F;&#x2F;Son.prototype &#x3D; new F();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 面试常见问题：你能实现一个继承吗？</span><br><span class="line">&#x2F;&#x2F; 圣杯模式</span><br><span class="line">function inherit(Target, Origin) &#123;</span><br><span class="line">    function F() &#123;&#125;</span><br><span class="line">    F.prototype &#x3D; Origin.prototype;</span><br><span class="line">    Target.prototype &#x3D; new F();</span><br><span class="line">    Target.prototype.constructor &#x3D; Target; &#x2F;&#x2F;解决son._proto_ --&gt; new F()._proto_--&gt;Father.prototype 作用域链紊乱</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 雅虎的解决方案</span><br><span class="line">var inherit &#x3D; (function() &#123;</span><br><span class="line">    var F &#x3D; function() &#123;&#125; &#x2F;&#x2F; 私有化变量</span><br><span class="line">    return function (Target, Origin) &#123;</span><br><span class="line">        F.prototype &#x3D; Origin.prototype;</span><br><span class="line">        Target.prototype &#x3D; new F();</span><br><span class="line">        Target.prototype.constructor &#x3D; Target;</span><br><span class="line">        Target.prototype.uber &#x3D; Father.prototype;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 闭包的第三点作用，实现封装，属性私有化</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure>
+
+<h4 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h4><p>管理变量，防止全局污染，适用于模块开发。</p>
+<h4 id="实现链式调用"><a href="#实现链式调用" class="headerlink" title="实现链式调用"></a>实现链式调用</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var a &#x3D; &#123;</span><br><span class="line">    smock: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;,</span><br><span class="line">    drink: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;,</span><br><span class="line">    eat: function() &#123;</span><br><span class="line">        console.log(&#39;1111&#39;)</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">a.smock().drink();</span><br></pre></td></tr></table></figure>
+
+<h4 id="属性名"><a href="#属性名" class="headerlink" title="属性名"></a>属性名</h4><p>obj.name ===== obj[‘name’]</p>
+<h4 id="对象遍历"><a href="#对象遍历" class="headerlink" title="对象遍历"></a>对象遍历</h4><p>for…in… 遍历属性的key值</p>
+<ul>
+<li>hasOwnProperty()</li>
+<li>in</li>
+<li>A instanceof B A对象是不是B构造函数构造出来的，看A的原型链上有没有B的原型</li>
+</ul>
+<p>应用：</p>
+<ul>
+<li>typeOf判断时数组和对象返回的都是’object’</li>
+<li>可以用xx instanceof Array换原来的this,深度拷贝的时候可以用来区分数组和对象</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;123&#39;,</span><br><span class="line">    age: &#39;123&#39;,</span><br><span class="line">    sex: &#39;male&#39;,</span><br><span class="line">    _proto_: &#123;</span><br><span class="line">        lastname: &#39;deng&#39;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for(var prop in obj) &#123;</span><br><span class="line">    console.log(obj.prop); &#x2F;&#x2F; undefined  相当于 obj[&#39;prop&#39;]</span><br><span class="line">    console.log(obj[prop]); &#x2F;&#x2F; 会遍历出原型上的属性，系统自带的不会打印</span><br><span class="line"></span><br><span class="line">    if(obj.hasOwnProperty(prop)) &#123;</span><br><span class="line">        console.log(obj[prop]); &#x2F;&#x2F; 不会遍历出原型上的属性</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[] instanceof Array &#x2F;&#x2F;true</span><br><span class="line">[] instanceof Object &#x2F;&#x2F; true</span><br></pre></td></tr></table></figure>
+
+<h2 id="this"><a href="#this" class="headerlink" title="this"></a>this</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var x &#x3D; 1, y &#x3D; z &#x3D; 0;</span><br><span class="line">function add(n) &#123;</span><br><span class="line">    return n &#x3D; n + 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">y &#x3D; add(x); &#x2F;&#x2F; 4</span><br><span class="line"></span><br><span class="line">function add(n) &#123;</span><br><span class="line">    return n &#x3D; n + 3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">z &#x3D; add(x); &#x2F;&#x2F; 4</span><br></pre></td></tr></table></figure>
+<p>预编译，后一个同名函数体会覆盖前面函数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function foo(x) &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">    return x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(1,2,3,4,5) &#x2F;&#x2F; 打印1,2,3,4,5</span><br><span class="line"></span><br><span class="line">function foo(x) &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">    return x;</span><br><span class="line">&#125;(1,2,3,4,5) &#x2F;&#x2F; undefined</span><br><span class="line"></span><br><span class="line">(function foo(x) &#123;</span><br><span class="line">    console.log(arguments)</span><br><span class="line">    reutrn x;</span><br><span class="line">&#125;)(1,2,3,4,5) &#x2F;&#x2F; 1,2,3,4,5</span><br><span class="line"></span><br><span class="line">fucntion foo() &#123; </span><br><span class="line">    bar.apply(null, arguments);</span><br><span class="line">&#125;</span><br><span class="line">function bar() &#123;</span><br><span class="line">    console.log(arguments);</span><br><span class="line">&#125;</span><br><span class="line">foo(1,2,3,4,5) &#x2F;&#x2F; 1,2,3,4,5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&#125; &#x3D;&#x3D; &#123;&#125; &#x2F;&#x2F; false</span><br><span class="line"></span><br><span class="line">isNaN(&#39;123&#39;) &#x2F;&#x2F; NaN</span><br></pre></td></tr></table></figure>
+
+<h3 id="this-1"><a href="#this-1" class="headerlink" title="this"></a>this</h3><ul>
+<li>函数预编译过程 this–&gt;window</li>
+<li>全局作用域里 this–&gt;window</li>
+<li><a href="#callapply">call/apply改变函数运行时的this指向</a></li>
+<li>obj.func()；func()里面的this指向obj</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fucntion test(c) &#123;</span><br><span class="line">    var a &#x3D; 123;</span><br><span class="line">    function b() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">AO &#123;</span><br><span class="line">    arguments: [1],</span><br><span class="line">    this: window,</span><br><span class="line">    c: 1,</span><br><span class="line">    a: undefined,</span><br><span class="line">    b: function() &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test(1)</span><br><span class="line"></span><br><span class="line">new test(); &#x2F;&#x2F; var this &#x3D; Object.create(test.prototype)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var name  &#x3D; &#39;222&#39;</span><br><span class="line"></span><br><span class="line">var a &#x3D; &#123;</span><br><span class="line">    name : &#39;111&#39;,</span><br><span class="line">    say: function() &#123;</span><br><span class="line">        console.log(this.name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">var fun &#x3D; a.say; &#x2F;&#x2F; function函数引用</span><br><span class="line"></span><br><span class="line">fun(); &#x2F;&#x2F; 222，全局范围内执行 this指向window</span><br><span class="line"></span><br><span class="line">a.say(); &#x2F;&#x2F; 111， this指向a</span><br><span class="line"></span><br><span class="line">var b &#x3D; &#123;</span><br><span class="line">    name: &#39;333&#39;,</span><br><span class="line">    say: function(fun) &#123;</span><br><span class="line">        fun(); &#x2F;&#x2F; fun（）执行指向预编译，不是this.fun()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">b.say(a.say); &#x2F;&#x2F; 222， fun（）执行指向预编译</span><br><span class="line">b.say &#x3D; a.say;</span><br><span class="line">b.say(); &#x2F;&#x2F; 333</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var foo &#x3D; 123;</span><br><span class="line">function print() &#123;</span><br><span class="line">    this.foo &#x3D; 234;</span><br><span class="line">    console.log(foo)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print(); &#x2F;&#x2F; 234</span><br><span class="line">new print(); &#x2F;&#x2F; 123</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var a &#x3D; 5;</span><br><span class="line">function test() &#123;</span><br><span class="line">    a &#x3D; 0;</span><br><span class="line">    alert(a);</span><br><span class="line">    alert(this.a);</span><br><span class="line">    var a;</span><br><span class="line">    alert(a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">test(); &#x2F;&#x2F; 0 5 0</span><br><span class="line"></span><br><span class="line">new test(); &#x2F;&#x2F; 0 undefined 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var b &#x3D; &#123;a: &#39;002&#39;&#125;;</span><br><span class="line">function print() &#123;</span><br><span class="line">    bar.a &#x3D; &#39;a&#39;;</span><br><span class="line">    Object.prototype.b &#x3D; &#39;b&#39;;</span><br><span class="line">    return function inner() &#123;</span><br><span class="line">        console.log(bar.a); &#x2F;&#x2F; a</span><br><span class="line">        console.log(bar.b); &#x2F;&#x2F; b</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print()();</span><br></pre></td></tr></table></figure>
+
+<h4 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h4><ul>
+<li>arguments.callee 指向函数的引用</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 立即执行函数无法递归调用</span><br><span class="line">var num &#x3D; (fucntion(n)&#123;</span><br><span class="line">    if(n &#x3D;&#x3D; 1) &#123;</span><br><span class="line">        return 1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return n &#x3D; n * arguments.callee(n-1);</span><br><span class="line">&#125;(100))</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>func.caller 谁调用的，没什么用</li>
+</ul>
+<h2 id="克隆"><a href="#克隆" class="headerlink" title="克隆"></a>克隆</h2><ul>
+<li>原始值克隆（浅拷贝）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    name: &#39;abc&#39;,</span><br><span class="line">    age: 123,</span><br><span class="line">    sex: &#39;female&#39;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">var obj1 &#x3D; &#123;&#125;;</span><br><span class="line"></span><br><span class="line">function clone(origin, target) &#123;</span><br><span class="line">    var target &#x3D; target || &#123;&#125;;</span><br><span class="line">    for(var prop in origin) &#123;</span><br><span class="line">        target[prop] &#x3D; origin[prop];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return target;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">clone(obj, obj1);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>深拷贝</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">function deepClone(origin, target) &#123;</span><br><span class="line">    var target &#x3D; target || &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    var toStr &#x3D; Object.prototype.toString;</span><br><span class="line"></span><br><span class="line">    arrStr &#x3D; &quot;[object Array]&quot;;</span><br><span class="line"></span><br><span class="line">    for(var prop in origin) &#123;</span><br><span class="line">        if(origin.hasOwnProperty(prop)) &#123;</span><br><span class="line">            if (typeof(origin[prop]) &#x3D;&#x3D; &#39;object&#39;) &#123;</span><br><span class="line">                </span><br><span class="line">                if(toStr.call(origin[prop] &#x3D;&#x3D; arrStr) &#123;</span><br><span class="line">                    target[prop] &#x3D; [];</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    target[prop] &#x3D; &#123;&#125;;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                deepClone(origin[prop], target[prop]);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                target[prop] &#x3D; origin[prop];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Object.prototype.toString.call(undefined);</span><br><span class="line">&quot;[object Undefined]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(null);</span><br><span class="line">&quot;[object Null]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(&#39;&#39;);</span><br><span class="line">&quot;[object String]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(&#123;&#125;);</span><br><span class="line">&quot;[object Object]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(function()&#123;&#125;);</span><br><span class="line">&quot;[object Function]&quot;</span><br><span class="line"></span><br><span class="line">Object.prototype.toString.call(123);</span><br><span class="line">&quot;[object Number]&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="数组和数组方法"><a href="#数组和数组方法" class="headerlink" title="数组和数组方法"></a>数组和数组方法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var arr &#x3D; [];</span><br><span class="line">var arr1 &#x3D; new Array();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>改变原数组</li>
+</ul>
+<p>push pop shift unshift sort reverse</p>
+<p>splice</p>
+<ul>
+<li>不改变原数组</li>
+</ul>
+<p>concat join</p>
+<p>split  toString  slice</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; 实现一个push</span><br><span class="line">var arr &#x3D; [1, 2]；</span><br><span class="line">Array.prototype.push &#x3D; function() &#123;</span><br><span class="line">    for(var i &#x3D; 0; i&lt; arguments.length; i++) &#123;</span><br><span class="line">        this[this.length] &#x3D; arguments[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return this.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 实现一个pop</span><br><span class="line">Array.prototype.pop &#x3D; function() &#123;</span><br><span class="line">    this.length &#x3D; this.length - 1;</span><br><span class="line"></span><br><span class="line">    return this.length</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>shift()方法：移除数组中的第一项并返回该项</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Array.prototype.shift &#x3D; function() &#123;</span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    var len &#x3D; this. length;</span><br><span class="line">    </span><br><span class="line">    if (len &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    for(var i&#x3D;1; i &lt; len; i++) &#123;</span><br><span class="line">        newArr[i-1] &#x3D; this[i];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var value &#x3D; this[0];</span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    </span><br><span class="line">    for(var i &#x3D; 0; i &lt; len-1; i++) &#123;</span><br><span class="line">        this[i] &#x3D; newArr[i];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>unshift()方法：在数组的前端添加项</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Array.prototype.unshift &#x3D; function() &#123;</span><br><span class="line">    var len &#x3D; this.length;</span><br><span class="line">    if (len &#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; arguemnts.length; i++) &#123;</span><br><span class="line">        newArr[i] &#x3D; arguments[i];</span><br><span class="line">    &#125;</span><br><span class="line">    for(var j &#x3D; 0; j &lt; len; j++) &#123;</span><br><span class="line">        newArr[arguments.length + j] &#x3D; this.[j];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    for(var k &#x3D; 0; k &lt; newArr.length; k++) &#123;</span><br><span class="line">        this[k] &#x3D; newArr[k];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>reverse() 数组逆转顺序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Array.prototype.reverse &#x3D; function() &#123;</span><br><span class="line">    var len &#x3D; this.length;</span><br><span class="line">    </span><br><span class="line">    if(len &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var newArr &#x3D; [];</span><br><span class="line">    for(var i &#x3D; 0; i &lt; len; i++) &#123;</span><br><span class="line">        newArr[i] &#x3D; this[len-i];</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>slice() 方法返回一个从开始到结束（不包括结束）选择的数组的一部分浅拷贝到一个新数组对像，原始数组不会改变。</p>
+</li>
+<li><p>splice()方法通过删除现有元素和/或添加新元素来更改一个数组的内容。</p>
+</li>
+</ul>
+<p>区别：</p>
+<p>splice(截取开始位置，截取长度，插入数据) 方法会直接对数组进行修改。</p>
+<p>slice()不对数组进行修改，原数组不会改变。</p>
+<p>splice() 返回值为被操作的值。</p>
+<p>slice()以新的字符串返回被提取的部分。</p>
+<ul>
+<li>sort() 无序数组排序，按ascll排序</li>
+</ul>
+<p>可通过function来自定义<br>1.必须传两个形参<br>2.规则是看返回值，返回负数，前面的数放在前面，返回正数，后面的数在前，为零不动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">array.sort(function(a, b) &#123;</span><br><span class="line">  return b - a; &#x2F;&#x2F;正数，b&gt;a，b在前，则是倒序排序</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 有序数组，乱序</span><br><span class="line">array.sort(function)</span><br></pre></td></tr></table></figure>
+
+<h3 id="类数组"><a href="#类数组" class="headerlink" title="类数组"></a>类数组</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var obj &#x3D; &#123;</span><br><span class="line">    &#39;0&#39;: &#39;a&#39;,</span><br><span class="line">    &#39;1&#39;: &#39;b&#39;,</span><br><span class="line">    &#39;2&#39;: &#39;c&#39;,</span><br><span class="line">    &#39;length&#39;: 3,</span><br><span class="line">    &#39;push&#39;: Array.prototype.push</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">obj.push(d) &#x2F;&#x2F; 对象插入&#39;3&#39;:&#39;d&#39;，且length变了</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>索引属性</li>
+<li>有length</li>
+<li>最好加上push</li>
+</ul>
+<p>原理：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Array.prototype.push &#x3D; function(target) &#123;</span><br><span class="line">    this[this.length] &#x3D; target;</span><br><span class="line">    length ++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="编程题-数组去重，要求在原型链上编程"><a href="#编程题-数组去重，要求在原型链上编程" class="headerlink" title="编程题-数组去重，要求在原型链上编程"></a>编程题-数组去重，要求在原型链上编程</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Array.prototype.unique &#x3D; function() &#123;</span><br><span class="line">    if(this.length &#x3D;&#x3D;&#x3D; 0) &#123;</span><br><span class="line">        return [];</span><br><span class="line">    &#125;</span><br><span class="line">    var arrMap &#x3D; &#123;&#125;;</span><br><span class="line">    for(var i &#x3D; 0; i &lt; this.length; i++) &#123;</span><br><span class="line">        arrMap[this[i]] &#x3D; i;</span><br><span class="line">    &#125;</span><br><span class="line">    this.length &#x3D; 0;</span><br><span class="line">    let j &#x3D; 0;</span><br><span class="line">    for(var prop in arrMap) &#123;</span><br><span class="line">        this[j] &#x3D; prop;</span><br><span class="line">        j++;</span><br><span class="line">    &#125;</span><br><span class="line">    return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现精准类型判断"><a href="#实现精准类型判断" class="headerlink" title="实现精准类型判断"></a>实现精准类型判断</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fucntion type(target) &#123;</span><br><span class="line">    var template &#x3D; &#123;</span><br><span class="line">        &quot;[object Array]&quot;: &#39;array&#39;,</span><br><span class="line">        &quot;[object String]&quot;: &#39;string - object&#39;,</span><br><span class="line">        &quot;[object Boolean]&quot;: &#39;boolean - object&#39;,</span><br><span class="line">        &quot;[object Object]&quot;: &#39;object&#39;,</span><br><span class="line">        &quot;[object Number]&quot;: &#39;number - object&#39;</span><br><span class="line">    &#125;</span><br><span class="line">    if(target &#x3D;&#x3D;&#x3D; null) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if (typeof(target &#x3D;&#x3D;&#x3D; &#39;object&#39;))&#123;</span><br><span class="line">        &#x2F;&#x2F; 数组，对象，包装类</span><br><span class="line">        var toStr &#x3D; Object.prototype.toString.call(target);</span><br><span class="line">        </span><br><span class="line">        return tmplate[toStr];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return typeof(target)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTML/CSS基础</title>
+    <url>/2020/05/11/html/</url>
+    <content><![CDATA[<p>关于HTML和CSS的那些事，日常温习~</p>
+<a id="more"></a>
+
+
+<p>行内元素有哪儿些？块级元素有哪儿些？空元素（void）有哪儿些？<br>行内： a b span input button img select textarea<br>块级：div ul ol li dt h1-h6 p<br>空： br hr link meta</p>
+<h3 id="html标签"><a href="#html标签" class="headerlink" title="html标签"></a>html标签</h3><p>HTML超文本标记语言<br>h1-h6  ol li div span<br>meta： name+content 关键字，描述  charset字符集<br>ul li：导航栏类结构，父子结构好，通用型，可维护<br>&amp;nbsp空格  &amp;lt小于号   &amp;gt大于号</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;img src&#x3D;&quot;&quot; alt&#x3D;&quot;图片占位符，出错时展示&quot; title&#x3D;&quot;鼠标划过提示&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;a href&#x3D;&quot;指向的目标地址&quot; target&#x3D;&quot;_blank&quot;&gt;&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>超文本引用 内容任意 target在新标签页打开</li>
+<li>a href=“#id“可作为锚点，跳回页面指定元素位置，可做置顶，双击置顶也可以</li>
+<li>打电话 <code>&lt;a href=&quot;tel: 17610603269&quot;&gt;&lt;/a&gt;</code> mailto:发邮件</li>
+<li>协议限定符：<code>&lt;a href=&quot;javascript:while(1){alert(&#39;让你手欠&#39;)&quot;&gt;&lt;/a&gt;</code></li>
+</ol>
+<p>form表单:发送数据</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;form method&#x3D;&quot;get&#x2F;post&quot; action&#x3D;&quot;发送后端地址&quot;&gt;</span><br><span class="line">    &lt;p&gt;username: &lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;userName&quot; placeholder&#x3D;&quot;默认展示的文案&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;p&gt;password: &lt;input type&#x3D;&quot;password&quot; name&#x3D;&quot;password&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;  checked&#x3D;&quot;checked&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;radio&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;radio&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;登陆&quot;&gt;</span><br><span class="line">    你喜欢的人：</span><br><span class="line">    a&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;a&quot;&gt;</span><br><span class="line">    b&lt;input type&#x3D;&quot;checkbox&quot; name&#x3D;&quot;a1&quot; value&#x3D;&quot;b&quot;&gt;</span><br><span class="line">    c&lt;input type&#x3D;&quot;checkbox&quot;name&#x3D;&quot;a1&quot; value&#x3D;&quot;c&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;select name&#x3D;&quot;province&quot;&gt; </span><br><span class="line">        &lt;option&gt;beijing&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;shanghai&lt;&#x2F;option&gt;</span><br><span class="line">        &lt;option&gt;tianjin&lt;&#x2F;option&gt;</span><br><span class="line">    &lt;&#x2F;select&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>提交后name绑定的名称和值都会拼接到url后面，密码用md5加密</p>
+<h3 id="meta标签的常用属性"><a href="#meta标签的常用属性" class="headerlink" title="meta标签的常用属性"></a>meta标签的常用属性</h3><ul>
+<li>设置字符集 charset</li>
+<li>声明浏览器及版本 </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta http-equiv&#x3D;&quot;X-UA-Compatible&quot; content&#x3D;&quot;IE&#x3D;edge,chrome&#x3D;1&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>viewport屏幕可视区域</li>
+<li>Pragma禁止本地缓存</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta http-equiv&#x3D;&quot;Pragma&quot; contect&#x3D;&quot;no-cache&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>SEO优化部分：关键字，描述，作者等</li>
+</ul>
+<h3 id="浏览器及其内核"><a href="#浏览器及其内核" class="headerlink" title="浏览器及其内核"></a>浏览器及其内核</h3><p>IE      triden<br>Google  Chrome  webkit–&gt;blint<br>Safari  webkit<br>FireFox Gecko<br>Opera   Presto</p>
+<h3 id="Css层叠样式表"><a href="#Css层叠样式表" class="headerlink" title="Css层叠样式表"></a>Css层叠样式表</h3><ul>
+<li>内联样式</li>
+<li>页面级样式</li>
+<li>外部链接文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;link ref&#x3D;&quot;stylesheet&quot; type&#x3D;&quot;text&#x2F;css&quot; href&#x3D;&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="选择器及其权重"><a href="#选择器及其权重" class="headerlink" title="选择器及其权重"></a>选择器及其权重</h4><ul>
+<li>!important Infinity</li>
+<li>行间样式 1000</li>
+<li>id 100</li>
+<li>class 10</li>
+<li>标签 1</li>
+<li>通配符 0</li>
+</ul>
+<h4 id="复杂选择器"><a href="#复杂选择器" class="headerlink" title="复杂选择器"></a>复杂选择器</h4><ul>
+<li>父子选择器 div span {} 祖先也可以，不限制直接父子</li>
+<li>直接父子 div &gt; span</li>
+<li>并列选择器 div.demo 不加空格，表示同一个标签下的某个class</li>
+<li>分组选择器 div,span 公用一个代码块</li>
+</ul>
+<p>浏览器处理父子选择器的顺序：自右向左。</p>
+<p>不管什么关系的选择器，权重都直接相加。相同权重的相同样式后面覆盖前面。</p>
+<h4 id="font-size"><a href="#font-size" class="headerlink" title="font-size"></a>font-size</h4><p>设置的字体的高，从而设置字体大小</p>
+<h4 id="font-weight"><a href="#font-weight" class="headerlink" title="font-weight"></a>font-weight</h4><p>设置元素的粗细，bold,,lighter,normal,bolder或者数字<br>bolder是否有效取决于字体包可否设置成更粗的样式</p>
+<h4 id="font-style"><a href="#font-style" class="headerlink" title="font-style"></a>font-style</h4><p>设置斜体 italic，normal</p>
+<h4 id="font-family"><a href="#font-family" class="headerlink" title="font-family"></a>font-family</h4><p>字体，默认宋体</p>
+<h4 id="color"><a href="#color" class="headerlink" title="color"></a>color</h4><p>设置字体颜色</p>
+<ul>
+<li>英文单词</li>
+<li>颜色代码 r()g()b() 每两位代表一个16进制的颜色 00-ff</li>
+<li>颜色函数 rgb(0-255，0-255，0-255)</li>
+</ul>
+<h4 id="border-粗细，类型，颜色"><a href="#border-粗细，类型，颜色" class="headerlink" title="border:粗细，类型，颜色"></a>border:粗细，类型，颜色</h4><p>border-width<br>border-style<br>border-color<br>画三角形利用border-left-color:transparent</p>
+<h4 id="text"><a href="#text" class="headerlink" title="text-"></a>text-</h4><p>text-align对齐方式<br>text-indent：2em 首行缩进<br>line-height=1.2倍的font-size丢对应的height<br>text-decoration: underline,overline,line-through，none</p>
+<h3 id="行级元素与块级元素"><a href="#行级元素与块级元素" class="headerlink" title="行级元素与块级元素"></a>行级元素与块级元素</h3><h4 id="行级元素-span-a-strong-em-del"><a href="#行级元素-span-a-strong-em-del" class="headerlink" title="行级元素 span a strong em del"></a>行级元素 span a strong em del</h4><ul>
+<li>内容决定元素所占位置</li>
+<li>不可以通过css改变宽高</li>
+<li>行级元素只能嵌套行级元素</li>
+<li>行级元素增加样式float和绝对定位，就会被自动转换成inline-block</li>
+</ul>
+<h4 id="块级元素-div-p-input-ul-ol-li-form-address"><a href="#块级元素-div-p-input-ul-ol-li-form-address" class="headerlink" title="块级元素 div p input ul ol li form address"></a>块级元素 div p input ul ol li form address</h4><ul>
+<li>独占一行</li>
+<li>可以通过css改变宽高</li>
+<li>块级元素可以嵌套任何元素</li>
+</ul>
+<h4 id="行级块元素-img"><a href="#行级块元素-img" class="headerlink" title="行级块元素 img"></a>行级块元素 img</h4><ul>
+<li>内容决定大小</li>
+<li>可以改宽高</li>
+</ul>
+<p>行级块元素外部文本和元素底对齐，如果行级块元素内部有文本，外部文本和内部文本底对齐！！</p>
+<h3 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h3><h4 id="absolute"><a href="#absolute" class="headerlink" title="absolute"></a>absolute</h4><ul>
+<li>脱离原来位置进行定位</li>
+<li>配合top left</li>
+<li>相对于最近的有定位的父级进行定位，如果没有，相对于文档定位</li>
+</ul>
+<h4 id="relative"><a href="#relative" class="headerlink" title="relative"></a>relative</h4><ul>
+<li>保留原来位置进行定位</li>
+<li>相对于自己原来的位置进行定位</li>
+</ul>
+<h4 id="fixed"><a href="#fixed" class="headerlink" title="fixed"></a>fixed</h4><p>固定定位</p>
+<h3 id="两栏布局"><a href="#两栏布局" class="headerlink" title="两栏布局"></a>两栏布局</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div class&#x3D;&quot;right&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">&lt;div class&#x3D;&quot;left&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">.right &#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    right: 0;</span><br><span class="line">    width: 100px;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background-color: black;</span><br><span class="line">    opacity: 0.5;</span><br><span class="line">&#125;</span><br><span class="line">.left &#123;</span><br><span class="line">    height: 100px;</span><br><span class="line">    background-color: aqua;</span><br><span class="line">    margin-right: 100px;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;先写右边是因为，先写左边沾满了一行，右边只能在第二行调整位置</span><br></pre></td></tr></table></figure>
+
+<h3 id="经典bug"><a href="#经典bug" class="headerlink" title="经典bug"></a>经典bug</h3><ul>
+<li>margin塌陷<br>父子都设置了margin-left，子在父内右移<br>都设置了margin-top，子top需要大于父top才会相对向下</li>
+</ul>
+<p>解决方案：<br>1.父加border，影响图纸还原程度<br>2.bfc块级格式化上下文 ，每个盒子里面有一个完整的规则，可以通过特定的手段改变特定盒子的规则，使用的就是bfc方案。给父级添加bfc样式。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">position：absolute </span><br><span class="line">float:left&#x2F;right</span><br><span class="line">overflow:hidden 引发问题移除部分隐藏</span><br><span class="line">display:inline-block</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>兄弟元素margin合并 </li>
+</ul>
+<p>1.加父层隔离开，改变文档解决<br>2.不解决，计算像素</p>
+<h3 id="float浮动"><a href="#float浮动" class="headerlink" title="float浮动"></a>float浮动</h3><p>站队的边界是父级的边界。</p>
+<ul>
+<li>浮动元素产生了浮动流<br>所有产生了浮动流的元素，块级元素看不到它们，产生了bfc的元素及文本类属性的元素以及文本可以看到。</li>
+<li>清除浮动流</li>
+</ul>
+<p>1.块级父级元素包浮动元素，清除浮动流，在子元素尾增加标签添加样式clear: both<br>2.伪元素，伪元素::after 必须写content，是行级元素，限制块级元素</p>
+<h3 id="理解BFC？形成条件？"><a href="#理解BFC？形成条件？" class="headerlink" title="理解BFC？形成条件？"></a>理解BFC？形成条件？</h3><p>BFC:块格式化上下文，是一个独立的布局环境，可以理解为一个容器，在这个容器内按照一定的规则进行物品摆放，并且不会影响其他环境中的物品。</p>
+<p>BFC的特性：<br>1.是一个独立的容器，容器内子元素不会影响容器外的元素<br>2.BFC区域不会与float的元素区域重叠<br>3.计算BFC高度时，浮动元素也参与计算<br>4.垂直方向上的距离由margin决定<br>5.内部的box会在垂直方向上一个接一个的摆放</p>
+<p>形成条件：<br>1.浮动元素 float: left | right | inherit(none除外)<br>2.position: absolte或者fixed定位<br>3.display: inline-block | inline-flex | tebel-cell<br>4.overflow: hidden | auto | scroll</p>
+<h3 id="文字溢出"><a href="#文字溢出" class="headerlink" title="文字溢出"></a>文字溢出</h3><ul>
+<li>单行文本</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">width:200px;</span><br><span class="line">white-space:nowrap;</span><br><span class="line">text-overflow:ellipsis;</span><br><span class="line">overflow:hidden;</span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li>多行文本<br>设置宽高<br>overflow: hidden</li>
+</ul>
+<h3 id="background-image"><a href="#background-image" class="headerlink" title="background-image"></a>background-image</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">background-image: url();</span><br><span class="line">background-size: 宽  高;</span><br><span class="line">background-repeat: no-repeat&#x2F;x-repeat&#x2F;y-repeat;</span><br><span class="line">background-position: center center；</span><br></pre></td></tr></table></figure>
+
+<h3 id="父子块级元素，内容水平居中"><a href="#父子块级元素，内容水平居中" class="headerlink" title="父子块级元素，内容水平居中"></a>父子块级元素，内容水平居中</h3><p>子元素设置margin: 0 auto，中间宽度固定，左右边距自适应</p>
+<h3 id="伪类与伪元素"><a href="#伪类与伪元素" class="headerlink" title="伪类与伪元素"></a>伪类与伪元素</h3><p>伪类： 用于向某些选择器添加特殊的效果（span:first-child），不互斥可叠加使用<br>伪元素：用于将特殊的想过添加到某些选择器(span:befor)，在一个选择器中只能出现一次，且只能出现在末尾</p>
+<h3 id="隐藏元素的方法"><a href="#隐藏元素的方法" class="headerlink" title="隐藏元素的方法"></a>隐藏元素的方法</h3><p>display:nonde 元素不可见，且不占用文档空间<br>visibility:hidden 隐藏元素，但依然占用文档空间<br>opacity：0 元素完全透明<br>position: absolute 设置left为一个很大的负值，元素飘出可见区<br>transform: scale(0) 设置元素缩放为无限小，元素不可见，但位置保留</p>
+<h2 id="补充：HTML5"><a href="#补充：HTML5" class="headerlink" title="补充：HTML5"></a>补充：HTML5</h2><h3 id="HTML5的新特性"><a href="#HTML5的新特性" class="headerlink" title="HTML5的新特性"></a>HTML5的新特性</h3><ul>
+<li>语义化更好的标签 header footer nav section等</li>
+<li>用于媒介回放的video和audio</li>
+<li>canvas画布</li>
+<li>拖放drag</li>
+<li>表单控件，calendar，date，time，email，url，search</li>
+<li>存储功能：localStorage和sessionStorage</li>
+<li>新的技术webworker,websocket,Geolocation</li>
+</ul>
+<h3 id="SVG与canvas的区别"><a href="#SVG与canvas的区别" class="headerlink" title="SVG与canvas的区别"></a>SVG与canvas的区别</h3><p>SVG 是一种使用 XML 描述 2D 图形的语言<br>Canvas 通过 JavaScript 来绘制 2D 图形<br>SVG 基于 XML，这意味着 SVG DOM 中的每个元素都是可用的，在SVG 中，每个被绘制的图形均被视为对象<br>如果 SVG 对象的属性发生变化，那么浏览器能够自动重现图形<br>Canvas 是逐像素进行渲染的<br>在 canvas 中，一旦图形被绘制完成，它就不会继续得到浏览器的关注<br>如果其位置发生变化，那么整个场景也需要重新绘制，包括任何或许已被图形覆盖的对象</p>
+<h3 id="rgba（）和opacity的透明效果有什么不同？"><a href="#rgba（）和opacity的透明效果有什么不同？" class="headerlink" title="rgba（）和opacity的透明效果有什么不同？"></a>rgba（）和opacity的透明效果有什么不同？</h3><p>raba()只作用于元素自身的颜色或背景色，子元素不继承透明效果<br>opacity作用于元素及元素内的所有内容的透明度</p>
+<h3 id="cookies-sessionStorage-localStorage的区别"><a href="#cookies-sessionStorage-localStorage的区别" class="headerlink" title="cookies,sessionStorage,localStorage的区别"></a>cookies,sessionStorage,localStorage的区别</h3><ul>
+<li>cookies是往往用于存储用户身份信息，加密后存储，数据大小不超过4k，关闭浏览器等不会清除，除非手动清除cookies或者到期</li>
+<li>sessionStorage 不发数据给服务器，存储大小比较大，浏览器关闭后自动删除</li>
+<li>localStorage 不发数据给服务器，存储大小比较大，存储持久，不主动删除数据不会丢失</li>
+</ul>
+<h3 id="浏览器是怎么对HTML5的离线储存资源进行管理和加载的？"><a href="#浏览器是怎么对HTML5的离线储存资源进行管理和加载的？" class="headerlink" title="浏览器是怎么对HTML5的离线储存资源进行管理和加载的？"></a>浏览器是怎么对HTML5的离线储存资源进行管理和加载的？</h3><p>1）在线的情况下，浏览器发现 html 标签有 manifest 属性，它会请求 manifest 文件<br>2）如果是第一次访问app，那么浏览器就会根据 manifest 文件的内容下载相应的资源并且进行离线存储<br>3）如果已经访问过app且资源已经离线存储了，浏览器会对比新的 manifest 文件与旧的 manifest 文件，如果文件没有发生改变，就不做任何操作。如果文件改变了，那么就会重新下载文件中的资源并进行离线存储<br>4）离线的情况下，浏览器就直接使用离线存储的资源</p>
+<h2 id="水平居中、垂直居中的方法有哪些？"><a href="#水平居中、垂直居中的方法有哪些？" class="headerlink" title="水平居中、垂直居中的方法有哪些？"></a>水平居中、垂直居中的方法有哪些？</h2><h3 id="水平居中"><a href="#水平居中" class="headerlink" title="水平居中"></a>水平居中</h3><ul>
+<li><p>inline-block子元素实现水平居中（父级设置text-align:center）</p>
+</li>
+<li><p>块级元素可以使用width配合margin:0 auto使用 或者display:table配合margin: 0 auto</p>
+</li>
+<li><p>绝对定位实现水平居中：父元素相对定位。子元素绝对定位，上下左右都设置为0，overfolow设为auto避免溢出，子元素需要设置宽度，否则被拉伸</p>
+</li>
+<li><p>flex布局（IE9以下不支持）<br>flex属性是flex-grow（放大比例）, flex-shrink（缩小比例） 和 flex-basis（项目占据主轴空间）的简写，默认值为0 1 auto<br>注意，设为 Flex 布局以后，子元素的float、clear和vertical-align属性将失效。<br>单个元素水平居中  伸缩容器上 display:flex; justify-content:center;<br>多个元素水平居中 增加width<br>伸缩项目上加 margin: 0 auto</p>
+</li>
+<li><p>栅格布局grid(IE10以下不支持)<br>容器上设置   display:grid; justify-items:center;<br>或网格项目中设置 justify-self: center 或 margin: 0 auto</p>
+</li>
+</ul>
+<h3 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h3><ul>
+<li><p>新增inline-block兄弟元素，设置vertical-align</p>
+</li>
+<li><p>绝对定位配合transform位移<br>除了可以使用margin-top把div往上偏移之外，CSS3的transform属性也可以实现这个功能，通过设置div的transform: translateY(-50%)，意思是使得div向上平移（translate）自身高度的一半(50%)。</p>
+</li>
+</ul>
+<p>margin: 0 auto; /<em>水平居中</em>/ position: relative;<br>top: 50%; /<em>偏移</em>/ transform: translateY(-50%);</p>
+<ul>
+<li><p>使用flex弹性盒子布局display:flex<br>display: flex;<br>align-items: center; /<em>定义body的元素垂直居中</em>/<br>justify-content: center; /<em>定义body的里的元素水平居中</em>/</p>
+</li>
+<li><p>未知高度的块级子元素，采用table-cell + vertical-align<br>父元素设置为display: table，子元素设置成为display: table-cell;vertical-align: middle;</p>
+</li>
+<li><p>已知高度的块级子元素，采用绝对定位和负边距<br>position: absolute; top: 50%; height: 240px; margin-top: -120px;</p>
+</li>
+</ul>
+<h2 id="你理解的flex弹性盒子布局"><a href="#你理解的flex弹性盒子布局" class="headerlink" title="你理解的flex弹性盒子布局"></a>你理解的flex弹性盒子布局</h2><p>用于不同尺寸屏幕中创建可自动伸缩的布局，任何一个容器都可以指定为flex布局<br>设置里flex布局后，float,clear,vertical-align失效</p>
+<p>容器默认存在两根轴：水平主轴和垂直的交叉轴，主轴开始位置叫main start 结束位置叫main end，交叉轴的开始位置叫cross start，结束位置脚cross end。</p>
+<p>容器属性：<br>flex-direction: row | row-reverse | column | column-reverse<br>flex-wrap: nowrap | wrap | wrap-reverse<br>flex-flow: direction wrap<br>justify-content: flex-start | flex-end | center | space-between |space-around;<br>align-items: flex-start | flex-end | center | baseline | stretch;<br>align-content: flex-start | flex-end | center | space-between | space-around | stretch;</p>
+<p>项目属性:<br>flex-grow: <number>; /* default 0 <em>/ 放大比例<br>flex-shrink: <number>; /</em> default 1 <em>/ 缩小比例<br>flex-basis: <length> | auto; /</em> default auto */ 项目占主轴空间<br>flex: none | [ &lt;’flex-grow’&gt; &lt;’flex-shrink’&gt;? || &lt;’flex-basis’&gt; ] 以上三个的缩写</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.item &#123;</span><br><span class="line">    flex: 0%;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;*等价于*&#x2F;</span><br><span class="line">.item &#123;</span><br><span class="line">    flex-grow: 1;</span><br><span class="line">    flex-shrink: 1;</span><br><span class="line">    flex-basis: 0%;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.item &#123;</span><br><span class="line">    flex: 20px;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;*等价于*&#x2F;</span><br><span class="line">.item &#123;</span><br><span class="line">    flex-grow: 1;</span><br><span class="line">    flex-shrink: 1;</span><br><span class="line">    flex-basis: 20px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="阐述px与em、rem的区别，以及你知道的其他css单位"><a href="#阐述px与em、rem的区别，以及你知道的其他css单位" class="headerlink" title="阐述px与em、rem的区别，以及你知道的其他css单位"></a>阐述px与em、rem的区别，以及你知道的其他css单位</h2><p>px就是pixel像素的缩写，相对长度单位。常用于PC端的字体单位<br>em相对于当前父元素的font-size（并不是固定的）<br>rem相对于HTML根元素的font</p>
+<p>其他css单位：<br>%百分比，一般来说就是相对于父元素<br>vw是相对视口（viewport）的宽度而定的，长度等于视口宽度的1/100<br>vh是相对视口（viewport）的高度而定的，长度等于视口高度的1/100<br>vm css3新单位，相对于视口的宽度或高度中较小的那个</p>
+<h3 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h3><p>所谓依赖根元素来计算的方式，就是先给予html元素一个font-size，然后我们所有的rem就根据这个font-size来计算<br>例如：html{ font-size:16px;}<br>那么我们这里的1rem就应该这么来计算：1x16=16px=1rem；浏览器默认为16px可能造成rem计算上的麻烦和多位小数，所以，我们也可以进行这种方式的初始化根元素：</p>
+<p>html{<br>   font-size=62.5% //这里就是10/16x100%=62.5% 也就是默认10px的字号<br>}<br>这样初始化之后，我们来进行rem计算的时候，就会减少许多的麻烦。</p>
+<h3 id="name-属性的-viewport-值（移动屏幕的缩放）"><a href="#name-属性的-viewport-值（移动屏幕的缩放）" class="headerlink" title="name 属性的 viewport 值（移动屏幕的缩放）"></a>name 属性的 viewport 值（移动屏幕的缩放）</h3><p>也就是可视区域。对于桌面浏览器，我们都很清楚 viewport 是什么，就是除去了所有工具栏、状态栏、滚动条等等之后用于看网页的区域，这是真正有效的区域。由于移动设备屏幕宽度不同于传统 web，因此我们需要改变 viewport 值。</p>
+<p>实际上我们可以操作的属性有 4 个：<br>width – // viewport 的宽度 （范围从 200 到 10,000，默认为 980 像素）<br>height – // viewport 的高度 （范围从 223 到 10,000 ）<br>initial-scale – // 初始的缩放比例 （范围从 &gt; 0 到 10）<br>minimum-scale – // 允许用户缩放到的最小比例<br>maximum-scale – // 允许用户缩放到的最大比例<br>user-scalable – // 用户是否可以手动缩放 (no，yes)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta name&#x3D;&quot;viewport&quot; content&#x3D;&quot;width&#x3D;device-width, initial-scale&#x3D;1.0, maximum-scale&#x3D;1.0, user-scalable&#x3D;no&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="移动设备上如何在不同分辨率下计算出根元素需要的font-size值？"><a href="#移动设备上如何在不同分辨率下计算出根元素需要的font-size值？" class="headerlink" title="移动设备上如何在不同分辨率下计算出根元素需要的font-size值？"></a>移动设备上如何在不同分辨率下计算出根元素需要的font-size值？</h3><h4 id="1-基于css"><a href="#1-基于css" class="headerlink" title="1.基于css"></a>1.基于css</h4><img src="../../../../images/rem01.jpg" width="80%">
+可以看出分辨率计算规则：
+基准640宽度下屏幕对比比例为1 font-size为20px
+320下 font-size 应该设置为才20/640=0.5
+那么如何来根据不同分辨率定义font-size呢？当然是媒体查询了
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@media only screen and (min-device-width: 320px)and (-webkit-min-device-pixel-ratio: 2) &#123;</span><br><span class="line">   &#x2F;&#x2F;针对iPhone 4, 5c,5s, 所有iPhone6的放大模式，个别iPhone6的标准模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:10px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">@media only screen and (min-device-width: 375px)and (-webkit-min-device-pixel-ratio: 2) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对大多数iPhone6的标准模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:12px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br><span class="line">   </span><br><span class="line">@media only screen and (min-device-width: 375px)and (-webkit-min-device-pixel-ratio: 3) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对所有iPhone6+的放大模式&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:16px;&lt;br&gt;　　&#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br><span class="line">@media only screen and (min-device-width:412px) and (-webkit-min-device-pixel-ratio: 3) &#123;</span><br><span class="line">　　&#x2F;&#x2F;针对所有iPhone6+的标准模式,414px写为412px是由于三星Nexus 6为412px，可一并处理&lt;br&gt;　　html&#123;&lt;br&gt;　　　　font-size:20px;&lt;br&gt;　　&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@media only screen and (-webkit-device-pixel-ratio:.75)&#123; &#x2F;*低分辨率小尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@media only screen and (-webkit-device-pixel-ratio:1)&#123; &#x2F;*普通分辨率普通尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@media only screen and (-webkit-device-pixel-ratio:1.5)&#123; &#x2F;*高分辨率大尺寸的图片样式*&#x2F;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-js"><a href="#2-js" class="headerlink" title="2.js"></a>2.js</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docEl.style.fontSize &#x3D; 20 * (clientWidth &#x2F; 320) + &#39;px&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>rem布局需要基于根元素的基准量来做的，不同屏幕分辨率设置不同的基准量，那么对UI的还原度就会很高，但是…发现了一个rem的问题…就是如果页面设计比较看重元素间隔和高度的话…那么用rem布局就会比较难受</p>
+<h2 id="实现左边固定宽度，右边自适应（不限于一种方法）"><a href="#实现左边固定宽度，右边自适应（不限于一种方法）" class="headerlink" title="实现左边固定宽度，右边自适应（不限于一种方法）"></a>实现左边固定宽度，右边自适应（不限于一种方法）</h2><p>1）浮动布局（左侧固定宽度并且左浮动，右侧使用margin-left）<br>2）使用定位（左侧固定宽度并且绝对定位，右侧使用margin-left）<br>3）overflow（左侧固定宽并且左浮动，右侧加overflow：hidden）<br>4）flex布局（父级元素设置display:flex，左侧设置固定宽，右侧flex:1）</p>
+<h2 id="使用css实现一个持续的动画"><a href="#使用css实现一个持续的动画" class="headerlink" title="使用css实现一个持续的动画"></a>使用css实现一个持续的动画</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.animat&#123;</span><br><span class="line">     width:20px;</span><br><span class="line">     height:20px;</span><br><span class="line">     background:red;</span><br><span class="line">     position:relative;</span><br><span class="line">     animation:mymove 3s infinite;        </span><br><span class="line">&#125;</span><br><span class="line">@keyframes mymove&#123;</span><br><span class="line">     from&#123;left:0px;&#125;</span><br><span class="line">     to&#123;left:200px;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="css实现三角形"><a href="#css实现三角形" class="headerlink" title="css实现三角形"></a>css实现三角形</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.triangle&#123; </span><br><span class="line">     width:0;</span><br><span class="line">     height:0;</span><br><span class="line">     border-width:20px;</span><br><span class="line">     border-style:solid;</span><br><span class="line">     border-color:transparent transparent red transparent;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="移动端开发中有哪些常用的布局？"><a href="#移动端开发中有哪些常用的布局？" class="headerlink" title="移动端开发中有哪些常用的布局？"></a>移动端开发中有哪些常用的布局？</h2><ul>
+<li><p>百分比流式布局<br>流动布局与固定宽度布局基本不同点就在于对网站尺寸的测量单位不同，流动布局就是使用百分比来代替px作为单位。<br>优点是流动布局可以很好解决自适应需求。<br>缺点是不够灵活，添加元素时，需要更改其他元素的值</p>
+</li>
+<li><p>flex布局<br>Flexbox是CSS3引入的新的布局模式，也称为弹性布局，他会根据页面的剩余宽度自动分配空间。 它决定了元素如何在页面上排列，使它们能在不同的屏幕尺寸和设备下可预测地展现出来。它能够扩展和收缩 flex 容器内的元素， 以最大限度地填充可用空间。Flexbox布局最适合应用程序的组件和小规模的布局，而网格布局更适合那些更大规模的布局。</p>
+</li>
+<li><p>媒体查询+rem布局<br>使用媒体查询可以根据不同的设备宽度加载不同的css样式。rem是一个相对单位，会根据根节点的字体大小来计算的，使用媒体查询和rem可以实现移动端的响应式。</p>
+</li>
+<li><p>固定宽度做法<br>在标签里把 viewport 加好,然后设想整个网页的宽度为 320px 即可。 其他地方根据 PC 端来布局。<br>缺点:大屏手机显示网页比较宽,固定布局宽度参照永远是 320px,导致左右两 边会有空白。</p>
+</li>
+<li><p>bootstrap布局<br>bootstrap是一个比较流行的响应式前端框架，利用bootstrap的栅格系统可以实现响应式的移动端布局。栅格系统：Bootstrap中定义了一套响应式的网格系统，其使用方式就是将一个容器划分成12列，然后通过col-xx-xx的类名控制每一列的占比， 在使用的时候，我们给相应的div设置col-lg-2 col-md-3 col-sm-4 col-xs-6，以此完成布局。</p>
+</li>
+</ul>
+<h2 id="什么是圣杯布局和双飞翼布局，并说下实现原理"><a href="#什么是圣杯布局和双飞翼布局，并说下实现原理" class="headerlink" title="什么是圣杯布局和双飞翼布局，并说下实现原理"></a>什么是圣杯布局和双飞翼布局，并说下实现原理</h2><p>两者的功能相同，都是为了实现一个两侧宽度固定，中间宽度自适应的三栏布局。</p>
+<h3 id="圣杯"><a href="#圣杯" class="headerlink" title="圣杯"></a>圣杯</h3><img src="../../../../images/cup.jpg" width="80%">
+1. header和footer占屏幕全部高度，高度固定
+2. 中间的contaier部分是一个三栏布局
+3. left和right宽度固定，middle自适应填满整个区域；高度为三栏中最大的高度；
+
+<h4 id="浮动布局-兼容性最好但是略显复杂"><a href="#浮动布局-兼容性最好但是略显复杂" class="headerlink" title="浮动布局(兼容性最好但是略显复杂)"></a>浮动布局(兼容性最好但是略显复杂)</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;body&gt;</span><br><span class="line">        &lt;header&gt;header&lt;&#x2F;header&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;container&quot;&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;middle&quot;&gt;middle&lt;&#x2F;div&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;left&quot;&gt;left&lt;&#x2F;div&gt;</span><br><span class="line">            &lt;div class&#x3D;&quot;right&quot;&gt;right&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;&#x2F;div&gt;</span><br><span class="line">        &lt;footer&gt;footer&lt;&#x2F;footer&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br></pre></td></tr></table></figure>
+
+<p>header和footer就直接定高，width设为100%就好;container也设为100%；left和right定宽；middle宽度100%；让container下的div都向左浮动。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">header,footer&#123;</span><br><span class="line">    height:100px;</span><br><span class="line">    width:100%; </span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line">.container&#123;</span><br><span class="line">    height:200px;</span><br><span class="line">&#125;</span><br><span class="line">.container&gt;div&#123;</span><br><span class="line">    float: left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    width:200px;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    width:300px;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.middle&#123;</span><br><span class="line">    width:100%;</span><br><span class="line">    height:200px;</span><br><span class="line">    background-color: #b0f9c2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为middle先渲染的且宽度为百分百，所以left和right被挤到了下面；为了让他们都在一行显示，让left左外边距向左偏移整行的宽度；让right的左外边距向左偏移right自身的宽度。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.left&#123;</span><br><span class="line">    ...</span><br><span class="line">     margin-left: -100%;</span><br><span class="line">&#125;</span><br><span class="line">.right&#123;</span><br><span class="line">    ...</span><br><span class="line">    margin-left: -300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而middle里的内容被left覆盖了。。我们需要给container部分设置左右padding，向中间挤压，然后将left和right设置成相对定位，将其固定到正确位置。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.container&#123;</span><br><span class="line">   ...</span><br><span class="line">    padding-left:200px;</span><br><span class="line">    padding-right:300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将div.left和div.right设置相对定位。并给container设置高度，其子级div高度为百分百。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.container&gt;div&#123;</span><br><span class="line">    ...</span><br><span class="line">    height:100%;</span><br><span class="line">    position: relative;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    ...</span><br><span class="line">    position:relative;</span><br><span class="line">    left:-200px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    ...</span><br><span class="line">    position:relative;</span><br><span class="line">    right:-300px;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="flex布局"><a href="#flex布局" class="headerlink" title="flex布局"></a>flex布局</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"> &lt;body&gt;</span><br><span class="line">    &lt;header&gt;header&lt;&#x2F;header&gt;</span><br><span class="line">    &lt;div class&#x3D;&quot;container&quot;&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;left&quot;&gt;left&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;middle&quot;&gt;middle&lt;&#x2F;div&gt;</span><br><span class="line">        &lt;div class&#x3D;&quot;right&quot;&gt;right&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;&#x2F;div&gt;</span><br><span class="line">    &lt;footer&gt;footer&lt;&#x2F;footer&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br></pre></td></tr></table></figure>
+
+<p>flex布局非常简单，只需在container中设置flex即可。两边和上面代码一样就不贴了。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.container&#123;</span><br><span class="line">    display: flex;</span><br><span class="line">    flex-direction: row;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="grid布局"><a href="#grid布局" class="headerlink" title="grid布局"></a>grid布局</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">body&#123;</span><br><span class="line">    display:grid;</span><br><span class="line">&#125;</span><br><span class="line">header&#123;</span><br><span class="line">    grid-row:1;</span><br><span class="line">    grid-column:1&#x2F;5;</span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line">footer&#123;</span><br><span class="line">    grid-row:3;</span><br><span class="line">    grid-column:1&#x2F;5;</span><br><span class="line">    background-color: antiquewhite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.left&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:1&#x2F;2;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.right&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:4&#x2F;5;</span><br><span class="line">    background-color: burlywood;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">.middle&#123;</span><br><span class="line">    grid-row:2;</span><br><span class="line">    grid-column:2&#x2F;4;</span><br><span class="line">    background-color: #b0f9c2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="双飞翼布局"><a href="#双飞翼布局" class="headerlink" title="双飞翼布局"></a>双飞翼布局</h3><p>双飞翼布局：对圣杯布局（使用相对定位对以后布局有局限性）的改进，消除相对定位<br>原理：主体元素上设置左右边距，预留两翼位置。左右两栏使用浮动和负边距归位，消除相对定位</p>
+<h2 id="align-content与align-items的区别？"><a href="#align-content与align-items的区别？" class="headerlink" title="align-content与align-items的区别？"></a>align-content与align-items的区别？</h2><p>align-content:center对单行是没有效果的<br>而align-items:center不管是对单行还是多行都有效果<br>我们日常开发中用的比较多的就是align-items</p>
+<h2 id="去除inline-block出现间距的几种方法"><a href="#去除inline-block出现间距的几种方法" class="headerlink" title="去除inline-block出现间距的几种方法"></a>去除inline-block出现间距的几种方法</h2><p>造成空白间隙的原因是在标签和标签之间使用了空格或换行符。</p>
+<ul>
+<li>移除空格和换行符</li>
+<li>设置父元素吃的font-size为0，子元素重新设置font-size</li>
+<li>利用负margin-left（不推荐，具体负margin多少取决于字体的大小）</li>
+<li>letter-spacing（字符边距）：负值 or word-spacing（单词边距） 负值</li>
+</ul>
+<h2 id="title和h1-b和strong，i和em的区别"><a href="#title和h1-b和strong，i和em的区别" class="headerlink" title="title和h1,b和strong，i和em的区别"></a>title和h1,b和strong，i和em的区别</h2><p>title属性没有明确意义只表示是个标题，H1则表示层次明确的标题，对页面信息的抓取有很大的影响<br>b是一个实体标签，展示强调内容。strong是标明重点内容，有语气加强的含义<br>i内容展示为斜体，em表示强调的文本</p>
+<h2 id="、、三者之间区别"><a href="#、、三者之间区别" class="headerlink" title="、、三者之间区别"></a><script>、<script defer>、<script async>三者之间区别</h2><p>没有defer或async属性，浏览器会立即加载并执行相应的脚本<br>有了async属性，表示后续文档的加载和渲染与js脚本的加载和执行是并行进行的，即异步执行<br>有了defer属性，加载后续文档的过程和js脚本的加载是并行进行的（此时仅加载不执行）<br>defer和async在网络加载过程是一致的，都是异步执行<br>两者的区别在于脚本加载完成之后何时执行<br>如果存在多个有defer属性的脚本，那么它们是按照加载顺序执行脚本的<br>对于async，它的加载和执行是紧挨的，无论声明顺序如何，只要加载完成立刻执行</p>
+<h2 id="data-的用法，以及他的优势"><a href="#data-的用法，以及他的优势" class="headerlink" title="data-的用法，以及他的优势"></a>data-的用法，以及他的优势</h2><p>data-代表自定义属性，可以在所有的 HTML 元素中嵌入数据<br>自定义的数据可以让页面拥有更好的交互体验<br>属性名不要包含大写字母，在 data- 后必须至少有一个字符<br>该属性可以是任何字符串<br>自定义属性前缀 "data-" 会被客户端忽略</p>
+<h2 id="实现多个标签页之间通信"><a href="#实现多个标签页之间通信" class="headerlink" title="实现多个标签页之间通信"></a>实现多个标签页之间通信</h2><p>websocket,shareworker,localstorage,cookies</p>
+<h2 id="实现不使用border画出1px高的线"><a href="#实现不使用border画出1px高的线" class="headerlink" title="实现不使用border画出1px高的线"></a>实现不使用border画出1px高的线</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;div style&#x3D;&quot;height:1px;overflow:hidden;background:red&quot;&gt;&lt;&#x2F;div&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="怎么让Chrome支持小于12px-的文字"><a href="#怎么让Chrome支持小于12px-的文字" class="headerlink" title="怎么让Chrome支持小于12px 的文字"></a>怎么让Chrome支持小于12px 的文字</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.shrink&#123;</span><br><span class="line">      -webkit-transform:scale(0.8);</span><br><span class="line">       -o-transform:scale(1);</span><br><span class="line">       display:inline-block;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="一个满屏-品-字布局-如何设计"><a href="#一个满屏-品-字布局-如何设计" class="headerlink" title="一个满屏 品 字布局 如何设计?"></a>一个满屏 品 字布局 如何设计?</h2><p>上面的div宽100%<br>下面的两个div分别宽50%<br>然后用float或者inline使其不换行即可</p>
+<h2 id="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"><a href="#经常遇到的浏览器的兼容性有哪些？解决方法是什么？" class="headerlink" title="经常遇到的浏览器的兼容性有哪些？解决方法是什么？"></a>经常遇到的浏览器的兼容性有哪些？解决方法是什么？</h2><p>1）PNG24位的图片在ie6浏览器上出现背景，解决方案是做成PNG8<br>2）浏览器默认的margin和padding不同。解决方案：*{margin:0;padding:0;}<br>3）Chrome中文界面下默认会将小于12px的文本强制按照12px显示，可通过加入CSS属性-webkit-text-size-adjust:none解决<br>4）IE下，可以使用获取常规属性的方法来获取自定义属性，也可以使用getAttribute()获取自定义的属性<br>在FireFox下，只能使用getAttribute()获取自定义属性；解决方法：统一通过getAttribute()获取自定义属性<br>5）IE下，even对象有x,y属性，但是没有pageX,pageY属性<br>在Firefox下，even对象有pageX,pageY属性，但是没有x,y属性<br>解决方法：(条件注释)缺点是在IE浏览器下可能会增加额外的HTTP请求数</p>
+<p>TODO</p>
+<h2 id="平移放大一个元素"><a href="#平移放大一个元素" class="headerlink" title="平移放大一个元素"></a>平移放大一个元素</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">transform: translateX(10px)</span><br><span class="line">transform:scale(2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="你知道的CSS预处理器，以及预处理器作用"><a href="#你知道的CSS预处理器，以及预处理器作用" class="headerlink" title="你知道的CSS预处理器，以及预处理器作用"></a>你知道的CSS预处理器，以及预处理器作用</h2><p>CSS 预处理器定义了一种新的语言，其基本思想是，用一种专门的编程语言，为 CSS 增加了一些编程的特性，将 CSS 作为目标生成文件，然后开发者就只要使用这种语言进行 CSS 的编码工作。转化成通俗易懂的话来说就是“用一种专门的编程语言，进行 Web 页面样式设计，再通过编译器转化为正常的 CSS 文件，以供项目使用”。</p>
+<p>sass，less</p>
+<h2 id="如何解决CSS模块化"><a href="#如何解决CSS模块化" class="headerlink" title="如何解决CSS模块化"></a>如何解决CSS模块化</h2><ul>
+<li>样式私有化</li>
+<li>避免被其他样式文件污染</li>
+<li>可复用</li>
+</ul>
+<p>三种方案</p>
+<ul>
+<li>就是通过每个页面根节点唯一类名，然后加上CSS后代选择器的方式来实现私有样式，这种方式是最简单，基本上和模块化不搭边，他只适合在比较小的前端中使用。</li>
+<li>Vue中scoped方案，通过给每个模块生成一个唯一的属性值，然后将该属性添加到每个dom节点上，然后配合CSS的属性选择器来时实现私有样式，这种方式只能解决样式私有化的问题，但是也架不住被其他样式文件干扰</li>
+<li>开启css-loader的modules,使用CSS Modules方案，它不仅能实现样式的私有化，还能有效的避免被其他样式文件干扰，只是他需要借助webpack进行进行编译，写法上也有点不一样。</li>
+</ul>
+<p><a href="https://blog.csdn.net/xiangzhihong8/article/details/53195926?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.nonecase" target="_blank" rel="noopener">css模块化，细读</a></p>
+<h2 id="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"><a href="#li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？" class="headerlink" title="li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？"></a>li与li之间有看不见的空白间隔是什么原因引起的？有什么解决办法？</h2><p>浏览器的默认行为是把inline元素间的空白字符（空格换行tab）渲染成一个空格，也就是我们上面的代码<li>换行后会产生换行字符，而它会变成一个空格，当然空格就占用一个字符的宽度。</p>
+<p>解决方案</p>
+<p>方法一：既然是因为<li>换行导致的，那就可以将<li>代码全部写在一排</p>
+<p>方法二：我们为了代码美观以及方便修改，很多时候我们不可能将<li>全部写在一排，那怎么办？既然是空格占一个字符的宽度，那我们索性就将<ul>内的字符尺寸直接设为0</p>
+<h2 id="描述一下你对渐进增强和优雅降级的理解"><a href="#描述一下你对渐进增强和优雅降级的理解" class="headerlink" title="描述一下你对渐进增强和优雅降级的理解"></a>描述一下你对渐进增强和优雅降级的理解</h2><p>优雅降级和渐进增强的理解：</p>
+<ul>
+<li>渐进增强 ：针对低版本浏览器进行构建页面，保证最基本的功能，然后再针对高级浏览器进行效果、交互等改进和追加功能达到更好的用户体验。</li>
+<li>优雅降级 ：一开始就构建完整的功能，然后再针对低版本浏览器进行兼容。</li>
+</ul>
+<p>区别：</p>
+<p>优雅降级是从复杂的现状开始，并试图减少用户体验的供给，而渐进增强则是从一个非常基础的 ，能够起作用的版本开始，并不断扩充，以适应未来环境的需要。降级(功能衰减)意味着往回看; 而渐进增强则意味着朝前看，同时保证其根基处于安全地带。</p>
+<h2 id="解释css-sprites，如何使用"><a href="#解释css-sprites，如何使用" class="headerlink" title="解释css sprites，如何使用"></a>解释css sprites，如何使用</h2><p>css精灵又称雪碧图<br>将多个小图片整个到一张大的背景图上，再利用repeat、position进行精准操作<br>雪碧图减轻了服务器的请求次数，提高了页面性能</p>
+<h2 id="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"><a href="#针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？" class="headerlink" title="针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？"></a>针对移动浏览器端开发页面，不期望用户放大屏幕，且要求“视口（viewport）”宽度等于屏幕宽度，视口高度等于设备高度，如何设置？</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;meta name &#x3D; &quot;viewport&quot; content &#x3D; &quot;width&#x3D;device-width,initial-scale &#x3D; 1.0,maximum-scale &#x3D; 1.0&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="简述几个css-hack"><a href="#简述几个css-hack" class="headerlink" title="简述几个css hack"></a>简述几个css hack</h2><p>(1) 图片间隙<br>　　在div中插入图片，图片会将div下方撑大3px。hack1：将<div>与<img>写在同一行。hack2：给<img>添加display：block；<br>　　dt li 中的图片间隙。hack：给<img>添加display：block；<br>(2) 默认高度，IE6以下版本中，部分块元素，拥有默认高度（低于18px）<br>　　hack1：给元素添加：font-size：0；<br>　　hack2：声明：overflow：hidden；<br>　　表单行高不一致<br>　　hack1：给表单添加声明：float：left；height： ；border： 0；<br>　　鼠标指针<br>　　hack：若统一某一元素鼠标指针为手型：cursor：pointer；<br>　　当li内的a转化块元素时，给a设置float，IE里面会出现阶梯状<br>　　hack1：给a加display：inline-block；<br>　　hack2：给li加float：left；</p>
+]]></content>
+      <categories>
+        <category>HTML、CSS</category>
+      </categories>
+      <tags>
+        <tag>CSS</tag>
+        <tag>HTML</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web前端常见面试题——性能优化与安全篇</title>
+    <url>/2020/04/09/mianshi03/</url>
+    <content><![CDATA[<p>一篇用于面试前恶补的小文章，不断补充。</p>
+<a id="more"></a>
+
+<h2 id="web语义化及其优势"><a href="#web语义化及其优势" class="headerlink" title="web语义化及其优势"></a>web语义化及其优势</h2><p>web语义化是通过HTML标记表示此页面包含的信息，包含HTML标签语义化和CSS明明语义化。</p>
+<p>优势：</p>
+<ul>
+<li>去掉样式后页面呈现清晰的结构</li>
+<li>盲人使用阅读器可以更好的阅读</li>
+<li>搜索引擎可以更好的理解，利于收录</li>
+<li>便于团队项目的可持续运作和维护</li>
+</ul>
+<h2 id="前端SEO"><a href="#前端SEO" class="headerlink" title="前端SEO"></a>前端SEO</h2><p>1.合理的title（强调重点，重要的关键词不要出现超过2次，靠前，不同）,description（高度概括内容，长度合适，不过分堆砌关键词，不同页面不同），keyword（列举出重要内容）<br>2.语义化的HTML代码，符合W3C规范，语义化代码让搜索引擎更容易理解网页<br>3.重要的HTML内容放在最前面，搜索引擎抓取HTML顺序是从上到下，有的搜索引擎有抓取长度限制，保证重要内容一定会被抓取<br>4.重要内容不要用js输出<br>5.少用iframe，搜索引擎不会抓取iframe的内容<br>6.非装饰性图片处必须加alt<br>7.提高网站速度</p>
+<h2 id="会话跟踪方法"><a href="#会话跟踪方法" class="headerlink" title="会话跟踪方法"></a>会话跟踪方法</h2><ul>
+<li>cookie</li>
+<li>session</li>
+<li>URL重写</li>
+<li>隐藏input</li>
+<li>ip地址</li>
+</ul>
+<h2 id="前端开发中如何优化图片"><a href="#前端开发中如何优化图片" class="headerlink" title="前端开发中如何优化图片"></a>前端开发中如何优化图片</h2><ul>
+<li>尽量用CSS3代替传图片</li>
+<li>用矢量图SVF</li>
+<li>webfont或者雪碧图</li>
+<li>css或js预加载</li>
+<li>按照HTTP协议设置合理的缓存</li>
+<li>webP图片格式</li>
+</ul>
+<h2 id="你所了解到的Web攻击技术"><a href="#你所了解到的Web攻击技术" class="headerlink" title="你所了解到的Web攻击技术"></a>你所了解到的Web攻击技术</h2><p>（1）XSS（Cross-Site Scripting，跨站脚本攻击）：指通过存在安全漏洞的Web网站注册用户的浏览器内运行非法的HTML标签或者JS进行的一种攻击。<br>（2）SQL注入攻击<br>（3）CSRF（跨站点请求伪造）：指攻击者通过设置好的陷阱，强制对已完成的认证用户进行非预期的个人信息或设定信息等某些状态更新</p>
+<h2 id="什么是渐进增强"><a href="#什么是渐进增强" class="headerlink" title="什么是渐进增强"></a>什么是渐进增强</h2><p>渐进增强是指在web设计时强调可访问性、语义化HTML标签、外部样式表和脚本。<br>保证所有人都能访问页面的基本内容和功能同时为高级浏览器和高带宽用户提供更好的用户体验<br>核心原则如下：<br>所有浏览器都必须能访问基本内容<br>所有浏览器都必须能使用基本功能<br>所有内容都包含在语义化标签中<br>通过外部CSS提供增强的布局<br>通过非侵入式、外部javascript提供增强功能</p>
+<h2 id="哪些操作会造成内存泄漏"><a href="#哪些操作会造成内存泄漏" class="headerlink" title="哪些操作会造成内存泄漏"></a>哪些操作会造成内存泄漏</h2><p>内存泄漏指任何对象在您不再拥有或需要它之后仍然存在。<br>垃圾回收器定期扫描对象，并计算引用了每个对象的其他对象的数量。如果一个对象的引用数量为 0（没有其他对象引用过该对象），或对该对象的惟一引用是循环的，那么该对象的内存即可回收。<br>setTimeout 的第一个参数使用字符串而非函数的话，会引发内存泄漏。<br>闭包、控制台日志、循环（在两个对象彼此引用且彼此保留时，就会产生一个循环）</p>
+<h2 id="从输入URL到页面加载发生了什么"><a href="#从输入URL到页面加载发生了什么" class="headerlink" title="从输入URL到页面加载发生了什么"></a>从输入URL到页面加载发生了什么</h2><p>总体来说分为以下几个过程　</p>
+<ul>
+<li>DNS解析</li>
+<li>TCP连接</li>
+<li>发送HTTP请求</li>
+<li>服务器处理请求并返回HTTP报文</li>
+<li>浏览器解析渲染页面</li>
+<li>连接结束</li>
+</ul>
+<h2 id="介绍下重绘和回流（Repaint-amp-Reflow），以及如何进行优化"><a href="#介绍下重绘和回流（Repaint-amp-Reflow），以及如何进行优化" class="headerlink" title="介绍下重绘和回流（Repaint &amp; Reflow），以及如何进行优化"></a>介绍下重绘和回流（Repaint &amp; Reflow），以及如何进行优化</h2><p>　　改变了背景颜色、边框、字体的颜色，浏览器重新绘制颜色的过程称为重绘</p>
+<p>　　当页面的元素发生变化的时候（宽、高、位置、创建元素），都会导致整个页面重排，浏览器会重新计算结构位置，重新渲染页面，称为DOM回流</p>
+<p>　　回流必定会发生重绘，重绘不一定会引发回流。</p>
+<p>　　解决方案：</p>
+<p>　　利用文档碎片 createDocumentFragment 或者利用模板字符串，将操作的元素进行字符串拼接，最后打包放入页面中</p>
+<h2 id="如何进行网站性能优化"><a href="#如何进行网站性能优化" class="headerlink" title="如何进行网站性能优化"></a>如何进行网站性能优化</h2><h3 id="content方向："><a href="#content方向：" class="headerlink" title="content方向："></a>content方向：</h3><p>　　1. 减少HTTP请求：合并文件、CSS精灵、inline Image<br>　　2. 减少DNS查询：DNS查询完成之前浏览器不能从这个主机下载任何文件。方法：DNS缓存、将资源分布到恰当数量的主机名，平衡并行下载和DNS查询<br>　　3. 避免重定向：多余的中间访问<br>　　4. 使Ajax可缓存<br>　　5. 非必须组件延迟加载<br>　　6. 未来所需组件预加载<br>　　7. 减少DOM元素数量<br>　　8. 将资源放到不同的域下：浏览器同时从一个域下载资源的数目有限，增加域可以提高并行下载量<br>　　9. 减少iframe数量<br>　　10. 减少404页面</p>
+<h3 id="Server方面"><a href="#Server方面" class="headerlink" title="Server方面"></a>Server方面</h3><p>　　1. 使用CDN<br>　　2. 添加Expires或者Cache-Control响应头<br>　　3. 对组件使用Gzip压缩<br>　　4. 配置ETag<br>　　5. Flush Buffer Early<br>　　6. Ajax使用GET进行请求<br>　　7. 避免空src的img标签</p>
+<h3 id="Cookie方面"><a href="#Cookie方面" class="headerlink" title="Cookie方面"></a>Cookie方面</h3><p>　　1. 减小cookie大小<br>　　2. 引入资源的域名不要包含cookie</p>
+<h3 id="css方面"><a href="#css方面" class="headerlink" title="css方面"></a>css方面</h3><p>　　1. 将样式表放到页面顶部<br>　　2. 不使用CSS表达式<br>　　3. 不使用@import<br>　　4. 不使用IE的Filter</p>
+<h3 id="Javascript方面"><a href="#Javascript方面" class="headerlink" title="Javascript方面"></a>Javascript方面</h3><p>　　1. 将脚本放到页面底部<br>　　2. 将javascript和css从外部引入<br>　　3. 压缩javascript和css<br>　　4. 删除不需要的脚本<br>　　5. 减少DOM访问<br>　　6. 合理设计事件监听器</p>
+<h3 id="图片方面"><a href="#图片方面" class="headerlink" title="图片方面"></a>图片方面</h3><p>　　1. 优化图片：根据实际颜色需要选择色深、压缩<br>　　2. 优化css精灵<br>　　3. 不要在HTML中拉伸图片<br>　　4. 保证favicon.ico小并且可缓存</p>
+<h2 id="XSS和CSRF如何避免"><a href="#XSS和CSRF如何避免" class="headerlink" title="XSS和CSRF如何避免"></a>XSS和CSRF如何避免</h2><p>　　防御XSS攻击：<br>　　a：HttpOnly 浏览器禁止页面的JS访问带有HttpOnly属性的Cookie。<br>　　b：输入检查 XSS Filter 对输入内容做格式检查，类似“白名单”，可以让一些基于特殊字符的攻击失效。在客户端JS和服务器端代码中实现相同的输入检查<br>　　c：输出检查 在变量输出到html页面时，可以使用编码或转义的方式来防御XSS攻击</p>
+<p>　　防御CSRF攻击：<br>　　a. 验证码、 Referer Check 检查请求是否来自合法的源（可被伪造）</p>
+]]></content>
+      <categories>
+        <category>HTML</category>
+      </categories>
+      <tags>
+        <tag>性能</tag>
+        <tag>安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Web前端常见面试题——HTTP</title>
+    <url>/2020/04/02/mianshi01/</url>
+    <content><![CDATA[<p>一篇用于面试前恶补的小文章，不断补充。</p>
+<a id="more"></a>
+
+<h2 id="常见的HTTP方法"><a href="#常见的HTTP方法" class="headerlink" title="常见的HTTP方法"></a>常见的HTTP方法</h2><ul>
+<li>GET： 用于请求访问已经被URI识别的资源，可以通过URL传参给服务器</li>
+<li>POST： 用于传输信息，提交表单给服务器，主要功能与GET相似，更推荐POST请求</li>
+<li>PUT：传输文件，报文主体包含文件内容，保存到对应URI位置</li>
+<li>HEAD： 获得报文首部，类似于GET方法，不返回报文主体，一般用于验证URI是否有效</li>
+<li>DELETE：删除文件，删除对应URI位置的文件</li>
+<li>OPTIONS：查询对应URI支持的HTTP方法</li>
+</ul>
+<h2 id="HTTP与HTTPS的区别"><a href="#HTTP与HTTPS的区别" class="headerlink" title="HTTP与HTTPS的区别"></a>HTTP与HTTPS的区别</h2><ul>
+<li>HTTP 的URL 以http:// 开头，而HTTPS 的URL 以https:// 开头</li>
+<li>HTTP是不安全的，HTTPS是安全的</li>
+<li>HTTP标准端口是80， HTTPS是443</li>
+<li>OSI网罗模型中，HTTP工作于应用层，HTTPS的安全传输机制工作在传输层</li>
+<li>HTTP无法加密，HTTPS对传输的数据是加密的</li>
+<li>HTTP不需要证书，HTTPS需要SSL证书</li>
+</ul>
+<h2 id="常见状态码"><a href="#常见状态码" class="headerlink" title="常见状态码"></a>常见状态码</h2><ul>
+<li>200 请求正常处理</li>
+<li>301 永久重定向</li>
+<li>302 临时重定向</li>
+<li>401 请求需要认证</li>
+<li>403 未授权</li>
+<li>404 资源未找到</li>
+<li>500 服务器内部错误</li>
+<li>503 服务器超过最大负荷</li>
+</ul>
+<h2 id="一次完整的HTTP事务是怎样一个过程"><a href="#一次完整的HTTP事务是怎样一个过程" class="headerlink" title="一次完整的HTTP事务是怎样一个过程"></a>一次完整的HTTP事务是怎样一个过程</h2><ul>
+<li>域名解析</li>
+<li>发起TCP三次握手</li>
+<li>建立TCP连接后发起HTTP请求</li>
+<li>服务器响应HTTP请求，浏览器得到HTML代码</li>
+<li>浏览器解析HTML代码，请求代码中的资源</li>
+<li>浏览器渲染页面呈现给用户</li>
+</ul>
+<h2 id="HTTPS工作原理"><a href="#HTTPS工作原理" class="headerlink" title="HTTPS工作原理"></a>HTTPS工作原理</h2><ul>
+<li>首先HTTP请求服务端生成证书，客户端对证书的有效性，合法性，域名是否与请求的域名一致，证书的公钥等进行校验。</li>
+<li>客户端校验通过后，根据证书的公钥有效性，生成随机数，对公钥随机加密。</li>
+<li>消息体产生后，对它的摘要进行MD5算法加密，得到了RSA签名。</li>
+<li>发送给服务器，只有服务端可以解密。</li>
+<li>解密得到的随机数，再用AES加密，作为秘钥。</li>
+</ul>
+<h2 id="HTTP优化方案"><a href="#HTTP优化方案" class="headerlink" title="HTTP优化方案"></a>HTTP优化方案</h2><ul>
+<li>TCP复用</li>
+<li>内容缓存</li>
+<li>压缩文本数据，减少带宽</li>
+<li>SSL协议加密，在通道内加密并加速</li>
+<li>TCP缓冲</li>
+</ul>
+<h2 id="304缓存的原理"><a href="#304缓存的原理" class="headerlink" title="304缓存的原理"></a>304缓存的原理</h2><ul>
+<li>服务器首先产生ETag，服务器可在稍后使用它来判断页面是否已经被修改。本质上，客户端通过将该记号传回服务器要求服务器验证其（客户端）缓存</li>
+<li>304是HTTP状态码，服务器用来标识这个文件没修改，不返回内容，浏览器在接收到个状态码后，会使用浏览器已缓存的文件</li>
+<li>客户端请求一个页面（A）。 服务器返回页面A，并在给A加上一个ETag。 客户端展现该页面，并将页面连同ETag一起缓存。 客户再次请求页面A，并将上次请求时服务器返回的ETag一起传递给服务器。 服务器检查该ETag，并判断出该页面自上次客户端请求之后还未被修改，直接返回响应304（未修改——Not Modified）和一个空的响应体</li>
+</ul>
+<h2 id="为什么HTTPS安全"><a href="#为什么HTTPS安全" class="headerlink" title="为什么HTTPS安全"></a>为什么HTTPS安全</h2><p>因为网络请求需要中间有很多的服务器路由器的转发。中间的节点都可能篡改信息，而如果使用HTTPS，密钥在你和终点站才有。https之所以比http安全，是因为他利用ssl/tls协议传输。它包含证书，卸载，流量转发，负载均衡，页面适配，浏览器适配，refer传递等。保障了传输过程的安全性</p>
+<h2 id="HTTP2-0"><a href="#HTTP2-0" class="headerlink" title="HTTP2.0"></a>HTTP2.0</h2><ul>
+<li>引入了服务端推的概念，允许服务端在客户端请求数据之前主动将数据发送到客户端缓存中，以提高性能</li>
+<li>提供更多的加密支持</li>
+<li>使用多路技术，允许多个消息在一个连接上同事交差</li>
+<li>增加了头部压缩，因此即使非常小的请求，其请求和响应的header都只会占用很少比例的带宽</li>
+</ul>
+<h2 id="一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么"><a href="#一个页面从输入-URL-到页面加载显示完成，这个过程中都发生了什么" class="headerlink" title="一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么"></a>一个页面从输入 URL 到页面加载显示完成，这个过程中都发生了什么</h2><p>01.浏览器查找域名对应的IP地址(DNS 查询：浏览器缓存-&gt;系统缓存-&gt;路由器缓存-&gt;ISP DNS 缓存-&gt;根域名服务器)</p>
+<p>02.浏览器向 Web 服务器发送一个 HTTP 请求（TCP三次握手）</p>
+<p>03.服务器 301 重定向（从 <a href="http://example.com" target="_blank" rel="noopener">http://example.com</a> 重定向到 <a href="http://www.example.com）" target="_blank" rel="noopener">http://www.example.com）</a></p>
+<p>04.浏览器跟踪重定向地址，请求另一个带 www 的网址</p>
+<p>05.服务器处理请求（通过路由读取资源）</p>
+<p>06.服务器返回一个 HTTP 响应（报头中把 Content-type 设置为 ‘text/html’）</p>
+<p>07.浏览器进 DOM 树构建</p>
+<p>08.浏览器发送请求获取嵌在 HTML 中的资源（如图片、音频、视频、CSS、JS等）</p>
+<p>09.浏览器显示完成页面</p>
+<p>10.浏览器发送异步请求</p>
+<h2 id="TCP和UDP的区别"><a href="#TCP和UDP的区别" class="headerlink" title="TCP和UDP的区别"></a>TCP和UDP的区别</h2><ul>
+<li>TCP（Transmission Control Protocol，传输控制协议）是基于连接的协议，也就是说，在正式收发数据前，必须和对方建立可靠的连接。一个TCP连接必须要经过三次“对话”才能建立起来</li>
+<li>UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是面向非连接的协议，它不与对方建立连接，而是直接就把数据包发送过去！ UDP适用于一次只传送少量数据、对可靠性要求不高的应用环境</li>
+</ul>
+<h2 id="说说网络分层里七层模型是哪七层"><a href="#说说网络分层里七层模型是哪七层" class="headerlink" title="说说网络分层里七层模型是哪七层"></a>说说网络分层里七层模型是哪七层</h2><ul>
+<li>应用层：允许访问OSI环境的手段</li>
+<li>表示层：对数据进行翻译、加密和压缩</li>
+<li>会话层：建立、管理和终止会话</li>
+<li>传输层：提供端到端的可靠报文传递和错误恢复</li>
+<li>网络层：负责数据包从源到宿的传递和网际互连</li>
+<li>物理层：通过媒介传输比特,确定机械及电气规范</li>
+</ul>
+]]></content>
+      <categories>
+        <category>http</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法题练习记录 （一）</title>
+    <url>/2020/03/24/test01/</url>
+    <content><![CDATA[<p>力扣算法题练习记录及小结。</p>
+<a id="more"></a>
+
+<p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</p>
+<p>你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</p>
+<p>示例</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">给定 nums &#x3D; [2, 7, 11, 15], target &#x3D; 9</span><br><span class="line"></span><br><span class="line">因为 nums[0] + nums[1] &#x3D; 2 + 7 &#x3D; 9</span><br><span class="line">所以返回 [0, 1]</span><br></pre></td></tr></table></figure>
+
+<p>解题方案一（最慢暴力for循环）<br>时间复杂度是O(n*(n-1))</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * @param &#123;number[]&#125; nums</span><br><span class="line"> * @param &#123;number&#125; target</span><br><span class="line"> * @return &#123;number[]&#125;</span><br><span class="line"> *&#x2F;</span><br><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let arr &#x3D; nums;</span><br><span class="line">    let arrs &#x3D; new Array()</span><br><span class="line">    for(let i &#x3D;  0; i &lt; arr.length - 1; i++)&#123;</span><br><span class="line">        for(let j &#x3D; i+1; j &lt; arr.length; j++)&#123;</span><br><span class="line">            if ( arr[i] + arr[j] &#x3D;&#x3D;&#x3D; target) &#123;</span><br><span class="line">                arrs.push(i, j)</span><br><span class="line">                return arrs</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>解题方案二（使用Map函数）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let map &#x3D; new Map();</span><br><span class="line">    let arr &#x3D; new Array();</span><br><span class="line">    for(let i in nnums) &#123;</span><br><span class="line">        map.set(nums[i], i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for(let j &#x3D; 0; j &lt; nums.length - 1; j++) &#123;</span><br><span class="line">        if(map.has(target - nums[j]) &amp;&amp; map.get(target - nums[j] !&#x3D;&#x3D; j) &#123;</span><br><span class="line">            arr.push(map.get(target-nums[j]), j);</span><br><span class="line">            return arr;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解题方案三 （尾递归）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target, i &#x3D; 0, maps &#x3D; &#123;&#125;) &#123;</span><br><span class="line">    const map &#x3D; maps</span><br><span class="line">    if(map[target - nums[i] ] &gt;&#x3D; 0 ) &#123;</span><br><span class="line">        return [ map[target - nums[i] ], i]</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        map[ nums[i] ] &#x3D; i;</span><br><span class="line">        i++;</span><br><span class="line">        if(i &lt; nums.length - 1)&#123;</span><br><span class="line">            return twoSum(nums, target, i, map)</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return [ map[target - nums[i] ], i]</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>图解HTTP</title>
+    <url>/2020/03/23/http/</url>
+    <content><![CDATA[<p>深入浅出《图解HTTP》</p>
+<a id="more"></a>
+
+<h1 id="HTTP和网络基础"><a href="#HTTP和网络基础" class="headerlink" title="HTTP和网络基础"></a>HTTP和网络基础</h1><p>HTTP，超文本传输协议，Web是建立在HTTP协议上通信的。是TCP/IP协议的子集。</p>
+<p>TCP/IP协议是互联网协议的合集，最重要的一点就是分层：应用层、传输层、网络层和数据链路层。</p>
+<p>分层协议的好处是，如果某个地方改变设计，只需要把变动的层替换掉即可。</p>
+<ul>
+<li>应用层： 决定了向用户提供应用服务时通信的活动。</li>
+<li>传输层： 提供处于网络连接中的两台计算机之间的数据传输。</li>
+<li>网络层： 处理在网络上流动的数据包。</li>
+<li>链路层： 处理链接网络的硬件部分。</li>
+</ul>
+<img src="../../../../images/tcpip.jpg" width="80%">
+发送端从应用层往下走，接收端则往应用层往上走。]]></content>
+      <categories>
+        <category>http</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
+      </tags>
+  </entry>
+</search>
