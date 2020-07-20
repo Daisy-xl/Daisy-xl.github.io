@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-02T15:12:59.000Z</updated>
+  <updated>2020-07-20T06:07:55.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>知识体系</title>
+    <link href="http://yoursite.com/2020/07/20/webBrainPic/"/>
+    <id>http://yoursite.com/2020/07/20/webBrainPic/</id>
+    <published>2020-07-19T16:00:00.000Z</published>
+    <updated>2020-07-20T06:07:55.000Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;web前端必学必会~&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="WEB" scheme="http://yoursite.com/categories/WEB/"/>
+    
+    
+      <category term="WEB5" scheme="http://yoursite.com/tags/WEB5/"/>
+    
+  </entry>
   
   <entry>
     <title>Vue源码学习</title>
@@ -88,7 +109,7 @@
     <link href="http://yoursite.com/2020/05/16/javascript/"/>
     <id>http://yoursite.com/2020/05/16/javascript/</id>
     <published>2020-05-15T16:00:00.000Z</published>
-    <updated>2020-07-02T15:12:59.000Z</updated>
+    <updated>2020-07-20T05:39:33.000Z</updated>
     
     <summary type="html">
     
