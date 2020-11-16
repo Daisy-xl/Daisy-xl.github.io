@@ -111,7 +111,6 @@ layout:
 github:
   # (关闭请设置为false)
   enable: false
-  url: https://github.com/Shen-Yu/hexo-theme-ayer
 
 # 网易云音乐插件
 music:

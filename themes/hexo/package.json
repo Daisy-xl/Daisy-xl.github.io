@@ -1,5 +1,5 @@
 {
-  "name": "ayer",
+  "name": "daisy",
   "version": "1.0.0",
   "description": "a clean and elegant theme for hexo.",
   "scripts": {
@@ -9,18 +9,18 @@
   "source": "source-src/main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Shen-Yu/hexo-theme-ayer.git"
+    "url": "git+https://github.com/Daisy-xl/blog.git"
   },
   "keywords": [
     "hexo",
     "theme",
     "blog",
-    "ayer"
+    "daisy"
   ],
-  "author": "Shen-Yu",
+  "author": "Daisy",
   "license": "MIT License",
   "bugs": {
-    "url": "https://github.com/Shen-Yu/hexo-theme-ayer/issues"
+    "url": "https://github.com/Daisy-xl/blog/issues"
   },
   "homepage": ".",
   "devDependencies": {

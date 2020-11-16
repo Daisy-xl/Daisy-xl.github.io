@@ -2,24 +2,6 @@
   <div class="outer">
     <ul>
       <li>
-        Copyrights &copy;
-        <% if (theme.since && !isNaN(theme.since) && theme.since < date(new Date(), 'YYYY')) { %><%- theme.since%>-<% } %><%= date(new Date(), 'YYYY') %>
-        <i class="ri-heart-fill heart_icon"></i> <%= config.author || config.title %>
-      </li>
-    </ul>
-    <ul>
-      <li>
-        <% if (theme.pageFooter){ %>
-        <% var hexoLink = '<a href="https://hexo.io" target="_blank">Hexo</a>'; %>
-        <% var themeLink = '<a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>'; %>
-        <%- __('powered_by', hexoLink) %>
-        <span class="division">|</span>
-        <%- __('theme', themeLink) %>
-        <% } %>
-      </li>
-    </ul>
-    <ul>
-      <li>
         <% if (theme.busuanzi && theme.busuanzi.enable){ %>
         <%# "不蒜子统计" %>
         <%- partial('post/busuanzi') %>

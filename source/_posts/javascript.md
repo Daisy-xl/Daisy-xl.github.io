@@ -1226,3 +1226,13 @@ fucntion type(target) {
 }
 ```
 
+### try catch
+```
+try{
+
+} catch(e) {
+
+}
+```
+捕获未知错误。
+
