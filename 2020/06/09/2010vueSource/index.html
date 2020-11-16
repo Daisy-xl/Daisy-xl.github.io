@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Vue源码学习 |  雪凝姐姐
+  </title>
+  <meta name="generator" content="hexo-theme-ayer">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/dist/main.css">
+
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Shen-Yu/cdn/css/remixicon.min.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+  
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="雪凝姐姐" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    
+      
+    <main class="content on">
+      <section class="outer">
+  <article
+  id="post-2010vueSource"
+  class="article article-type-post"
+  itemscope
+  itemprop="blogPost"
+  data-scroll-reveal
+>
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Vue源码学习
+</h1>
+ 
+
+    </header>
+     
+    <div class="article-meta">
+      <a href="/2020/06/09/2010vueSource/" class="article-date">
+  <time datetime="2020-06-08T16:00:00.000Z" itemprop="datePublished">2020-06-09</time>
+</a> 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/VUE/">VUE</a>
+  </div>
+  
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> Word count:</span>
+            <span class="post-count">2.2k</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> Reading time≈</span>
+            <span class="post-count">10 min</span>
+        </span>
+    </span>
+</div>
+ 
+    </div>
+      
+    <div class="tocbot"></div>
+
+
+
+
+  
+    <div class="article-entry" itemprop="articleBody">
+       
+  <p>VUE源码分析，用于日常记录~</p>
+<a id="more"></a>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>Roolup可以作为纯js库的模块打包器。</p>
+<ul>
+<li>生成npm项目,package.json</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -y</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>安装开发依赖</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @babel&#x2F;preset-env @babel&#x2F;core rollup rollup-plugin-babel rollup-plugin-serve cross-env -D</span><br></pre></td></tr></table></figure>
+
+<p>@babel/preset-env @babel/core ES6转换为ES5<br>rollup rolliup-plugin-babel rolliup-plugin-serve  配合rollup和babel使用</p>
+<ul>
+<li>配置rollup.config.js</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">import babel from &#39;rollup-plugin-babel&#39;;</span><br><span class="line">import serve from &#39;rollup-plugin-serve&#39;;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">    input: &#39;.&#x2F;src&#x2F;index.js&#39;,</span><br><span class="line">    output: &#123;</span><br><span class="line">        format: &#39;umd&#39;, &#x2F;&#x2F; 统一模块规范，默认将打包后的结果挂在到window</span><br><span class="line">        file: &#39;dist&#x2F;vue.js&#39;, &#x2F;&#x2F;打包出的vue.js文件</span><br><span class="line">        name: &#39;Vue&#39;, &#x2F;&#x2F;  &#x2F;&#x2F; 打包后的全局变量的名字</span><br><span class="line">        sourcemap: true &#x2F;&#x2F; 可以看到打包后的ES6源码，方便调试，</span><br><span class="line">    &#125;,</span><br><span class="line">    plugins: [</span><br><span class="line">        babel( &#123; &#x2F;&#x2F; 配置babel 解析es6</span><br><span class="line">            exclude: &quot;node_modules&#x2F;**&quot; &#x2F;&#x2F; 移除文件操作</span><br><span class="line">        &#125;),</span><br><span class="line">        serve(&#123; &#x2F;&#x2F; 配置本地服务</span><br><span class="line">            open: true, &#x2F;&#x2F; 默认打开</span><br><span class="line">            openPage: &#39;&#x2F;public&#x2F;index.html&#39;, &#x2F;&#x2F; 本地服务打开的页面</span><br><span class="line">            port: 3000, &#x2F;&#x2F;本地服务端口号</span><br><span class="line">            contentBase: &#39;&#39;</span><br><span class="line">        &#125;)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置.babelrc</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;presets&quot;: [</span><br><span class="line">        &quot;@babel&#x2F;preset-env&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置启动脚本<br>在package.json中配置script</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;build:dev&quot;: &quot;rollup -c&quot;,</span><br><span class="line">&quot;serve&quot;: &quot;cross-env ENV&#x3D;development rollup -c -w&quot;</span><br></pre></td></tr></table></figure>
+
+<p>运行 npm run serve</p>
+<p>自动打开本地端口3000的服务</p>
+<h2 id="VUE显示数据原理"><a href="#VUE显示数据原理" class="headerlink" title="VUE显示数据原理"></a>VUE显示数据原理</h2><h3 id="入口实现"><a href="#入口实现" class="headerlink" title="入口实现"></a>入口实现</h3><p>首先看一下vue是怎么使用数据绑定的呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id&#x3D;&quot;app&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line"></span><br><span class="line">const vm &#x3D; new Vue(&#123;</span><br><span class="line">    el: &#39;#app&#39;,</span><br><span class="line">    &#x2F;&#x2F; 数据会被进行观测，响应式数据变化，操作数据可以更新视图</span><br><span class="line">    &#x2F;&#x2F; 对对象的所有属性，使用defineProperty进行重新定义get和set</span><br><span class="line">    data() &#123;</span><br><span class="line">        return &#123;</span><br><span class="line">            msg: &#39;zzz&#39;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，在new的时候需要传入一个对象</p>
+<p>index.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function Vue(options) &#123;</span><br><span class="line">    &#x2F;&#x2F; 对传入的结构进行初始化操作</span><br><span class="line">    this._init(options);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default Vue;</span><br></pre></td></tr></table></figure>
+
+<p>这里的_init方法对于页面和组件都需要通用，因此可以挂载到Vue的原型上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Vue.protptype._init &#x3D; function(options) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以采用模块化开发</p>
+<p>抽象到一个新的init.js中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">export function initMixin(Vue) &#123;</span><br><span class="line">    Vue.prototype._init &#x3D; function() &#123;</span><br><span class="line">        &#x2F;&#x2F; Vue内部$options就是用户传入的所有参数</span><br><span class="line"></span><br><span class="line">        const vm &#x3D; this;</span><br><span class="line">        vm.$options &#x3D; options;&#x2F;&#x2F; 用户传入的参数</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需要在index.js中import这个方法，就可以调用原型上的this._init方法了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1.import</span><br><span class="line">import &#123; initMixin &#125; from &#39;.&#x2F;init&#39;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2.调用</span><br><span class="line">initMixin(); &#x2F;&#x2F; 给Vue原型上增加init方法</span><br></pre></td></tr></table></figure>
+
+<p>init方法中初始化vue状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 初始化状态</span><br><span class="line">initState(vm)</span><br></pre></td></tr></table></figure>
+
+<p>根据不同属性进行初始化操作,initState.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">export function initState(vm)&#123;</span><br><span class="line">    const opts &#x3D; vm.$options;</span><br><span class="line">    </span><br><span class="line">    opts.props &amp;&amp; initProps(vm);</span><br><span class="line">    </span><br><span class="line">    opts.methods &amp;&amp; initMethod(vm);</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 初始化data</span><br><span class="line">    opts.data &amp;&amp; initData(vm);</span><br><span class="line">    </span><br><span class="line">    opts.computed &amp;&amp; initComputed(vm);</span><br><span class="line">    </span><br><span class="line">    opts.watch &amp;&amp; initWatch(vm);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">function initProps()&#123;&#125;</span><br><span class="line">function initMethod()&#123;&#125;</span><br><span class="line">function initData(vm)&#123;</span><br><span class="line">    console.log(vm.$options.data)</span><br><span class="line">&#125;</span><br><span class="line">function initComputed()&#123;&#125;</span><br><span class="line">function initWatch()&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上，入口基本实现，入口本身就是一个Vue的构造函数。</p>
+<h3 id="初始化数据"><a href="#初始化数据" class="headerlink" title="初始化数据"></a>初始化数据</h3><p>initData()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">let data &#x3D; vm.$options.data;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;  如果传入的data是函数，则执行函数，且this需要指向vue实例的this</span><br><span class="line">&#x2F;&#x2F; vm._data就是检测后的数据</span><br><span class="line"></span><br><span class="line">data &#x3D; vm._data &#x3D; typeof(data) &#x3D;&#x3D;&#x3D; &#39;function&#39; ? data.call(vm): data;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 观测数据，实现响应式</span><br><span class="line">observe(data);</span><br></pre></td></tr></table></figure>
+
+<h3 id="新增observer文件夹，内部index-js内部到处导出observer方法实现数据观测和劫持"><a href="#新增observer文件夹，内部index-js内部到处导出observer方法实现数据观测和劫持" class="headerlink" title="新增observer文件夹，内部index.js内部到处导出observer方法实现数据观测和劫持"></a>新增observer文件夹，内部index.js内部到处导出observer方法实现数据观测和劫持</h3><p>observer/index.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">export function observer(data) &#123;</span><br><span class="line">    &#x2F;&#x2F; 对象就是使用defineProperty实现响应式原理</span><br><span class="line">    &#x2F;&#x2F; 如果这个不是非空对象或数组，就不需要监控</span><br><span class="line">    &#x2F;&#x2F; 此处可以抽到一个工具类方法中再导入使用 util.js中一个isObject方法</span><br><span class="line">    if(typeof data &#x3D;&#x3D;&#x3D; &#39;object&#39; &amp;&amp; data !&#x3D; null)&#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    Observer(data)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Observer定义为一个class</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> &#x2F;&#x2F; 观测值</span><br><span class="line">constructor(value)&#123;</span><br><span class="line">    this.walk(value);</span><br><span class="line">&#125;</span><br><span class="line">walk(data)&#123; &#x2F;&#x2F; 让对象上的所有属性依次进行观测</span><br><span class="line">    let keys &#x3D; Object.keys(data);</span><br><span class="line">    for(let i &#x3D; 0; i &lt; keys.length; i++)&#123;</span><br><span class="line">        let key &#x3D; keys[i];</span><br><span class="line">        let value &#x3D; data[key];</span><br><span class="line">        defineReactive(data,key,value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时已经可以实现基本数据类型的观测，但是如果类型是引用值，还是观测不到内部的数据变化</p>
+<p>在defineProperty内部先递归调用，set方法内也递归调用observer</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">observer(value);&#x2F;&#x2F; 如果传入的值还是一个object的话，就做递归循环检测</span><br></pre></td></tr></table></figure>
+
+<p>** 这也是vue2监控数据变化性能不高的原因 **</p>
+<h3 id="数组监控"><a href="#数组监控" class="headerlink" title="数组监控"></a>数组监控</h3><p>Observer对数组索引进行拦截，性能差且直接更改索引的概率很低</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if(Array.isArray(data)) &#123;</span><br><span class="line">    &#x2F;&#x2F;  函数劫持，重写数组，改变数组本身的方法可以监测到</span><br><span class="line">    data._proto_ &#x3D; arrayMethod; &#x2F;&#x2F; 原型链向上查找，先找自己重写的方法</span><br><span class="line">    this.observeArray(data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">observeArray(value)&#123;</span><br><span class="line">    for(let i &#x3D; 0 ; i &lt; value.length ;i ++)&#123;</span><br><span class="line">        observe(value[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数劫持改写数组方法"><a href="#函数劫持改写数组方法" class="headerlink" title="函数劫持改写数组方法"></a>函数劫持改写数组方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">let oldArrayMethods &#x3D; Array.prototype; &#x2F;&#x2F; 获取数组原型上的方法</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 创造一个全新的对象，可以找到数组原型上的方法，修改对象时，不会影响原数组的原型</span><br><span class="line">export let arrayMethods &#x3D; Object.create(oldArrayMethods);</span><br><span class="line"></span><br><span class="line">let methods &#x3D; [</span><br><span class="line">    &#39;push&#39;,</span><br><span class="line">    &#39;pop&#39;,</span><br><span class="line">    &#39;shift&#39;,</span><br><span class="line">    &#39;unshift&#39;,</span><br><span class="line">    &#39;reverse&#39;,</span><br><span class="line">    &#39;sort&#39;,</span><br><span class="line">    &#39;splice&#39;</span><br><span class="line">];</span><br><span class="line">methods.forEach(method &#x3D;&gt; &#123;</span><br><span class="line">    arrayMethods[method] &#x3D; function (...args) &#123;</span><br><span class="line">        const result &#x3D; oldArrayProtoMethods[method].apply(this, args);</span><br><span class="line">        const ob &#x3D; this.__ob__;</span><br><span class="line">        let inserted;</span><br><span class="line">        &#x2F;&#x2F;  push unshift splice都可以新增属性，新增的属性可能是一个对象属性</span><br><span class="line">        &#x2F;&#x2F; 内部还对数组中的引用类型进行了劫持</span><br><span class="line">        switch (method) &#123;</span><br><span class="line">            case &#39;push&#39;:</span><br><span class="line">            case &#39;unshift&#39;:</span><br><span class="line">                inserted &#x3D; args;</span><br><span class="line">                break;</span><br><span class="line">            case &#39;splice&#39;:</span><br><span class="line">                inserted &#x3D; args.slice(2)</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        if (inserted) ob.observeArray(inserted); &#x2F;&#x2F; 对新增的每一项进行观测</span><br><span class="line">        return result</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>observer方法中增加防重复监控</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(data._ob_ instanceof Observer) &#123;&#x2F;&#x2F; 防止对象被重复观测</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="VUE模板解析"><a href="#VUE模板解析" class="headerlink" title="VUE模板解析"></a>VUE模板解析</h2><p>将template编译成render函数</p>
+<p>vue2中模板编译可以选择性的添加。</p>
+<ul>
+<li>runtimeonly 只在运行时使用，无法解析用户传递的template属性</li>
+<li>runtime with compiler，可以实现模板编译的</li>
+</ul>
+<p>如何将模板变成render函数 -》返回的时虚拟节点</p>
+<p>模板引擎原理，必须用with</p>
+<ul>
+<li>实现一个解析器，可以解析html模板，目的时把他变成ast（抽象）语法树，用一个树结构描述当前标签内容</li>
+<li>虚拟节点时描述dom的，是使用对象来描述html结构的。ast是描述html语法的。</li>
+</ul>
+<p>将html本身变成js语法 render函数</p>
+<p>模板编译原理：</p>
+<ul>
+<li>先把我们的代码转化成ast语法树 parser</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">const ncname &#x3D; &#96;[a-zA-Z_][\\-\\.0-9_a-zA-Z]*&#96;;  &#x2F;&#x2F; 匹配标签名</span><br><span class="line">const qnameCapture &#x3D; &#96;((?:$&#123;ncname&#125;\\:)?$&#123;ncname&#125;)&#96;;</span><br><span class="line">const startTagOpen &#x3D; new RegExp(&#96;^&lt;$&#123;qnameCapture&#125;&#96;); &#x2F;&#x2F; 标签开头的正则 捕获的内容是标签名</span><br><span class="line">const endTag &#x3D; new RegExp(&#96;^&lt;\\&#x2F;$&#123;qnameCapture&#125;[^&gt;]*&gt;&#96;); &#x2F;&#x2F; 匹配标签结尾的 &lt;&#x2F;div&gt;</span><br><span class="line">const attribute &#x3D; &#x2F;^\s*([^\s&quot;&#39;&lt;&gt;\&#x2F;&#x3D;]+)(?:\s*(&#x3D;)\s*(?:&quot;([^&quot;]*)&quot;+|&#39;([^&#39;]*)&#39;+|([^\s&quot;&#39;&#x3D;&lt;&gt;&#96;]+)))?&#x2F;; &#x2F;&#x2F; 匹配属性的</span><br><span class="line">const startTagClose &#x3D; &#x2F;^\s*(\&#x2F;?)&gt;&#x2F;; &#x2F;&#x2F; 匹配标签结束的 &gt;</span><br><span class="line">const defaultTagRE &#x3D; &#x2F;\&#123;\&#123;((?:.|\r?\n)+?)\&#125;\&#125;&#x2F;g &#x2F;&#x2F; &#123;&#123; xxxxx  &#125;&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 解析html</span><br><span class="line">export function parserHTML(html) &#123;</span><br><span class="line">    while(html)&#123;</span><br><span class="line">        </span><br><span class="line">        let textEnd &#x3D; html.indexOf(&#39;&lt;&#39;);</span><br><span class="line">        &#x2F;&#x2F; 匹配到标签&lt; ，解析标签</span><br><span class="line">        if(textEnd &#x3D;&#x3D; 0)&#123;</span><br><span class="line">            const startTagMatch &#x3D; parseStartTag();</span><br><span class="line">            if(startTagMatch)&#123;</span><br><span class="line">                start(startTagMatch.tagName,startTagMatch.attrs);</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">            const endTagMatch &#x3D; html.match(endTag);</span><br><span class="line">            if(endTagMatch)&#123;</span><br><span class="line">                advance(endTagMatch[0].length);</span><br><span class="line">                end(endTagMatch[1]);</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F; 如果&lt;没有，说明是文本</span><br><span class="line">        let text;</span><br><span class="line">        if(textEnd &gt;&#x3D; 0)&#123;</span><br><span class="line">            text &#x3D; html.substring(0,textEnd);</span><br><span class="line">        &#125;</span><br><span class="line">        if(text)&#123;</span><br><span class="line">            advance(text.length);</span><br><span class="line">            chars(text);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    function advance(n)&#123;</span><br><span class="line">        html &#x3D; html.substring(n);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F; 解析标签开头</span><br><span class="line">    function parseStartTag()&#123;</span><br><span class="line">        const start &#x3D; html.match(startTagOpen);</span><br><span class="line">        if(start)&#123;</span><br><span class="line">            const match &#x3D; &#123;</span><br><span class="line">                tagName:start[1], &#x2F;&#x2F; 标签名，span div</span><br><span class="line">                attrs:[]</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; 匹配到的部分截掉</span><br><span class="line">            advance(start[0].length);</span><br><span class="line"></span><br><span class="line">            let attr,end;</span><br><span class="line">            &#x2F;&#x2F; 匹配标签上的属性，未到标签头闭合处且匹配属性规则</span><br><span class="line">            while(!(end &#x3D; html.match(startTagClose)) &amp;&amp; (attr &#x3D; html.match(attribute)))&#123;</span><br><span class="line"></span><br><span class="line">                &#x2F;&#x2F; 匹配上的截断</span><br><span class="line">                advance(attr[0].length);</span><br><span class="line">                match.attrs.push(&#123;name:attr[1],value:attr[3]&#125;); &#x2F;&#x2F; 存入属性名和属性值</span><br><span class="line">            &#125;</span><br><span class="line">            if(end)&#123;</span><br><span class="line">                &#x2F;&#x2F; 到标签头&gt;处，截断</span><br><span class="line">                advance(end[0].length);</span><br><span class="line">                return match</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>标记静态树，树得遍历标记 markup</li>
+<li>通过ast产生的语法树，生成代码–》render函数 codegen</li>
+</ul>
+<h2 id="知识重点"><a href="#知识重点" class="headerlink" title="知识重点"></a>知识重点</h2><ul>
+<li><p>Vue中响应式数据原理</p>
+</li>
+<li><p>Vue中模板编译原理</p>
+</li>
+</ul>
+ 
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        Donate
+      </div>
+      
+    </div>
+    
+
+    <!-- copyright -->
+    
+    <footer class="article-footer">
+       
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/06/09/2010vueSource/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>  
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VUE/" rel="tag">VUE</a></li></ul>
+
+    </footer>
+  </div>
+
+   
+  <nav class="article-nav">
+    
+      <a href="/2020/07/20/webBrainPic/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            知识体系
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/05/16/html5/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">HTML5疑难杂症</div>
+      </a>
+    
+  </nav>
+
+   
+<!-- valine评论 -->
+<div id="vcomments-box">
+  <div id="vcomments"></div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+    el: "#vcomments",
+    app_id: "l38Ubkh54FW4ofQeggqmrQWd-gzGzoHsz",
+    app_key: "uCmoewcxSurxM1xgHGIx31a6",
+    path: window.location.pathname,
+    avatar: "monsterid",
+    placeholder: "给我的文章加点评论吧~",
+    recordIP: true,
+  });
+  const infoEle = document.querySelector("#vcomments .info");
+  if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+    infoEle.childNodes.forEach(function (item) {
+      item.parentNode.removeChild(item);
+    });
+  }
+</script>
+<style>
+  #vcomments-box {
+    padding: 5px 30px;
+  }
+
+  @media screen and (max-width: 800px) {
+    #vcomments-box {
+      padding: 5px 0px;
+    }
+  }
+
+  #vcomments-box #vcomments {
+    background-color: #fff;
+  }
+
+  .v .vlist .vcard .vh {
+    padding-right: 20px;
+  }
+
+  .v .vlist .vcard {
+    padding-left: 10px;
+  }
+</style>
+
+ 
+     
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul>
+      <li>
+        
+        
+        <span>
+  <span><i class="ri-user-3-fill"></i>Visitors:<span id="busuanzi_value_site_uv"></span></s>
+  <span class="division">|</span>
+  <span><i class="ri-eye-fill"></i>Views:<span id="busuanzi_value_page_pv"></span></span>
+</span>
+        
+      </li>
+    </ul>
+    <ul>
+      
+    </ul>
+    <ul>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="float_btns">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+
+<div class="todark" id="todark">
+  <i class="ri-moon-line"></i>
+</div>
+
+      </div>
+    </main>
+    <aside class="sidebar on">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="雪凝姐姐"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <script>
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        document.querySelector('.content').classList.remove('on');
+        document.querySelector('.sidebar').classList.remove('on');
+      }
+    </script>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpeg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpeg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+<!-- Tocbot -->
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto'
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/dist/main.js"></script>
+
+<!-- ImageViewer -->
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+<!-- MathJax -->
+
+<!-- Katex -->
+
+<!-- busuanzi  -->
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<!-- ClickLove -->
+
+
+<script src="/js/clickLove.js"></script>
+
+
+<!-- ClickBoom1 -->
+
+<!-- ClickBoom2 -->
+
+<!-- CodeCopy -->
+
+
+<link rel="stylesheet" href="/css/clipboard.css">
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="ri-file-copy-2-line"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-checkbox-circle-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-checkbox-circle-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('ri-file-copy-2-line');
+        $icon.addClass('ri-time-line');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('ri-time-line');
+          $icon.addClass('ri-file-copy-2-line');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+<!-- CanvasBackground -->
+
+
+<script src="/js/dz.js"></script>
+
+
+
+    
+    <div id="music">
+    
+    
+    
+    <iframe frameborder="no" border="1" marginwidth="0" marginheight="0" width="200" height="52"
+        src="//music.163.com/outchain/player?type=2&id=446512502&auto=1&height=32"></iframe>
+</div>
+
+<style>
+    #music {
+        position: fixed;
+        right: 15px;
+        bottom: 0;
+        z-index: 998;
+    }
+</style>
+    
+  </div>
+</body>
+
+</html>

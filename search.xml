@@ -1,6 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ES2020可选链</title>
+    <url>/2020/11/01/Dairy1/</url>
+    <content><![CDATA[<p>关于ES2020新增方法——可选链的解读。</p>
+<a id="more"></a>
+
+<p>在ES6还没有读熟读透的时候，ES已经更新到2020了，刷掘金的时候发现了其中的一个新特性——可选链，对于苦于针对于业务中接口的不确定性无休无止的判断多年的前端er，简直是代码简洁和保障神器。</p>
+<h3 id="什么是可选链？"><a href="#什么是可选链？" class="headerlink" title="什么是可选链？"></a>什么是可选链？</h3><p>可选链 ?. 是一种访问嵌套对象属性的安全的方式。即使中间的属性不存在，也不会出现错误。</p>
+<h3 id="可选链解决了什么问题？"><a href="#可选链解决了什么问题？" class="headerlink" title="可选链解决了什么问题？"></a>可选链解决了什么问题？</h3><p>简而言之，对于一个层级很深的对象userInfo，三层以下有某个属性——父亲的手机号（tel）,结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userInfo &#x3D; &#123;</span><br><span class="line">    name: &#39;zhangsan&#39;,</span><br><span class="line">    family: &#123;</span><br><span class="line">        father: &#123;</span><br><span class="line">            name: &#39;laowang&#39;,</span><br><span class="line">            tel: &#39;137****4321&#39;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们去取父亲的手机号时，需要用到userInfo.family.father.tel，但是我们发现，用户根本没有提供父亲的信息</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let userInfo &#x3D; &#123;</span><br><span class="line">    name: &#39;zhangsan&#39;，</span><br><span class="line">    family: &#123;</span><br><span class="line">        mother：&#123;</span><br><span class="line">            name: &#39;laowang&#39;,</span><br><span class="line">            tel: &#39;137****4321&#39;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;; &#x2F;&#x2F; 一个没有father属性的obj</span><br><span class="line"></span><br><span class="line">alert(userInfo.family.father.tel) &#x2F;&#x2F; Error!</span><br></pre></td></tr></table></figure>
+
+<p>这是预期的结果。JavaScript 的工作原理就是这样的。因为 userInfo.family.father 为 undefined，尝试读取 userInfo.family.father.tel 会失败，并收到一个错误。</p>
+<p>对于无法掌控的后端接口，甚至在用户没有提供家庭成员信息的时候，family节点都会消失。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let userInfo &#x3D; &#123;</span><br><span class="line">    name: &#39;zhangsan&#39;</span><br><span class="line">&#125;; &#x2F;&#x2F; 一个没有family属性的obj</span><br><span class="line"></span><br><span class="line">alert(userInfo.family.father.tel) &#x2F;&#x2F; Error!</span><br></pre></td></tr></table></figure>
+<p>同样的，userInfo.family为undefined， 那么接着去找undefined内部的属性，也必然会报错。</p>
+<p>还有另一个例子。在 Web 开发中，我们可以使用特殊的方法调用（例如 document.querySelector(‘.elem’)）以对象的形式获取一个网页元素，如果没有这种对象，则返回 null。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">&#x2F;&#x2F; 如果 document.querySelector(&#39;.elem&#39;) 的结果为 null，则这里不存在这个元素</span><br><span class="line">let html &#x3D; document.querySelector(&#39;.elem&#39;).innerHTML; &#x2F;&#x2F; 如果 document.querySelector(&#39;.elem&#39;) 的结果为 null，则会出现错误</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<p>同样，如果该元素不存在，则访问 null 的 .innerHTML 时会出错。在某些情况下，当元素的缺失是没问题的时候，我们希望避免出现这种错误，而是接受 html = null 作为结果。</p>
+<p>那么，可选链就是为这样的问题提供了一种快速，方便，友好的解决方案。</p>
+<h3 id="其他解决方案"><a href="#其他解决方案" class="headerlink" title="其他解决方案"></a>其他解决方案</h3><p>那么在可选链出现之前，我们是怎么规避或者解决这样的问题的呢？</p>
+<h4 id="万能-if-判断-amp-amp-条件语句"><a href="#万能-if-判断-amp-amp-条件语句" class="headerlink" title="万能 if 判断 &amp;&amp; 条件语句"></a>万能 if 判断 &amp;&amp; 条件语句</h4><p>通过if层层判断或者通过条件运算符 ？：，显然可以解决这个问题，像下面这样：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if (userInfo) &#123;</span><br><span class="line">    ...</span><br><span class="line">    if (userInfo.family) &#123;</span><br><span class="line">        ...</span><br><span class="line">        if (userInfo.family.father) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或是</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userInfo ? userInfo.family ? userInfo.family.father ? userInfo.family.father.tel : &#39;&#39; : undefined : undefined : undefined</span><br></pre></td></tr></table></figure>
+
+<p>这显然是及其不优雅的，并且当你既需要判断父亲，又需要判断母亲的时候，你的代码对于其他人来说，简直是一个迷。</p>
+<p>这就是为什么增加了可选链这个解决方案。</p>
+<h3 id="可选链，详解"><a href="#可选链，详解" class="headerlink" title="可选链，详解"></a>可选链，详解</h3><p>如果可选链 ?. 前面的部分是 undefined 或者 null，它会停止运算并返回该部分。</p>
+<p>为了简明起见，在本文接下来的内容中，我们会说如果一个属性既不是 null 也不是 undefined，那么它就“存在”。</p>
+<p>换句话说，例如 value?.prop：</p>
+<ul>
+<li>如果 value 存在，则结果与 value.prop 相同，</li>
+<li>否则（当 value 为 undefined/null 时）则返回 undefined。</li>
+</ul>
+<p>那么上面这个例子，我们就可以这样优雅的写；</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userInfo？.family？.father？.tel</span><br></pre></td></tr></table></figure>
+
+<p>这样，某一个节点不存在，也只会返回undefined，而不是报出异常。</p>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><h4 id="不要过度使用可选链："><a href="#不要过度使用可选链：" class="headerlink" title="不要过度使用可选链："></a>不要过度使用可选链：</h4><p>我们应该只将 ?. 使用在一些东西可以不存在的地方。<br>例如，如果根据我们的代码逻辑，user 对象必须存在，但 address 是可选的，那么我们应该这样写 user.address?.street，而不是这样 user?.address?.street。<br>所以，如果 user 恰巧因为失误变为 undefined，我们会看到一个编程错误并修复它。否则，代码中的错误在不恰当的地方被消除了，这会导致调试更加困难。</p>
+<h4 id="可选链-前的变量必须已声明"><a href="#可选链-前的变量必须已声明" class="headerlink" title="可选链 ?. 前的变量必须已声明"></a>可选链 ?. 前的变量必须已声明</h4><p>如果未声明变量 userInfo，那么 userInfo?.anything 会触发一个错误：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; ReferenceError: userInfo is not defined</span><br><span class="line">userInfo?.family;</span><br></pre></td></tr></table></figure>
+
+<h4 id="存在短路效应"><a href="#存在短路效应" class="headerlink" title="存在短路效应"></a>存在短路效应</h4><p>正如前面所说的，如果 ?. 左边部分不存在，就会立即停止运算（“短路效应”）。</p>
+<p>所以，如果后面有任何函数调用或者副作用，它们均不会执行。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let user &#x3D; null;</span><br><span class="line">let x &#x3D; 0;</span><br><span class="line"></span><br><span class="line">user?.sayHi(x++); &#x2F;&#x2F; 没有 &quot;sayHi&quot;，因此代码执行没有触达 x++</span><br><span class="line"></span><br><span class="line">alert(x); &#x2F;&#x2F; 0，值没有增加</span><br></pre></td></tr></table></figure>
+
+<h4 id="其他应用"><a href="#其他应用" class="headerlink" title="其他应用"></a>其他应用</h4><p>可选链 ?. 不是一个运算符，而是一个特殊的语法结构。它还可以与函数和方括号一起使用。</p>
+<p>例如，将 ?.() 用于调用一个可能不存在的函数。</p>
+<p>如果我们想使用方括号 [] 而不是点符号 . 来访问属性，语法 ?.[] 也可以使用。跟前面的例子类似，它允许从一个可能不存在的对象上安全地读取属性。</p>
+<p>用法和点符号都一样，这里就不举例子了。</p>
+<h4 id="可以将-跟-delete-一起使用"><a href="#可以将-跟-delete-一起使用" class="headerlink" title="可以将 ?. 跟 delete 一起使用"></a>可以将 ?. 跟 delete 一起使用</h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">delete userInfo?.name; &#x2F;&#x2F; 如果 userInfo 存在，则删除 userInfo.name</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>可选链 ?. 语法有三种形式：</p>
+<ul>
+<li>obj?.prop —— 如果 obj 存在则返回 obj.prop，否则返回 undefined。</li>
+<li>obj?.[prop] —— 如果 obj 存在则返回 obj[prop]，否则返回 undefined。</li>
+<li>obj.method?.() —— 如果 obj.method 存在则调用 obj.method()，否则返回 undefined。</li>
+</ul>
+<p>正如我们所看到的，这些语法形式用起来都很简单直接。?. 检查左边部分是否为 null/undefined，如果不是则继续运算。<br>?. 链使我们能够安全地访问嵌套属性。<br>但是，我们应该谨慎地使用 ?.，仅在当左边部分不存在也没问题的情况下使用为宜。以保证在代码中有编程上的错误出现时，也不会对我们隐藏。</p>
+]]></content>
+      <categories>
+        <category>ES2020</category>
+      </categories>
+      <tags>
+        <tag>ES</tag>
+        <tag>ES2020</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>javascript &amp; ES</title>
+    <url>/2020/10/10/2010ES/</url>
+    <content><![CDATA[<p>从浅入深 Js &amp; ES</p>
+<a id="more"></a>
+
+<h1 id="数据类型和API"><a href="#数据类型和API" class="headerlink" title="数据类型和API"></a>数据类型和API</h1>]]></content>
+      <categories>
+        <category>Javascript</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
+        <tag>ES</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>HTTP</title>
+    <url>/2020/10/01/2010http/</url>
+    <content><![CDATA[<p>深入学习HTTP</p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>http</category>
+      </categories>
+      <tags>
+        <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>微前端</title>
+    <url>/2020/10/01/2010miniWeb/</url>
+    <content><![CDATA[<p>好帮手项目为多个项目聚合的应用，目前存在的问题，代码杂，业务乱，风格不统一，维护困难，牵一发动全身，想要进行整改，优化，升级难上加难。<br>因此，考虑采用一种新的架构来结局这个问题，保证新的业务开发和旧业务改造可以互不干扰的同步进行。</p>
+<a id="more"></a>
+
+<h2 id="什么是微前端"><a href="#什么是微前端" class="headerlink" title="什么是微前端"></a>什么是微前端</h2><p>做过后端的可能对微服务有所了解，微前端就是一种在浏览器端运行的微服务，将单页的前端应用，按照业务拆分为多个小型的前端应用，可以独立开发，独立部署。</p>
+<h2 id="微前端的好处"><a href="#微前端的好处" class="headerlink" title="微前端的好处"></a>微前端的好处</h2><ul>
+<li>独立部署，可以针对性的抽出某个业务进行全面改造</li>
+<li>更容易识别全局基础组件和业务组件，通过依赖包的方式进行共享，提高代码复用率和开发效率</li>
+<li>对技术栈没有要求，可以在一个项目中，根据业务的复杂度，选型不同的技术栈，开发效率高，对成员的技术不做强制要求</li>
+</ul>
+<img src="../../../../images/qiankun.png">
+
+<h2 id="已有项目如何接入qiankun"><a href="#已有项目如何接入qiankun" class="headerlink" title="已有项目如何接入qiankun"></a>已有项目如何接入qiankun</h2><ul>
+<li>创建微应用容器 - 用于承载微应用，渲染显示微应用；</li>
+<li>注册微应用 - 设置微应用激活条件，微应用地址等等；</li>
+<li>启动 qiankun。</li>
+</ul>
+<h2 id="START"><a href="#START" class="headerlink" title="START"></a>START</h2><h3 id="创建微应用容器"><a href="#创建微应用容器" class="headerlink" title="创建微应用容器"></a>创建微应用容器</h3><p>创建一个容器，相当于一个页面框架，微应用在容器内渲染并展示。</p>
+]]></content>
+      <categories>
+        <category>微前端</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+        <tag>微前端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>React源码</title>
+    <url>/2020/10/01/2010reactSource/</url>
+    <content><![CDATA[<p>阅读React源码笔记</p>
+<a id="more"></a>
+]]></content>
+      <categories>
+        <category>React源码</category>
+      </categories>
+      <tags>
+        <tag>React</tag>
+        <tag>源码</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Webpack</title>
+    <url>/2020/10/01/2010webpack/</url>
+    <content><![CDATA[<p>深入学习webpack</p>
+<a id="more"></a>
+
+]]></content>
+      <categories>
+        <category>webpack</category>
+      </categories>
+      <tags>
+        <tag>webpack</tag>
+        <tag>打包编译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>注册会计备考——财管</title>
+    <url>/2020/10/01/CPA/</url>
+    <content><![CDATA[<p>财管，会计，审计，经济法，战略，税法，综合</p>
+]]></content>
+      <categories>
+        <category>CPA</category>
+      </categories>
+      <tags>
+        <tag>CPA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CSS</title>
+    <url>/2020/10/01/2010css/</url>
+    <content><![CDATA[<p>深入学习CSS</p>
+<a id="more"></a>]]></content>
+      <categories>
+        <category>css</category>
+      </categories>
+      <tags>
+        <tag>css</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Vue知识体系</title>
+    <url>/2020/08/19/2010vueBase/</url>
+    <content><![CDATA[<p>VUE知识体系～</p>
+<a id="more"></a>
+
+<h2 id="基础原理"><a href="#基础原理" class="headerlink" title="基础原理"></a>基础原理</h2><h3 id="Vnode虚拟DOM"><a href="#Vnode虚拟DOM" class="headerlink" title="Vnode虚拟DOM"></a>Vnode虚拟DOM</h3><p>Vnode是虚拟节点，是对真实节点的抽象。产生的原因是过去通过innerHTML修改DOM修改视图，每次更新DOM节点都要重绘整个页面，项目一旦庞大起来，维护就成了一个难题。那换个角度想如果把真实Dom树抽象成为一棵以JS语法构建的抽象，然后通过修改抽象树的结构来转换成真实的Dom来重新渲染到视图。</p>
+<p>Vue.js将DOM抽象成一个以JavaScript对象为节点的虚拟DOM树，以VNode节点模拟真实DOM，可以对这颗抽象树进行创建节点、删除节点以及修改节点等操作，在这过程中都不需要操作真实DOM，只需要操作JavaScript对象后只对差异修改，相对于整块的innerHTML的粗暴式修改，大大提升了性能。修改以后经过diff算法得出一些需要修改的最小单位，再将这些小单位的视图进行更新。这样做减少了很多不需要的DOM操作，大大提高了性能。</p>
+<p>Vue是通过数据绑定来修改视图，当某个数据被修改的时候set方法会让闭包中的Dep调用notify通知所有订阅者Watcher，Watcher通过get方法执行vm._update(vm._render(), hydrating)。</p>
+<p>updage方法的第一个参数是Vnode，在内部会将新老Vnode进行patch，这里使用的就是diff算法，对比较结果进行最小单位的修改。</p>
+<p>diff算法是通过同层的树节点进行比较而非对树进行逐层搜索遍历的方式，所以时间复杂度只有O(n)，是一种相当高效的算法。</p>
+<p>当oldVnode与vnode在sameVnode的时候才会进行patchVnode，也就是新旧VNode节点判定为同一节点的时候才会进行patchVnode这个过程，否则就是创建新的DOM，移除旧的DOM。</p>
+]]></content>
+      <categories>
+        <category>VUE</category>
+      </categories>
+      <tags>
+        <tag>VUE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>React入坑笔记</title>
+    <url>/2020/07/27/2010reactBase/</url>
+    <content><![CDATA[<p>第一篇React学习笔记，初涉～</p>
+<a id="more"></a>
+
+<p>MVVM框架。</p>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><ul>
+<li>声明式</li>
+<li>组件化（侧重UI）</li>
+<li>灵活（单／多页面 服务端渲染 RN-App）</li>
+</ul>
+<h3 id="编写Hello-world"><a href="#编写Hello-world" class="headerlink" title="编写Hello world"></a>编写Hello world</h3><h4 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h4><ul>
+<li>React.render()</li>
+<li>React.creatElement()</li>
+<li>React.Conponent</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1.0"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"X-UA-Compatible"</span> <span class="attr">content</span>=<span class="string">"ie=edge"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>React<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">crossorigin</span> <span class="attr">src</span>=<span class="string">"https://unpkg.com/react@16/umd/react.development.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">crossorigin</span> <span class="attr">src</span>=<span class="string">"https://unpkg.com/react-dom@16/umd/react-dom.development.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="actionscript">        <span class="keyword">var</span> hello = React.createElement(<span class="string">'h1'</span>, &#123;&#125;, <span class="string">'hello world'</span>);</span></span><br><span class="line"><span class="javascript">        ReactDOM.render(hello, <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>));</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>后期会使用ES6的语法糖，引入babel</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://cdn.bootcss.com/babel-standalone/6.26.0/babel.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">// ...</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/babel"</span>&gt;</span></span><br><span class="line"><span class="javascript">    ReactDOM.render(<span class="xml"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span>, <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>))</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="JSX"><a href="#JSX" class="headerlink" title="JSX"></a>JSX</h3><h3 id="元素渲染"><a href="#元素渲染" class="headerlink" title="元素渲染"></a>元素渲染</h3>]]></content>
+      <categories>
+        <category>React</category>
+      </categories>
+      <tags>
+        <tag>Javascript</tag>
+        <tag>React</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>知识体系</title>
     <url>/2020/07/20/webBrainPic/</url>
     <content><![CDATA[<p>web前端必学必会~</p>
@@ -390,7 +622,7 @@
   </entry>
   <entry>
     <title>Vue源码学习</title>
-    <url>/2020/06/09/vueSource/</url>
+    <url>/2020/06/09/2010vueSource/</url>
     <content><![CDATA[<p>VUE源码分析，用于日常记录~</p>
 <a id="more"></a>
 
@@ -505,20 +737,6 @@
       </categories>
       <tags>
         <tag>VUE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CSS3疑难杂症</title>
-    <url>/2020/05/16/css3/</url>
-    <content><![CDATA[<p>CSS3的一些疑难杂症及解决方案，不断补充~</p>
-<a id="more"></a>
-]]></content>
-      <categories>
-        <category>CSS</category>
-      </categories>
-      <tags>
-        <tag>CSS</tag>
-        <tag>CSS3</tag>
       </tags>
   </entry>
   <entry>
@@ -1211,14 +1429,14 @@
         <category>HTML、CSS</category>
       </categories>
       <tags>
-        <tag>CSS</tag>
         <tag>HTML</tag>
+        <tag>CSS</tag>
       </tags>
   </entry>
   <entry>
     <title>Web前端常见面试题——性能优化与安全篇</title>
     <url>/2020/04/09/mianshi03/</url>
-    <content><![CDATA[<p>一篇用于面试前恶补的小文章，不断补充。</p>
+    <content><![CDATA[<p>一篇用于面试前恶补的小文章。</p>
 <a id="more"></a>
 
 <h2 id="web语义化及其优势"><a href="#web语义化及其优势" class="headerlink" title="web语义化及其优势"></a>web语义化及其优势</h2><p>web语义化是通过HTML标记表示此页面包含的信息，包含HTML标签语义化和CSS明明语义化。</p>
@@ -1368,56 +1586,6 @@
 <li>物理层：通过媒介传输比特,确定机械及电气规范</li>
 </ul>
 ]]></content>
-      <categories>
-        <category>http</category>
-      </categories>
-      <tags>
-        <tag>http</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>算法题练习记录 （一）</title>
-    <url>/2020/03/24/test01/</url>
-    <content><![CDATA[<p>力扣算法题练习记录及小结。</p>
-<a id="more"></a>
-
-<p>给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。</p>
-<p>你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。</p>
-<p>示例</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">给定 nums &#x3D; [2, 7, 11, 15], target &#x3D; 9</span><br><span class="line"></span><br><span class="line">因为 nums[0] + nums[1] &#x3D; 2 + 7 &#x3D; 9</span><br><span class="line">所以返回 [0, 1]</span><br></pre></td></tr></table></figure>
-
-<p>解题方案一（最慢暴力for循环）<br>时间复杂度是O(n*(n-1))</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * @param &#123;number[]&#125; nums</span><br><span class="line"> * @param &#123;number&#125; target</span><br><span class="line"> * @return &#123;number[]&#125;</span><br><span class="line"> *&#x2F;</span><br><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let arr &#x3D; nums;</span><br><span class="line">    let arrs &#x3D; new Array()</span><br><span class="line">    for(let i &#x3D;  0; i &lt; arr.length - 1; i++)&#123;</span><br><span class="line">        for(let j &#x3D; i+1; j &lt; arr.length; j++)&#123;</span><br><span class="line">            if ( arr[i] + arr[j] &#x3D;&#x3D;&#x3D; target) &#123;</span><br><span class="line">                arrs.push(i, j)</span><br><span class="line">                return arrs</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>解题方案二（使用Map函数）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target) &#123;</span><br><span class="line">    let map &#x3D; new Map();</span><br><span class="line">    let arr &#x3D; new Array();</span><br><span class="line">    for(let i in nnums) &#123;</span><br><span class="line">        map.set(nums[i], i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    for(let j &#x3D; 0; j &lt; nums.length - 1; j++) &#123;</span><br><span class="line">        if(map.has(target - nums[j]) &amp;&amp; map.get(target - nums[j] !&#x3D;&#x3D; j) &#123;</span><br><span class="line">            arr.push(map.get(target-nums[j]), j);</span><br><span class="line">            return arr;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>解题方案三 （尾递归）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var twoSum &#x3D; function(nums, target, i &#x3D; 0, maps &#x3D; &#123;&#125;) &#123;</span><br><span class="line">    const map &#x3D; maps</span><br><span class="line">    if(map[target - nums[i] ] &gt;&#x3D; 0 ) &#123;</span><br><span class="line">        return [ map[target - nums[i] ], i]</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        map[ nums[i] ] &#x3D; i;</span><br><span class="line">        i++;</span><br><span class="line">        if(i &lt; nums.length - 1)&#123;</span><br><span class="line">            return twoSum(nums, target, i, map)</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">            return [ map[target - nums[i] ], i]</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>http</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>图解HTTP</title>
-    <url>/2020/03/23/http/</url>
-    <content><![CDATA[<p>深入浅出《图解HTTP》</p>
-<a id="more"></a>
-
-<h1 id="HTTP和网络基础"><a href="#HTTP和网络基础" class="headerlink" title="HTTP和网络基础"></a>HTTP和网络基础</h1><p>HTTP，超文本传输协议，Web是建立在HTTP协议上通信的。是TCP/IP协议的子集。</p>
-<p>TCP/IP协议是互联网协议的合集，最重要的一点就是分层：应用层、传输层、网络层和数据链路层。</p>
-<p>分层协议的好处是，如果某个地方改变设计，只需要把变动的层替换掉即可。</p>
-<ul>
-<li>应用层： 决定了向用户提供应用服务时通信的活动。</li>
-<li>传输层： 提供处于网络连接中的两台计算机之间的数据传输。</li>
-<li>网络层： 处理在网络上流动的数据包。</li>
-<li>链路层： 处理链接网络的硬件部分。</li>
-</ul>
-<img src="../../../../images/tcpip.jpg" width="80%">
-发送端从应用层往下走，接收端则往应用层往上走。]]></content>
       <categories>
         <category>http</category>
       </categories>
